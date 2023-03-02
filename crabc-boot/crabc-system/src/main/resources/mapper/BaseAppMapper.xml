@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.system.mapper.BaseAppMapper">
+
+    <select id="selectList" resultType="cn.crabc.core.system.entity.BaseApp">
+        SELECT
+            app_id,
+            app_name,
+            app_desc,
+            app_code,
+            app_key,
+            app_secret,
+            strategy_type,
+            ips
+        FROM
+            base_app
+    </select>
+
+    <select id="selectAppApi" resultType="cn.crabc.core.system.entity.BaseApp">
+        SELECT
+            aa.api_id,
+            ap.app_id,
+            ap.app_code,
+            ap.app_key,
+            ap.app_secret,
+            ap.strategy_type,
+            ap.ips
+        FROM
+            base_app_api aa
+        LEFT JOIN base_app ap ON
+                aa.app_id = ap.app_id
+        WHERE
+            ap.enabled = 1
+    </select>
+
+    <update id="update" parameterType="cn.crabc.core.system.entity.BaseGroup">
+        UPDATE base_api_group
+        <set>
+            <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="groupDesc != null and groupDesc != ''">group_desc = #{groupDesc},</if>
+            update_time =#{updateTime}
+        </set>
+        WHERE group_id = #{groupId}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="groupId" parameterType="cn.crabc.core.system.entity.BaseGroup">
+        insert into base_api_group(
+        <if test="groupName != null and groupName != ''">group_name,</if>
+        <if test="parentId != null and parentId != ''">parent_id,</if>
+        <if test="groupDesc != null and groupDesc != ''">group_desc,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="groupName != null and groupName != ''">#{groupName},</if>
+        <if test="parentId != null and parentId != ''">#{parentId},</if>
+        <if test="groupDesc != null and groupDesc != ''">#{groupDesc},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        #{createTime}
+        )
+    </insert>
+
+    <delete id="delete">
+        delete from base_api_group where group_id =#{groupId}
+    </delete>
+
+    <delete id="deleteAll">
+        delete from base_api_group where create_by =#{userId}
+    </delete>
+</mapper>

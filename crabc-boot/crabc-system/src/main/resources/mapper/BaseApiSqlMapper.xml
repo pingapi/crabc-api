@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.system.mapper.BaseApiSqlMapper">
+
+    <select id="selectApiSql" resultType="cn.crabc.core.system.entity.BaseApiSql">
+        SELECT
+            api_id,
+            sql_id,
+            datasource_id,
+            datasource_type,
+            schema_name,
+            sql_script,
+            page_setup,
+            update_by,
+            update_time
+        FROM
+            base_api_sql where api_id =#{apiId}
+    </select>
+
+    <insert id="insertApiSql" useGeneratedKeys="true" keyProperty="sqlId" parameterType="cn.crabc.core.system.entity.BaseApiSql">
+        insert into base_api_sql(
+        <if test="apiId != null and apiId !=''">api_id,</if>
+        <if test="sqlScript != null and sqlScript !=''">sql_script,</if>
+        <if test="datasourceId != null and datasourceId != ''">datasource_id,</if>
+        <if test="datasourceType != null and datasourceType != ''">datasource_type,</if>
+        <if test="schemaName != null and schemaName != ''">schema_name,</if>
+        <if test="pageSetup != null">page_setup,</if>
+        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        update_time
+        )values(
+        <if test="apiId != null and apiId !=''">#{apiId},</if>
+        <if test="sqlScript != null and sqlScript !=''">#{sqlScript},</if>
+        <if test="datasourceId != null and datasourceId != ''">#{datasourceId},</if>
+        <if test="datasourceType != null and datasourceType != ''">#{datasourceType},</if>
+        <if test="schemaName != null and schemaName != ''">#{schemaName},</if>
+        <if test="pageSetup != null">#{pageSetup},</if>
+        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        #{updateTime}
+        )
+    </insert>
+
+    <update id="updateApiSql" parameterType="cn.crabc.core.system.entity.BaseApiSql">
+        update base_api_sql
+        <set>
+            <if test="sqlScript != null and sqlScript !=''">sql_script = #{sqlScript},</if>
+            <if test="datasourceId != null and datasourceId != ''">datasource_id =#{datasourceId},</if>
+            <if test="datasourceType != null and datasourceType != ''">datasource_type =#{datasourceType},</if>
+            <if test="schemaName != null and schemaName != ''">schema_name =#{schemaName},</if>
+            <if test="pageSetup != null">page_setup =#{pageSetup},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = #{updateTime}
+        </set>
+        where sql_id = #{sqlId}
+    </update>
+
+    <delete id="deleteApiSql">
+        DELETE FROM base_api_sql where api_id =#{apiId}
+    </delete>
+</mapper>
