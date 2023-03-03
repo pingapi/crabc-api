@@ -1,6 +1,7 @@
 package cn.crabc.core.system.mapper;
 
 import cn.crabc.core.system.entity.BaseGroup;
+import cn.crabc.core.system.entity.vo.BaseGroupVO;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public interface BaseGroupMapper {
      * 查询分组列表
      * @param userId
      */
-    List<BaseGroup> selectList(String userId);
+    List<BaseGroupVO> selectList(String userId);
 
     /**
      * 查询详情

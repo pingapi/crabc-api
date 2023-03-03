@@ -1,6 +1,7 @@
 package cn.crabc.core.system.service.system;
 
 import cn.crabc.core.system.entity.BaseGroup;
+import cn.crabc.core.system.entity.vo.BaseGroupVO;
 
 import java.util.List;
 
@@ -37,7 +38,8 @@ public interface IBaseGroupService {
     /**
      * 分组树
      * @param userId
+     * @param apiId
      * @return
      */
-    List<BaseGroup> groupTree(String userId);
+    List<BaseGroupVO> groupTree(String userId, Long apiId);
 }

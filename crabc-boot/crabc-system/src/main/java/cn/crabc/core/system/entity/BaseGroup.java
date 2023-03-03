@@ -18,8 +18,6 @@ public class BaseGroup extends BaseEntity{
 
     private Integer parentId;
 
-    private List<BaseGroup> children;
-
     public Integer getGroupId() {
         return groupId;
     }
@@ -52,11 +50,4 @@ public class BaseGroup extends BaseEntity{
         this.parentId = parentId;
     }
 
-    public List<BaseGroup> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<BaseGroup> children) {
-        this.children = children;
-    }
 }

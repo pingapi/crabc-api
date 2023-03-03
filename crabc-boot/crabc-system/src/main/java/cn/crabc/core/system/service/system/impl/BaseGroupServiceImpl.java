@@ -1,8 +1,13 @@
 package cn.crabc.core.system.service.system.impl;
 
+import cn.crabc.core.system.entity.BaseApiInfo;
 import cn.crabc.core.system.entity.BaseGroup;
+import cn.crabc.core.system.entity.vo.ApiComboBoxVO;
+import cn.crabc.core.system.entity.vo.BaseGroupVO;
+import cn.crabc.core.system.mapper.BaseApiInfoMapper;
 import cn.crabc.core.system.mapper.BaseGroupMapper;
 import cn.crabc.core.system.service.system.IBaseGroupService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +26,8 @@ public class BaseGroupServiceImpl implements IBaseGroupService {
 
     @Autowired
     private BaseGroupMapper baseGroupMapper;
+    @Autowired
+    private BaseApiInfoMapper apiInfoMapper;
 
     @Override
     public Integer addGroup(BaseGroup group) {
@@ -55,13 +62,38 @@ public class BaseGroupServiceImpl implements IBaseGroupService {
     }
 
     @Override
-    public List<BaseGroup> groupTree(String userId) {
-        List<BaseGroup> treeList = new ArrayList<>();
-        List<BaseGroup> list = baseGroupMapper.selectList(userId);
-        List<BaseGroup> rootList = list.stream().filter(vo -> vo.getParentId() == 0).collect(Collectors.toList());
+    public List<BaseGroupVO> groupTree(String userId, Long apiId) {
+        List<BaseGroupVO> treeList = new ArrayList<>();
+        List<BaseGroupVO> list = baseGroupMapper.selectList(userId);
+        if (apiId != null) {
+            this.getApiInfo(apiId, list);
+        }
+        List<BaseGroupVO> rootList = list.stream().filter(vo -> vo.getParentId() == 0).collect(Collectors.toList());
         //寻找子节点
         rootList.forEach(tree -> treeList.add(findChildren(tree, list)));
         return treeList;
+    }
+
+    /**
+     * 加载分组下的api信息
+     * @param apiId
+     * @param list
+     * @return
+     */
+    private List<BaseGroupVO> getApiInfo(Long apiId, List<BaseGroupVO> list){
+        BaseApiInfo baseApiInfo = apiInfoMapper.selectApiById(apiId);
+        if (baseApiInfo != null) {
+            for(BaseGroupVO group : list) {
+                if (group.getGroupId() == baseApiInfo.getGroupId()){
+                    List<ApiComboBoxVO> apis = new ArrayList<>();
+                    ApiComboBoxVO api = new ApiComboBoxVO();
+                    BeanUtils.copyProperties(baseApiInfo, api);
+                    apis.add(api);
+                    group.setApis(apis);
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -70,7 +102,7 @@ public class BaseGroupServiceImpl implements IBaseGroupService {
      * @param list
      * @return
      */
-    private BaseGroup findChildren(BaseGroup tree, List<BaseGroup> list) {
+    private BaseGroupVO findChildren(BaseGroupVO tree, List<BaseGroupVO> list) {
         list.stream().filter(node -> tree.getGroupId().equals(node.getParentId())).collect(Collectors.toList()).forEach(node -> {
             if (tree.getChildren() == null) {
                 tree.setChildren(new ArrayList<>());

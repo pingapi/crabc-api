@@ -1,6 +1,7 @@
 package cn.crabc.core.system.controller;
 
 import cn.crabc.core.system.entity.BaseGroup;
+import cn.crabc.core.system.entity.vo.BaseGroupVO;
 import cn.crabc.core.system.service.system.IBaseGroupService;
 import cn.crabc.core.system.util.Result;
 import cn.crabc.core.system.util.UserThreadLocal;
@@ -25,8 +26,8 @@ public class BaseGroupController {
      * @return
      */
     @GetMapping("/tree")
-    public Result groupTree(){
-        List<BaseGroup> baseGroups = iBaseGroupService.groupTree(UserThreadLocal.getUserId());
+    public Result groupTree(Long apiId){
+        List<BaseGroupVO> baseGroups = iBaseGroupService.groupTree(UserThreadLocal.getUserId(), apiId);
         return Result.success(baseGroups);
     }
 

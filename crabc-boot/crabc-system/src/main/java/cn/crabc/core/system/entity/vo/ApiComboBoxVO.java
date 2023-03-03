@@ -2,17 +2,17 @@ package cn.crabc.core.system.entity.vo;
 
 public class ApiComboBoxVO {
 
-    private Integer apiId;
+    private Long apiId;
 
     private String apiName;
 
     private String apiType;
 
-    public Integer getApiId() {
+    public Long getApiId() {
         return apiId;
     }
 
-    public void setApiId(Integer apiId) {
+    public void setApiId(Long apiId) {
         this.apiId = apiId;
     }
 

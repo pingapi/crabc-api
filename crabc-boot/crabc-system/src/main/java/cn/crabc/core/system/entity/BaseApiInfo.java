@@ -45,7 +45,7 @@ public class BaseApiInfo extends BaseEntity {
     /**
      * 分组ID
      */
-    private String groupId;
+    private Integer groupId;
     /**
      * 租户ID
      */
@@ -164,11 +164,11 @@ public class BaseApiInfo extends BaseEntity {
         this.parentId = parentId;
     }
 
-    public String getGroupId() {
+    public Integer getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
+    public void setGroupId(Integer groupId) {
         this.groupId = groupId;
     }
 

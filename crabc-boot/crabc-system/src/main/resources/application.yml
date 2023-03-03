@@ -9,10 +9,10 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   redis:
-    host: 120.79.83.23
-    port: 10007
-    database: 1
-    password: LegionRedis2004
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    password:
     #超时时间ms
     timeout: 10000
     lettuce:
@@ -29,9 +29,9 @@ spring:
         max-wait: -1
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/pingapi?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: Admin123.
+    password: admin
     druid:
       initial-size: 1
       max-active: 20
