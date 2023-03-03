@@ -1,11 +1,11 @@
 package cn.crabc.core.system.controller;
 
+import cn.crabc.core.system.entity.BaseApiInfo;
 import cn.crabc.core.system.entity.param.ApiInfoParam;
 import cn.crabc.core.system.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.system.entity.vo.ApiInfoVO;
 import cn.crabc.core.system.entity.vo.ColumnParseVo;
 import cn.crabc.core.system.entity.vo.SqlParseVO;
-import cn.crabc.core.system.entity.BaseApiInfo;
 import cn.crabc.core.system.service.system.IBaseApiInfoService;
 import cn.crabc.core.system.util.PageInfo;
 import cn.crabc.core.system.util.Result;
@@ -13,7 +13,9 @@ import cn.crabc.core.system.util.SQLUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -31,14 +33,15 @@ public class ApiInfoController {
     /**
      * API分页列表
      *
-     * @param apiName
-     * @param pageNo
+     * @param keyword
+     * @param appId
+     * @param pageNum
      * @param pageSize
      * @return
      */
     @GetMapping("/page")
-    public Result page(String apiName, Integer pageNo, Integer pageSize) {
-        PageInfo<BaseApiInfo> page = apiInfoService.getApiPage(apiName, pageNo, pageSize);
+    public Result page(String keyword, Integer appId, Integer pageNum, Integer pageSize) {
+        PageInfo<BaseApiInfo> page = apiInfoService.getApiPage(keyword, pageNum, pageSize);
         return Result.success(page);
     }
 

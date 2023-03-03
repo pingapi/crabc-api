@@ -7,8 +7,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectList" resultType="cn.crabc.core.system.entity.BaseUser">
         SELECT
             user_id,
-            user_name,
-            nick_name,
+            user_name username,
+            nick_name nickname,
             email,
             phone,
             sex,
@@ -27,8 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectOne" resultType="cn.crabc.core.system.entity.BaseUser">
         SELECT
             user_id,
-            user_name,
-            nick_name,
+            user_name username,
+            nick_name nickname,
             email,
             phone,
             sex,
@@ -50,8 +50,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update base_sys_user
         <set>
             <if test="deptId != null and deptId != 0">dept_id = #{deptId},</if>
-            <if test="userName != null and userName != ''">user_name = #{userName},</if>
-            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="username != null and username != ''">user_name = #{username},</if>
+            <if test="nickname != null and nickname != ''">nick_name = #{nickname},</if>
             <if test="email != null ">email = #{email},</if>
             <if test="phone != null ">phone = #{phone},</if>
             <if test="sex != null">sex = #{sex},</if>
@@ -69,8 +69,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into base_sys_user(
         <if test="userId != null and userId != 0">user_id,</if>
         <if test="deptId != null and deptId != 0">dept_id,</if>
-        <if test="userName != null and userName != ''">user_name,</if>
-        <if test="nickName != null and nickName != ''">nick_name,</if>
+        <if test="username != null and username != ''">user_name,</if>
+        <if test="nickname != null and nickname != ''">nick_name,</if>
         <if test="email != null and email != ''">email,</if>
         <if test="picture != null and picture != ''">picture,</if>
         <if test="phone != null and phone != ''">phone,</if>
@@ -83,8 +83,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )values(
         <if test="userId != null and userId != 0">#{userId},</if>
         <if test="deptId != null and deptId != ''">#{deptId},</if>
-        <if test="userName != null and userName != ''">#{userName},</if>
-        <if test="nickName != null and nickName != ''">#{nickName},</if>
+        <if test="username != null and username != ''">#{username},</if>
+        <if test="nickname != null and nickname != ''">#{nickname},</if>
         <if test="email != null and email != ''">#{email},</if>
         <if test="picture != null and picture != ''">#{picture},</if>
         <if test="phone != null and phone != ''">#{phone},</if>

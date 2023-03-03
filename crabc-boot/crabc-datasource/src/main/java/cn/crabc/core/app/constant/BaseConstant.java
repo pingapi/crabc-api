@@ -46,4 +46,24 @@ public class BaseConstant {
      * redis
      */
     public final static String REDIS_CACHE = "redis";
+
+    /**
+     * API数据缓存
+     */
+    public static final String CACHE_API_DETAIL = "api_detail";
+
+    public static final String CACHE_METADATA_CATALOG = "metadata_catalog:";
+    /**
+     * redis缓存schema
+     */
+    public static final String CACHE_METADATA_SCHEMA = "metadata_schema:";
+    /**
+     * redis缓存表
+     */
+    public static final String CACHE_METADATA_TABLE = "metadata_table:";
+    /**
+     * redis缓存字段
+     */
+    public static final String CACHE_METADATA_COLUMN = "metadata_column:";
+
 }

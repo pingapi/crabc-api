@@ -1,14 +1,15 @@
 package cn.crabc.core.system.controller;
 
 import cn.crabc.core.system.entity.BaseUser;
-import cn.crabc.core.system.component.RedisClient;
 import cn.crabc.core.system.service.system.IBaseUserService;
 import cn.crabc.core.system.util.JwtUtil;
 import cn.crabc.core.system.util.Result;
-import cn.crabc.core.system.util.UserThreadLocal;
 import com.alibaba.fastjson2.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -16,8 +17,6 @@ import java.util.*;
 @RequestMapping("/api/box/sys/user")
 public class SysUserController {
 
-    @Autowired
-    private RedisClient redisService;
     @Autowired
     private IBaseUserService iBaseUserService;
 
@@ -42,7 +41,7 @@ public class SysUserController {
             return Result.error("账号或密码错误!");
         }
         Map<String, Object> user = new HashMap<>();
-        String token = JwtUtil.createToken(userInfo.getUserId(), userInfo.getUserName());
+        String token = JwtUtil.createToken(userInfo.getUserId(), userInfo.getUsername());
         user.put("expires_in", 3600);
         user.put("access_token", token);
         user.put("refresh_token",UUID.randomUUID().toString());
@@ -64,22 +63,22 @@ public class SysUserController {
      */
     @GetMapping("/info")
     public Result userInfo(){
-//        Map<String,Object> userInfo = new HashMap<>();
-//        Map<String,Object> users = new HashMap<>();
-//        users.put("id","1");
-//        users.put("username","admin");
-//        users.put("nickname","管理员");
-//        users.put("email","admin@example.com");
-//        users.put("depts",new ArrayList<>());
-//        users.put("sysRoles", new ArrayList<>());
-//        users.put("topOrgId",1);
-//        List<String> permissions = new ArrayList<>();
-//        permissions.add("ALL:/api/**");
-//        users.put("permissions",permissions);
-//        userInfo.put("user",users);
-//        List<Map<String,Object>> permissionMap = new ArrayList<>();
-//        userInfo.put("permissions",permissionMap);
-        BaseUser userInfo =  iBaseUserService.getUserById(Long.parseLong(UserThreadLocal.getUserId()));
+        Map<String,Object> userInfo = new HashMap<>();
+        Map<String,Object> users = new HashMap<>();
+        users.put("id","1");
+        users.put("username","admin");
+        users.put("nickname","管理员");
+        users.put("email","admin@example.com");
+        users.put("depts",new ArrayList<>());
+        users.put("sysRoles", new ArrayList<>());
+        users.put("topOrgId",1);
+        List<String> permissions = new ArrayList<>();
+        permissions.add("ALL:/api/**");
+        users.put("permissions",permissions);
+        userInfo.put("user",users);
+        List<Map<String,Object>> permissionMap = new ArrayList<>();
+        userInfo.put("permissions",permissionMap);
+//        BaseUser userInfo =  iBaseUserService.getUserById(Long.parseLong(UserThreadLocal.getUserId()));
         return Result.success(userInfo);
     }
 

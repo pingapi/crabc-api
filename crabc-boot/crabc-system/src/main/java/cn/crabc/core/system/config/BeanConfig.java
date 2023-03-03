@@ -8,6 +8,7 @@ import cn.crabc.core.system.component.BaseCache;
 import cn.crabc.core.system.component.RedisClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,8 +18,11 @@ import org.springframework.context.annotation.Configuration;
  * @author yuqf
  */
 @Configuration
+@EnableCaching
 public class BeanConfig {
 
+    @Value("${crabc.cache.type:redis}")
+    private String cacheType;
 
     /**
      * JDBC 数据源驱动
@@ -44,13 +48,16 @@ public class BeanConfig {
     }
 
     /**
-     * 缓存配置
+     * 缓存管理类
      * @param redisClient
-     * @param cacheType
      * @return
      */
     @Bean
-    public BaseCache cacheLocal(@Autowired RedisClient redisClient, @Value("${crabc.cache:local}") String cacheType){
-        return new BaseCache(redisClient, cacheType);
+    public BaseCache baseCache(@Autowired(required = false) RedisClient redisClient){
+        if (redisClient != null && "redis".equalsIgnoreCase(cacheType)){
+            return new BaseCache(redisClient);
+        }else{
+            return new BaseCache();
+        }
     }
 }

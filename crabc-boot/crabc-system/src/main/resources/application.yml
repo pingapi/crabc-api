@@ -5,16 +5,33 @@ server:
 spring:
   application:
     name: crabc-system
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
   redis:
-    host: localhost
-    port: 6379
-    database: 0
-    password: 123456
+    host: 120.79.83.23
+    port: 10007
+    database: 1
+    password: LegionRedis2004
+    #超时时间ms
+    timeout: 10000
+    lettuce:
+      #在关闭客户端连接之前等待任务处理完成的最长时间ms
+      shutdown-timeout: 100
+      pool:
+        # 连接池中的最小空闲连接
+        min-idle: 1
+        # 连接池中的最大空闲连接
+        max-idle: 8
+        # 连接池的最大数据库连接数
+        max-active: 8
+        # 最大阻塞等待时间（使用负值表示没有限制）
+        max-wait: -1
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/pingapi?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: admin
+    password: Admin123.
     druid:
       initial-size: 1
       max-active: 20
@@ -56,5 +73,6 @@ mybatis:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #crabc配置
 crabc:
-  # 缓存配置：缓存数据存redis/local
-  cache: local
+  # 缓存类型redis、local
+  cache:
+    type: local

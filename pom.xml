@@ -26,7 +26,7 @@
         <jsqlparser.version>4.5</jsqlparser.version>
         <fastjson.version>2.0.24</fastjson.version>
         <jwt.version>0.9.1</jwt.version>
-        <bitwalker.version>1.21</bitwalker.version>
+        <commons-pool2.version>2.11.1</commons-pool2.version>
     </properties>
     <dependencyManagement>
         <dependencies>

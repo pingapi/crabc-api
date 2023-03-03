@@ -7,8 +7,6 @@ import cn.crabc.core.app.mapper.BaseDataHandleMapper;
 import cn.crabc.core.app.util.PageInfo;
 import com.github.pagehelper.PageHelper;
 
-import java.sql.SQLException;
-import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -16,6 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ips
         FROM
             base_app
+        order by create_time desc
     </select>
 
     <select id="selectAppApi" resultType="cn.crabc.core.system.entity.BaseApp">

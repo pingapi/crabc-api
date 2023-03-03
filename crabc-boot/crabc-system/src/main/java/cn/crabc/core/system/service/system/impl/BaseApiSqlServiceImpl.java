@@ -1,8 +1,8 @@
 package cn.crabc.core.system.service.system.impl;
 
-import cn.crabc.core.system.service.system.IBaseApiSqlService;
 import cn.crabc.core.system.entity.BaseApiSql;
 import cn.crabc.core.system.mapper.BaseApiSqlMapper;
+import cn.crabc.core.system.service.system.IBaseApiSqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

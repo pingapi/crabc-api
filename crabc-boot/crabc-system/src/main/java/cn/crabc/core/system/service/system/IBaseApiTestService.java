@@ -5,7 +5,7 @@ import cn.crabc.core.system.entity.vo.PreviewVO;
 import java.util.Map;
 
 /**
- * API测试和预览
+ * API测试和预览 接口
  *
  * @author yuqf
  */

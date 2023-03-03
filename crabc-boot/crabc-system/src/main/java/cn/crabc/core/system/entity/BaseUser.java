@@ -18,10 +18,10 @@ public class BaseUser extends BaseEntity {
     private Integer deptId;
 
     /** 用户账号 */
-    private String userName;
+    private String username;
 
     /** 用户昵称 */
-    private String nickName;
+    private String nickname;
 
     /** 用户邮箱 */
     private String email;
@@ -57,20 +57,20 @@ public class BaseUser extends BaseEntity {
         this.deptId = deptId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getNickName() {
-        return nickName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getEmail() {

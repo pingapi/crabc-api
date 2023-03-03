@@ -1,8 +1,8 @@
 package cn.crabc.core.system.mapper;
 
 
-import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.system.entity.BaseDatasource;
 
 import java.util.List;
 

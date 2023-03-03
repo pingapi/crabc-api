@@ -1,25 +1,24 @@
 package cn.crabc.core.system.component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * spring redis 工具类（借鉴自 ruoyi）
+ *  redis 工具类
  *
  **/
+public class RedisClient {
 
-@Component
-public class RedisClient
-{
-    @Autowired
-    public RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;
 
+    public RedisClient(RedisTemplate redisTemplate){
+        this.redisTemplate = redisTemplate;
+    }
     /**
      * 缓存基本的对象，Integer、String、实体类等
      *

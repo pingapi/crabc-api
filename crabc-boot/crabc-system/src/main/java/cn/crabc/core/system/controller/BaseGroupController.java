@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/box/sys/group")
-public class ApiGroupController {
+public class BaseGroupController {
 
     @Autowired
     private IBaseGroupService iBaseGroupService;

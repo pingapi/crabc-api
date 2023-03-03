@@ -18,7 +18,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             tenant_id,
             remarks,
             version,
-            page_setup,
             create_by,
             create_time,
             update_by,
@@ -28,9 +27,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="apiName !=null and apiName !=''">
                 api_name concat('%',#{apiName,jdbcType=VARCHAR},'%')
-            </if>
-            <if test="groupId !=null and groupId !=''">
-                and group_id = #{groupId}
             </if>
         </where>
         ORDER BY api_id

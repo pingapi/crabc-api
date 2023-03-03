@@ -28,6 +28,9 @@ public class JwtInterceptor implements HandlerInterceptor {
             throw new CustomException(401, "用户未登录");
         }
         Claims claims = JwtUtil.parseToken(token);
+        if (claims == null) {
+            throw new CustomException(401, "用户未登录");
+        }
         UserThreadLocal.set(claims);
         return true;
     }

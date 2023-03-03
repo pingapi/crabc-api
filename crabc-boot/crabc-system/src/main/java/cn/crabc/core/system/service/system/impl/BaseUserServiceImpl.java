@@ -53,7 +53,7 @@ public class BaseUserServiceImpl implements IBaseUserService {
 
     @Override
     public Integer addUser(BaseUser baseUser) {
-        BaseUser user = baseUserMapper.selectOne(null, baseUser.getUserName());
+        BaseUser user = baseUserMapper.selectOne(null, baseUser.getUsername());
         if (user == null) {
             return 0;
         }

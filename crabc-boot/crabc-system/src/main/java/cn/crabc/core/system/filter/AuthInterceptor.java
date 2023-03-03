@@ -32,7 +32,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();
         String method = request.getMethod();
-        ApiInfoDTO apiInfo = baseCache.getCacheApiInfo(method + "_" + path.replace(API_PRE, ""));
+        ApiInfoDTO apiInfo = baseCache.getCacheApis(method + "_" + path.replace(API_PRE, ""));
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             Boolean auth = checkAppCode(request, apiInfo);
             if (auth == false) {
