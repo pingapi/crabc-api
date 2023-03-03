@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
  */
 public class SQLUtils {
 
-    private final static String PATTERN = "\\$\\{\\s*(\\w+|[\\w-]+)\\s*\\}";
+    private final static String PATTERN = "\\#\\{\\s*(\\w+|[\\w-]+)\\s*\\}";
 
-    public final static String PARAM_PATTERN = "(?<=\\$\\{)(.+?)(?=\\})";
+    public final static String PARAM_PATTERN = "(?<=\\#\\{)(.+?)(?=\\})";
 
 
     /**
@@ -39,7 +39,7 @@ public class SQLUtils {
     public static String sqlCommentReplace(String sql) {
         String SQL_COMMENT = "(?ms)('(?:''|[^'])*')|--.*?$|///*.*?//*/|\\/\\/[^\\n]*|\\/\\*([^\\*^\\/]*|[\\*^\\/*]*|[^\\**\\/]*)*\\*+\\/";
         Pattern p = Pattern.compile(SQL_COMMENT);
-        return p.matcher(sql).replaceAll("$1");
+        return p.matcher(sql).replaceAll("#1");
     }
 
     /**
@@ -87,7 +87,7 @@ public class SQLUtils {
     public static Set<String> parseColumns(String sql) {
         sql = sqlCommentReplace(sql);
 
-        if (sql.contains("${")) {
+        if (sql.contains("#{")) {
             sql = sqlParamReplaceTemp(sql);
         }
         Set<String> result = new HashSet<>();
