@@ -1,7 +1,7 @@
 package cn.crabc.core.system.mapper;
 
 
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.system.entity.BaseDatasource;
 
 import java.util.List;
@@ -13,20 +13,21 @@ import java.util.List;
  */
 public interface BaseDataSourceMapper {
 
+    List<DataSource> list();
+
     /**
      *
      * 数据源列表
      * @param dataSourceName
      * @return
      */
-    List<BaseDataSource> selectDataSourceList(String dataSourceName);
-
+    List<BaseDatasource> selectList(String dataSourceName);
     /**
      * 查询数据源详情
      * @param datasourceId
      * @return
      */
-    BaseDataSource selectDataSource(Integer datasourceId);
+    BaseDatasource selectOne(Integer datasourceId);
 
     /**
      *  插入数据源

@@ -1,6 +1,6 @@
 package cn.crabc.core.system.controller;
 
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.service.core.IBaseDataService;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
@@ -30,18 +30,32 @@ public class DataSourceController {
      */
     @GetMapping("/page")
     public Result list(String name) {
-        PageInfo<BaseDataSource> dataSourcePage = baseDataSourceService.getDataSourcePage(null, 1, 10);
+        PageInfo<BaseDatasource> dataSourcePage = baseDataSourceService.getDataSourcePage(null, 1, 10);
         return Result.success(dataSourcePage);
     }
 
     /**
-     * 新增/编辑数据源
+     * 新增数据源
      * @param dataSource
      * @return
      */
     @PostMapping
-    public Result add(@RequestBody BaseDatasource dataSource) {
+    public Result add(BaseDatasource dataSource) {
         Integer result = baseDataSourceService.addDataSource(dataSource);
+        if(result == 1){
+            return Result.success("操作成功");
+        }
+        return Result.error("操作失败");
+    }
+
+    /**
+     * 编辑
+     * @param dataSource
+     * @return
+     */
+    @PutMapping
+    public Result update(BaseDatasource dataSource) {
+        Integer result = baseDataSourceService.updateDataSource(dataSource);
         if(result == 1){
             return Result.success("操作成功");
         }
@@ -54,7 +68,7 @@ public class DataSourceController {
      * @return
      */
     @PostMapping("/test")
-    public Result test(@RequestBody BaseDataSource dataSource) {
+    public Result test(DataSource dataSource) {
         Integer test = baseDataService.testConnection(dataSource);
         if(test == 1){
             return Result.success("测试成功");
@@ -67,8 +81,8 @@ public class DataSourceController {
      * @param dataSourceId
      * @return
      */
-    @DeleteMapping
-    public Result delete(Integer dataSourceId) {
+    @DeleteMapping("/{dataSourceId}")
+    public Result delete(@PathVariable Integer dataSourceId) {
         baseDataSourceService.deleteDataSource(dataSourceId);
         return Result.success("操作成功！");
     }

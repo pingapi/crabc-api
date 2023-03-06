@@ -1,7 +1,7 @@
 package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.DataSourceDriver;
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
@@ -29,7 +29,7 @@ public class EsDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Integer test(BaseDataSource dataSource) {
+    public Integer test(DataSource dataSource) {
         try {
             ElasticsearchClient testClient = createClient(dataSource);
             testClient.indices().exists(e -> e.index("test"));
@@ -40,7 +40,7 @@ public class EsDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public void init(BaseDataSource dataSource) {
+    public void init(DataSource dataSource) {
         client = createClient(dataSource);
     }
 
@@ -49,14 +49,14 @@ public class EsDataSourceDriver implements DataSourceDriver {
      * @param dataSource
      * @return
      */
-    public ElasticsearchClient createClient(BaseDataSource dataSource){
+    public ElasticsearchClient createClient(DataSource dataSource){
         RestClient client = RestClient.builder(new HttpHost(dataSource.getHost(), Integer.parseInt(dataSource.getPort()),"http")).build();
         ElasticsearchTransport transport = new RestClientTransport(client,new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 
     @Override
-    public void destroy() {
+    public void destroy(String dataSourceId) {
 
     }
 

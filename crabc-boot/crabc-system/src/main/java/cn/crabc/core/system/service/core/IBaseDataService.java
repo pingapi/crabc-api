@@ -1,6 +1,6 @@
 package cn.crabc.core.system.service.core;
 
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Table;
 
@@ -25,7 +25,7 @@ public interface IBaseDataService{
      * @param dataSource
      * @return
      */
-    Integer testConnection(BaseDataSource dataSource);
+    Integer testConnection(DataSource dataSource);
 
     /**
      * 通用查询方法

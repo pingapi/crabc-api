@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @author yuqf
  */
-public class BaseDataSource implements Serializable {
+public class DataSource implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

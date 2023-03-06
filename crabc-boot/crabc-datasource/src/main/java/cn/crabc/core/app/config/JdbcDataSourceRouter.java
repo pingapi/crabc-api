@@ -2,6 +2,8 @@ package cn.crabc.core.app.config;
 
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.app.exception.CustomException;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -52,6 +54,23 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
             return true;
         }
         return false;
+    }
+
+    /**
+     * 销毁
+     * @param dataSourceId
+     * @return
+     */
+    public static void destroy(String dataSourceId) {
+        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId);
+        if (dataSource instanceof  DruidDataSource){
+            DruidDataSource druidDataSource = (DruidDataSource) dataSource;
+            druidDataSource.close();
+        }else if(dataSource instanceof HikariDataSource){
+            HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+            hikariDataSource.close();
+        }
+        DataSourceManager.DATA_SOURCE_POOL_JDBC.remove(dataSourceId);
     }
 
     /**

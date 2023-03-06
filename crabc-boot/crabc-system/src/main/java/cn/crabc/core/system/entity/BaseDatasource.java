@@ -1,6 +1,5 @@
 package cn.crabc.core.system.entity;
 
-
 /**
  *
  * 数据源配置

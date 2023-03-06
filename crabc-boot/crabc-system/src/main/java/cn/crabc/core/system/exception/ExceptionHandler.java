@@ -28,7 +28,7 @@ public class ExceptionHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler(value = CustomException.class)
     @ResponseBody
     public Result custom(CustomException e) {
-        return Result.error(e.getCode(), e.getMessage());
+        return Result.error(e.getCode(), e.getMsg());
     }
 
     /**

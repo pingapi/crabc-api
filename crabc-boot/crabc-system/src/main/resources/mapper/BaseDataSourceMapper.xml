@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.crabc.core.system.mapper.BaseDataSourceMapper">
-    <select id="selectDataSourceList" resultType="cn.crabc.core.spi.bean.BaseDataSource">
+    <select id="list" resultType="cn.crabc.core.spi.bean.DataSource">
         SELECT
             datasource_id,
             datasource_name,
@@ -15,13 +15,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             username,
             password,
             remarks,
+            extend
+        FROM
+            base_datasource ORDER BY datasource_id DESC
+    </select>
+    <select id="selectList" resultType="cn.crabc.core.system.entity.BaseDatasource">
+        SELECT
+            datasource_id,
+            datasource_name,
+            datasource_type,
+            classify,
+            jdbc_url,
+            host,
+            port,
+            username,
+            '******' as password,
+            remarks,
             extend,
             update_time
         FROM
             base_datasource ORDER BY datasource_id DESC
     </select>
 
-    <select id="selectDataSource" resultType="cn.crabc.core.spi.bean.BaseDataSource">
+    <select id="selectOne" resultType="cn.crabc.core.system.entity.BaseDatasource">
         SELECT
             datasource_id,
             datasource_name,

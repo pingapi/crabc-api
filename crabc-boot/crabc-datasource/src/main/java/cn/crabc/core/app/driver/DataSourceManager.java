@@ -2,9 +2,10 @@ package cn.crabc.core.app.driver;
 
 import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.spi.DataSourceDriver;
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.DataSource;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 
-import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class DataSourceManager {
     /**
      * JDBC数据源连接池
      */
-    public static final Map<String, DataSource> DATA_SOURCE_POOL_JDBC = new ConcurrentHashMap<>();
+    public static final Map<String, javax.sql.DataSource> DATA_SOURCE_POOL_JDBC = new ConcurrentHashMap<>();
 
     /**
      * 支持的关系型数据源类型
@@ -71,7 +72,7 @@ public class DataSourceManager {
      *
      * @param baseDataSource
      */
-    public void createDataSource(BaseDataSource baseDataSource) {
+    public void createDataSource(DataSource baseDataSource) {
         String datasourceType = baseDataSource.getDatasourceType();
         DataSourceDriver dataSourceDriver = PLUGIN_TYPE.get(datasourceType);
         if (dataSourceDriver != null) {
@@ -90,7 +91,7 @@ public class DataSourceManager {
      * @param dataSource
      * @return
      */
-    public Integer test(BaseDataSource dataSource) {
+    public Integer test(DataSource dataSource) {
         String datasourceType = dataSource.getDatasourceType();
         DataSourceDriver dataSourceDriver = PLUGIN_TYPE.get(datasourceType);
         if (dataSourceDriver != null) {
@@ -111,7 +112,7 @@ public class DataSourceManager {
      */
     public DataSourceDriver getDataSource(String datasourceId) {
         DataSourceDriver dataSourceDriver = null;
-        DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
+        javax.sql.DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
         if (dataSource != null) {
             dataSourceDriver = this.defaultDriver;
         }else{
@@ -131,11 +132,18 @@ public class DataSourceManager {
     public void remove(String datasourceId) {
         DataSourceDriver dataSourceDriver = DATA_SOURCE_POOL_PLUGIN.get(datasourceId);
         if (dataSourceDriver != null) {
-            dataSourceDriver.destroy();
+            dataSourceDriver.destroy(datasourceId);
             DATA_SOURCE_POOL_PLUGIN.remove(datasourceId);
         }
-        DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
+        javax.sql.DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
         if (dataSource != null) {
+            if (dataSource instanceof  DruidDataSource){
+                DruidDataSource druidDataSource = (DruidDataSource) dataSource;
+                druidDataSource.close();
+            }else if(dataSource instanceof HikariDataSource){
+                HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+                hikariDataSource.close();
+            }
             DATA_SOURCE_POOL_JDBC.remove(datasourceId);
         }
     }

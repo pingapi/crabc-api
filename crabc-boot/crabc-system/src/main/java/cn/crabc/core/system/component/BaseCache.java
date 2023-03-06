@@ -22,6 +22,8 @@ public class BaseCache {
     // 本地缓存的api数据
     private Map<String, ApiInfoDTO> apisMap = new ConcurrentHashMap<>();
 
+    public static Map<String,Object> localCeche = new ConcurrentHashMap<>();
+
     public BaseCache() {
         this.cacheType = "local";
     }

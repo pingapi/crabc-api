@@ -8,19 +8,18 @@ package cn.crabc.core.app.exception;
 public class CustomException extends RuntimeException {
 
     private int code;
-    private String message;
+    private String msg;
 
     public CustomException(int code, String message) {
         this.code = code;
-        this.message = message;
+        this.msg = message;
     }
 
     public int getCode() {
         return code;
     }
 
-    public String getMessage() {
-        return message;
+    public String getMsg() {
+        return msg;
     }
-
 }

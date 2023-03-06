@@ -50,10 +50,7 @@ public class Result extends HashMap<String, Object>
     {
         super.put(CODE_TAG, code);
         super.put(MSG_TAG, msg);
-        if (data != null && !"".equals(data.toString().trim()))
-        {
-            super.put(DATA_TAG, data);
-        }
+        super.put(DATA_TAG, data);
     }
     
     /**

@@ -2,10 +2,11 @@ package cn.crabc.core.system.controller;
 
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.spi.DataSourceDriver;
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
+import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
 import cn.crabc.core.system.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class MetaDataController {
      */
     @GetMapping("/dataSources")
     public Result dataSources(String name) {
-        List<BaseDataSource> dataSourceList = baseDataSourceService.getDataSourceList(name);
-        Map<String, List<BaseDataSource>> listMap = dataSourceList.stream().collect(Collectors.groupingBy(BaseDataSource::getDatasourceType));
+        List<BaseDatasource> dataSourceList = baseDataSourceService.getDataSourceList(name);
+        Map<String, List<BaseDatasource>> listMap = dataSourceList.stream().collect(Collectors.groupingBy(BaseDatasource::getDatasourceType));
         return Result.success(listMap);
     }
 
