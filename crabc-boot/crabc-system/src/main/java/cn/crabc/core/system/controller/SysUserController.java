@@ -9,15 +9,15 @@ import cn.crabc.core.system.util.Result;
 import cn.crabc.core.system.util.UserThreadLocal;
 import com.alibaba.fastjson2.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/box/sys/user")
@@ -25,11 +25,6 @@ public class SysUserController {
 
     @Autowired
     private IBaseUserService iBaseUserService;
-
-    @GetMapping("/params")
-    public Result params(){
-        return Result.success();
-    }
 
     /**
      * 登录
@@ -84,12 +79,6 @@ public class SysUserController {
         return Result.success(poetList);
     }
 
-    @GetMapping("/statistics")
-    public Result getStatistics(){
-        return Result.success();
-    }
-
-
     /**
      * 获取公钥
      * @return
@@ -98,10 +87,10 @@ public class SysUserController {
     @GetMapping("/pubKey")
     public Result getPublicKey() throws Exception {
         String uuid = UUID.randomUUID().toString().replace("-", "");
-        Map<String, String> keyMap = RSAUtils.getKey();
-        BaseCache.localCeche.put("priKey", keyMap.get("priKey"));
+        RSAUtils.RSAKeyPair rsaKeyPair = RSAUtils.getKey();
+        BaseCache.localCeche.put("priKey_"+UserThreadLocal.getUserId(), rsaKeyPair.getPrivateKey());
         Map<String, String> map = new HashMap(3);
-        map.put("public", keyMap.get("pubKey").toString());
+        map.put("public", rsaKeyPair.getPublicKey());
         map.put("key", uuid);
         return Result.success(map);
     }

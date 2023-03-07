@@ -15,7 +15,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             username,
             password,
             remarks,
-            extend
+            extend,
+            secret_key
         FROM
             base_datasource ORDER BY datasource_id DESC
     </select>
@@ -34,7 +35,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             extend,
             update_time
         FROM
-            base_datasource ORDER BY datasource_id DESC
+            base_datasource
+            <where>
+                <if test="datasourceName !=null and datasourceName !=''">
+                    datasource_name like concat('%',#{datasourceName},'%')
+                </if>
+            </where>
+        ORDER BY datasource_id DESC
     </select>
 
     <select id="selectOne" resultType="cn.crabc.core.system.entity.BaseDatasource">
@@ -43,11 +50,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             datasource_name,
             datasource_type,
             jdbc_url,
+            classify,
             host,
             port,
             username,
             password,
-            extend
+            extend,
+            secret_key
         FROM
             base_datasource WHERE datasource_id=#{datasourceId}
     </select>
@@ -65,7 +74,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="port != null and port != ''">port,</if>
         <if test="username != null and username != ''">username,</if>
         <if test="password != null and password != ''">password,</if>
+        <if test="classify != null and classify != ''">classify,</if>
         <if test="remarks != null and remarks != ''">remarks,</if>
+        <if test="secretKey != null and secretKey != ''">secret_key,</if>
         <if test="createBy != null and createBy != ''">create_by,</if>
         create_time
         )values(
@@ -76,7 +87,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="port != null and port != ''">#{port},</if>
         <if test="username != null and username != ''">#{username},</if>
         <if test="password != null and password != ''">#{password},</if>
+        <if test="classify != null and classify != ''">#{classify},</if>
         <if test="remarks != null and remarks != ''">#{remarks},</if>
+        <if test="secretKey != null and secretKey != ''">#{secretKey},</if>
         <if test="createBy != null and createBy != ''">#{createBy},</if>
         #{createTime}
         )
@@ -92,7 +105,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="port != null and port != ''">port = #{port},</if>
             <if test="username != null and username != ''">username = #{username},</if>
             <if test="password != null and password != ''">password = #{password},</if>
+            <if test="classify != null and classify != ''">classify = #{classify},</if>
             <if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
+            <if test="secretKey != null and secretKey != ''">secret_key = #{secretKey},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
             update_time =#{updateTime}
         </set>
         WHERE datasource_id = #{datasourceId}

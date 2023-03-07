@@ -60,4 +60,11 @@ public interface IBaseDataSourceService {
      * @return
      */
     Integer deleteDataSource(Integer dataSourceId);
+
+    /**
+     * 测试数据源连接
+     * @param dataSource
+     * @return
+     */
+    Integer test(BaseDatasource dataSource);
 }

@@ -70,18 +70,18 @@ public class DataSourceManager {
     /**
      * 插件创建数据源
      *
-     * @param baseDataSource
+     * @param dataSource
      */
-    public void createDataSource(DataSource baseDataSource) {
-        String datasourceType = baseDataSource.getDatasourceType();
+    public void createDataSource(DataSource dataSource) {
+        String datasourceType = dataSource.getDatasourceType();
         DataSourceDriver dataSourceDriver = PLUGIN_TYPE.get(datasourceType);
         if (dataSourceDriver != null) {
             // 初始化
-            dataSourceDriver.init(baseDataSource);
-            DATA_SOURCE_POOL_PLUGIN.putIfAbsent(baseDataSource.getDatasourceId(), dataSourceDriver);
+            dataSourceDriver.init(dataSource);
+            DATA_SOURCE_POOL_PLUGIN.putIfAbsent(dataSource.getDatasourceId(), dataSourceDriver);
         } else {
             dataSourceDriver = this.defaultDriver;
-            dataSourceDriver.init(baseDataSource);
+            dataSourceDriver.init(dataSource);
         }
     }
 

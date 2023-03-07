@@ -1,8 +1,8 @@
 package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.DataSourceDriver;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;

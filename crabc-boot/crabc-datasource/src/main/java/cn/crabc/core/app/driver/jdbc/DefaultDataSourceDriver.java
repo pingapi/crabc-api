@@ -2,8 +2,8 @@ package cn.crabc.core.app.driver.jdbc;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
 import cn.crabc.core.spi.DataSourceDriver;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
 import com.alibaba.druid.pool.DruidDataSource;
@@ -53,15 +53,18 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
     }
 
     @Override
-    public void init(DataSource baseDataSource) {
-        String datasourceId = baseDataSource.getDatasourceId();
+    public void init(DataSource ds) {
+        String datasourceId = ds.getDatasourceId();
         if (JdbcDataSourceRouter.exist(datasourceId)) {
             this.destroy(datasourceId);
         }
+        String username = ds.getUsername();
+        String password = ds.getPassword();
+        String jdbcUrl = ds.getJdbcUrl();
         DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(baseDataSource.getJdbcUrl());
-        dataSource.setUsername(baseDataSource.getUsername());
-        dataSource.setPassword(baseDataSource.getPassword());
+        dataSource.setUrl(jdbcUrl);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         dataSource.setInitialSize(1);
         dataSource.setMinIdle(1);
         dataSource.setMaxActive(20);
@@ -79,8 +82,8 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         dataSource.setTestOnReturn(false);
         // dataSource.setFilters("stat,wall");
 
-        if (baseDataSource.getDatasourceType() != null) {
-            dataSource.setDbType(baseDataSource.getDatasourceType());
+        if (ds.getDatasourceType() != null) {
+            dataSource.setDbType(ds.getDatasourceType());
         }
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
     }

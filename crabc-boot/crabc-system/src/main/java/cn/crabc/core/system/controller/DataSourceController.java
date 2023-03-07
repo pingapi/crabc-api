@@ -1,8 +1,6 @@
 package cn.crabc.core.system.controller;
 
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.system.entity.BaseDatasource;
-import cn.crabc.core.system.service.core.IBaseDataService;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
 import cn.crabc.core.system.util.PageInfo;
 import cn.crabc.core.system.util.Result;
@@ -20,17 +18,17 @@ public class DataSourceController {
 
     @Autowired
     private IBaseDataSourceService baseDataSourceService;
-    @Autowired
-    private IBaseDataService baseDataService;
 
     /**
      * 数据源分页列表
-     * @param name
+     * @param datasourceName
+     * @param pageNum
+     * @param pageSize
      * @return
      */
     @GetMapping("/page")
-    public Result list(String name) {
-        PageInfo<BaseDatasource> dataSourcePage = baseDataSourceService.getDataSourcePage(null, 1, 10);
+    public Result list(String datasourceName, Integer pageNum, Integer pageSize) {
+        PageInfo<BaseDatasource> dataSourcePage = baseDataSourceService.getDataSourcePage(datasourceName, pageNum, pageSize);
         return Result.success(dataSourcePage);
     }
 
@@ -68,8 +66,8 @@ public class DataSourceController {
      * @return
      */
     @PostMapping("/test")
-    public Result test(DataSource dataSource) {
-        Integer test = baseDataService.testConnection(dataSource);
+    public Result test(BaseDatasource dataSource) {
+        Integer test = baseDataSourceService.test(dataSource);
         if(test == 1){
             return Result.success("测试成功");
         }

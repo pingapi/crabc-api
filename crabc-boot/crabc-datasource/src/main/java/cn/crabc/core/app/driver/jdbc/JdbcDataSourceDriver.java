@@ -7,6 +7,7 @@ import cn.crabc.core.app.mapper.BaseDataHandleMapper;
 import cn.crabc.core.app.util.PageInfo;
 import com.github.pagehelper.PageHelper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,14 +42,16 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     @Override
     public List<Map<String, Object>> selectList(String dataSourceId, String sql, Object params) {
         // 列表默认查询15条
-        PageInfo page =  this.selectPage(dataSourceId, sql, params, PAGE_NUM, PAGE_SIZE);
-        return  page.getList();
+        PageInfo page = this.selectPage(dataSourceId, sql, params, PAGE_NUM, PAGE_SIZE);
+        return page.getList();
     }
+
     @Override
     public PageInfo selectPage(String dataSourceId, String sql, Object params, int pageNum, int pageSize) {
         // 设置线程数据源
         JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
         PageInfo pageInfo = null;
+        List<Map<String, Object>> list = new ArrayList<>();
         try {
             Map<String, Object> paramsMap = new HashMap<>();
             paramsMap.put(BaseConstant.BASE_SQL, sql);
@@ -64,16 +67,19 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
             } else {
                 PageHelper.startPage(pageNum, pageSize, false);
             }
-            List<Map<String, Object>> list = baseDataHandleMapper.executeQuery(paramsMap);
-            pageInfo = new PageInfo<>(list, pageNum, pageSize);
-        }catch(Exception e){
-            log.error("--SQL执行失败，请检查SQL是否正常",e);
-            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
-        }finally {
+            list = baseDataHandleMapper.executeQuery(paramsMap);
+
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            log.error("--SQL执行失败，请检查SQL是否正常: {}", cause == null ? e : cause.getMessage());
+            Map<String, Object> errorMap = new HashMap<>();
+            errorMap.put("errorMsg", cause == null ? e.getMessage() : cause.getMessage());
+            list.add(errorMap);
+        } finally {
             PageHelper.clearPage();
-            // 移除线程
             JdbcDataSourceRouter.remove();
         }
+        pageInfo = new PageInfo<>(list, pageNum, pageSize);
         return pageInfo;
     }
 
@@ -93,16 +99,16 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     }
 
     @Override
-    public int update(String sql, Map<String,Object> entity) {
+    public int update(String sql, Map<String, Object> entity) {
         JdbcDataSourceRouter.setDataSourceKey(entity.get(BaseConstant.DATA_SOURCE_ID).toString());
         Integer result = 0;
-        try{
+        try {
             entity.remove(BaseConstant.DATA_SOURCE_ID);
             result = baseDataHandleMapper.executeUpdate(entity);
-        }catch(Exception e){
-            log.error("--SQL执行失败，请检查SQL是否正常",e);
+        } catch (Exception e) {
+            log.error("--SQL执行失败，请检查SQL是否正常", e);
             throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
-        }finally {
+        } finally {
             // 移除线程
             JdbcDataSourceRouter.remove();
         }

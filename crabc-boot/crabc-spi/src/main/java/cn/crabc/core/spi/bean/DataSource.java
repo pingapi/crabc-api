@@ -71,6 +71,11 @@ public class DataSource implements Serializable {
      */
     private String extend;
 
+    /**
+     * 解密密钥
+     */
+    private String secretKey;
+
     public String getDatasourceId() {
         return datasourceId;
     }
@@ -165,5 +170,13 @@ public class DataSource implements Serializable {
 
     public void setClassify(String classify) {
         this.classify = classify;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

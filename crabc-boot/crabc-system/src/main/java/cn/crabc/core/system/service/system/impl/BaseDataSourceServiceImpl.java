@@ -5,6 +5,7 @@ import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.system.component.BaseCache;
 import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.mapper.BaseDataSourceMapper;
+import cn.crabc.core.system.service.core.IBaseDataService;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
 import cn.crabc.core.system.util.PageInfo;
 import cn.crabc.core.system.util.RSAUtils;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 数据源 服务实现
@@ -30,6 +30,8 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     private BaseDataSourceMapper dataSourceMapper;
     @Autowired
     private DataSourceManager dataSourceManager;
+    @Autowired
+    private IBaseDataService iBaseDataService;
 
     @Override
     public List<DataSource> getList() {
@@ -55,34 +57,29 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
 
     @Override
     public Integer addDataSource(BaseDatasource dataSource) {
-        Integer result = 0;
         String password = dataSource.getPassword();
-        dataSource.setPassword(this.parsePwd(password));
+        // 解密后的密码
+        String pwd = this.decryptPwd(password);
+        dataSource.setPassword(pwd);
         dataSource.setClassify("jdbc");
         dataSource.setCreateBy(UserThreadLocal.getUserId());
-        dataSource.setUpdateTime(new Date());
-        result = dataSourceMapper.insertDataSource(dataSource);
-
+        dataSource.setCreateTime(new Date());
+        // 加密
+        this.encryptPwd(dataSource);
+        dataSourceMapper.insertDataSource(dataSource);
+        dataSource.setPassword(pwd);
         this.addCache(dataSource);
-        return result;
+        return 1;
     }
 
     @Override
     public Integer updateDataSource(BaseDatasource dataSource) {
-        String password = dataSource.getPassword();
-        String pwd = null;
-        if (password != null && !password.trim().equals("")) {
-            pwd = this.parsePwd(password);
-        }
-        if (pwd == null) {
-            BaseDatasource baseDatasource = dataSourceMapper.selectOne(Integer.parseInt(dataSource.getDatasourceId()));
-            pwd = baseDatasource.getPassword();
-        }
-        dataSource.setPassword(pwd);
-        dataSource.setUpdateTime(new Date());
+        this.parsePassword(dataSource);
+        dataSource.setUpdateBy(UserThreadLocal.getUserId());
         dataSource.setUpdateTime(new Date());
         this.addCache(dataSource);
-
+        // 加密
+        this.encryptPwd(dataSource);
         return dataSourceMapper.updateDataSource(dataSource);
     }
 
@@ -102,22 +99,67 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     }
 
     /**
+     * 加密密码
+     * @param dataSource
+     */
+    private void encryptPwd(BaseDatasource dataSource){
+        try {
+            // 加密数据库密码
+            RSAUtils.RSAKeyPair rsaKeyPair = RSAUtils.getKey();
+            String pubKey = rsaKeyPair.getPublicKey();
+            String encryptPwd = RSAUtils.encryptByPubKey(pubKey, dataSource.getPassword());
+            dataSource.setPassword(encryptPwd);
+            dataSource.setSecretKey(rsaKeyPair.getPrivateKey());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    /**
      * 解析密码
      * @param password
      * @return
      */
-    private String parsePwd(String password){
+    private String decryptPwd(String password){
         try {
-            String pwd = RSAUtils.decryptByPriKey(BaseCache.localCeche.get("priKey").toString(), password);
+            String pwd = RSAUtils.decryptByPriKey(BaseCache.localCeche.get("priKey_"+UserThreadLocal.getUserId()).toString(), password);
+            BaseCache.localCeche.remove("priKey_" + UserThreadLocal.getUserId());
             return pwd;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Integer deleteDataSource(Integer dataSourceId) {
         // 删除缓存中的数据源
         dataSourceManager.remove(dataSourceId.toString());
         return dataSourceMapper.deleteDataSource(dataSourceId);
+    }
+
+    @Override
+    public Integer test(BaseDatasource dataSource) {
+        this.parsePassword(dataSource);
+        return iBaseDataService.testConnection(dataSource);
+    }
+
+    /**
+     * 更新/测试时解析数据库密码
+     * @param dataSource
+     */
+    private void parsePassword(BaseDatasource dataSource) {
+        String password = dataSource.getPassword();
+        String pwd = null;
+        if (password != null && !password.trim().equals("")) {
+            pwd = this.decryptPwd(password);
+        }
+        if (pwd == null) {
+            BaseDatasource baseDatasource = dataSourceMapper.selectOne(Integer.parseInt(dataSource.getDatasourceId()));
+            try {
+                pwd = RSAUtils.decryptByPriKey(baseDatasource.getSecretKey(),baseDatasource.getPassword());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        dataSource.setPassword(pwd);
     }
 }

@@ -1,7 +1,7 @@
 package cn.crabc.core.system.service.core;
 
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Table;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public interface IBaseDataService{
     List<Column> getColumns(String dataSourceId, String schema, String table);
 
     /**
-     * 测试数据源连通性
+     * 测试数据库
      * @param dataSource
      * @return
      */

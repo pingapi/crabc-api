@@ -1,5 +1,6 @@
 package cn.crabc.core.system.util;
 
+import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.util.Base64Utils;
 
 import javax.crypto.Cipher;
@@ -8,16 +9,13 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * RSA加/解密工具类
- *
- *
  */
 public class RSAUtils {
 
+    private final static  String RSA = "RSA";
     /**
      * 公钥解密
      *
@@ -27,10 +25,11 @@ public class RSAUtils {
      * @throws Exception
      */
     public static String decryptByPubKey(String pubKey, String text) throws Exception {
-        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(Base64Utils.decodeFromString(pubKey));
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        byte[] bytes = Base64Utils.decodeFromString(pubKey);
+        X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(bytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
         PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec);
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA);
         cipher.init(Cipher.DECRYPT_MODE, publicKey);
         byte[] result = Base64Utils.decodeFromString(text);
         return new String(result);
@@ -45,10 +44,11 @@ public class RSAUtils {
      * @throws Exception
      */
     public static String encryptByPriKey(String priKey, String text) throws Exception {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(Base64Utils.decodeFromString(priKey));
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        byte[] bytes = Base64Utils.decodeFromString(priKey);
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(bytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
         PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA);
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
         byte[] result = cipher.doFinal(text.getBytes());
         return Base64Utils.encodeToString(result);
@@ -63,10 +63,11 @@ public class RSAUtils {
      * @throws Exception
      */
     public static String decryptByPriKey(String priKey, String text) throws Exception {
-        PKCS8EncodedKeySpec pkcs8EncodedKeySpec5 = new PKCS8EncodedKeySpec(Base64Utils.decodeFromString(priKey));
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        byte[] bytes = Base64Utils.decodeFromString(priKey);
+        PKCS8EncodedKeySpec pkcs8EncodedKeySpec5 = new PKCS8EncodedKeySpec(bytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
         PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec5);
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA);
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         byte[] result = cipher.doFinal(Base64Utils.decodeFromString(text));
         return new String(result);
@@ -80,10 +81,12 @@ public class RSAUtils {
      * @return
      */
     public static String encryptByPubKey(String pubKey, String text) throws Exception {
-        X509EncodedKeySpec x509EncodedKeySpec2 = new X509EncodedKeySpec(Base64Utils.decodeFromString(pubKey));
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        byte[] bytes = Base64Utils.decodeFromString(pubKey);
+
+        X509EncodedKeySpec x509EncodedKeySpec2 = new X509EncodedKeySpec(bytes);
+        KeyFactory keyFactory = KeyFactory.getInstance(RSA);
         PublicKey publicKey = keyFactory.generatePublic(x509EncodedKeySpec2);
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA);
         cipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] result = cipher.doFinal(text.getBytes());
         return Base64Utils.encodeToString(result);
@@ -93,20 +96,44 @@ public class RSAUtils {
      * 构建RSA密钥对
      *
      * @return
-     * @throws NoSuchAlgorithmException
+     * @throws Exception
      */
-    public static Map<String,String> getKey() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+    public static RSAKeyPair getKey() throws Exception {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(RSA);
         keyPairGenerator.initialize(1024);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
         RSAPrivateKey rsaPrivateKey = (RSAPrivateKey) keyPair.getPrivate();
         String pubKey = Base64Utils.encodeToString(rsaPublicKey.getEncoded());
         String priKey = Base64Utils.encodeToString(rsaPrivateKey.getEncoded());
-        Map<String,String> keyMap = new HashMap<>();
-        keyMap.put("pubKey", pubKey);
-        keyMap.put("priKey", priKey);
-        return keyMap;
+        RSAKeyPair rsaKeyPair = new RSAKeyPair();
+        rsaKeyPair.setPublicKey(pubKey);
+        rsaKeyPair.setPrivateKey(priKey);
+        return rsaKeyPair;
     }
 
+    /**
+     * Key对象内部类
+     */
+    public static class RSAKeyPair {
+        private String publicKey;
+
+        private String privateKey;
+
+        public String getPublicKey() {
+            return publicKey;
+        }
+
+        public void setPublicKey(String publicKey) {
+            this.publicKey = publicKey;
+        }
+
+        public String getPrivateKey() {
+            return privateKey;
+        }
+
+        public void setPrivateKey(String privateKey) {
+            this.privateKey = privateKey;
+        }
+    }
 }

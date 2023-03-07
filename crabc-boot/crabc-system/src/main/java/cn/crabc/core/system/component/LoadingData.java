@@ -5,6 +5,7 @@ import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.system.entity.dto.ApiInfoDTO;
 import cn.crabc.core.system.service.system.IBaseApiInfoService;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
+import cn.crabc.core.system.util.RSAUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,14 @@ public class LoadingData implements InitializingBean {
         // 加载数据源
         List<DataSource> baseDataSources = iBaseDataSourceService.getList();
         for (DataSource dataSource : baseDataSources) {
-            dataSourceManager.createDataSource(dataSource);
+            String priKey = dataSource.getSecretKey();
+            try {
+                String pwd = RSAUtils.decryptByPriKey(priKey, dataSource.getPassword());
+                dataSource.setPassword(pwd);
+                dataSourceManager.createDataSource(dataSource);
+            } catch (Exception e) {
+
+            }
         }
 
         List<ApiInfoDTO> apis = iBaseApiInfoService.getApiDetail();

@@ -1,7 +1,7 @@
 package cn.crabc.core.spi;
 
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Column;
+import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
 

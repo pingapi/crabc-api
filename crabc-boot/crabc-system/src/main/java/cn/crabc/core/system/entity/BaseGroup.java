@@ -1,7 +1,5 @@
 package cn.crabc.core.system.entity;
 
-import java.util.List;
-
 /**
  * api分组
  *

@@ -3,10 +3,15 @@ package cn.crabc.core.app.config;
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.app.exception.CustomException;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.mysql.cj.jdbc.ConnectionImpl;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * JDBC数据源 动态路由
@@ -15,6 +20,7 @@ import javax.sql.DataSource;
  */
 public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
 
+    Logger log = LoggerFactory.getLogger(JdbcDataSourceRouter.class);
     /**
      * 当前线程数据源KEY
      */
@@ -49,7 +55,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      * 判断数据源是否存在
      */
     public static boolean exist(String dataSourceId) {
-        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId);
+        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(getDataSourceId(dataSourceId));
         if (dataSource != null) {
             return true;
         }
@@ -57,16 +63,26 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     }
 
     /**
+     * 获取数据源ID
+     * @param dataSourceId
+     * @return
+     */
+    private static String getDataSourceId(String dataSourceId){
+        return dataSourceId == null ? null : dataSourceId.split(":")[0];
+    }
+
+    /**
      * 销毁
+     *
      * @param dataSourceId
      * @return
      */
     public static void destroy(String dataSourceId) {
-        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId);
-        if (dataSource instanceof  DruidDataSource){
+        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(getDataSourceId(dataSourceId));
+        if (dataSource instanceof DruidDataSource) {
             DruidDataSource druidDataSource = (DruidDataSource) dataSource;
             druidDataSource.close();
-        }else if(dataSource instanceof HikariDataSource){
+        } else if (dataSource instanceof HikariDataSource) {
             HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
             hikariDataSource.close();
         }
@@ -80,7 +96,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      * @return
      */
     public static DataSource getDataSource(String dataSourceId) {
-        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId);
+        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(getDataSourceId(dataSourceId));
         if (dataSource == null) {
             throw new CustomException(51001, "数据源不存在！");
 
@@ -95,12 +111,12 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      */
     public static DataSource getDataSource() {
         String dataSourceKey = getDataSourceKey();
-        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceKey);
+        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(getDataSourceId(dataSourceKey));
         if (dataSource == null) {
             throw new CustomException(51001, "数据源不存在！");
         }
 
-        return DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceKey);
+        return dataSource;
     }
 
     /**
@@ -114,20 +130,43 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
 
     /**
      * 切换数据源
+     *
      * @return
      */
     @Override
     protected DataSource determineTargetDataSource() {
-        Object dataSourceId = this.determineCurrentLookupKey();
+        Object dataSourceKey = this.determineCurrentLookupKey();
         // 默认系统数据源
-        if (dataSourceId == null) {
+        if (dataSourceKey == null) {
             return super.getResolvedDefaultDataSource();
         }
-        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId.toString());
+        String dataSourceId = getDataSourceId(dataSourceKey.toString());
+        DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId);
+
         if (dataSource == null) {
             throw new CustomException(51001, "数据源不存在！");
         }
+        log.info("--DataSource:{}", dataSource.getClass());
         return dataSource;
+    }
+
+    /**
+     * 获取连接
+     *
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public Connection getConnection() throws SQLException {
+        Connection connection = this.determineTargetDataSource().getConnection();
+        Object dataSourceKey = this.determineCurrentLookupKey();
+        if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
+            String schema = dataSourceKey.toString().split(":")[1];
+            connection.setCatalog(schema);
+            //connection.setSchema(schema);
+        }
+        log.info("--Connection:{}", connection.getClientInfo());
+        return connection;
     }
 
     @Override

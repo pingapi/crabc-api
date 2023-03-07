@@ -24,8 +24,11 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
     private DataSourceManager dataSourceManager;
 
     @Override
-    public PreviewVO sqlPreview(String datasourceId, String sql) {
+    public PreviewVO sqlPreview(String datasourceId, String schema, String sql) {
         DataSourceDriver dataSource = dataSourceManager.getDataSource(datasourceId);
+        if (schema != null && !"".equals(schema)) {
+            datasourceId = datasourceId + ":" + schema;
+        }
         List<Map<String, Object>> list = dataSource.selectList(datasourceId, sql, null);
         PreviewVO preview = new PreviewVO();
         if (list != null && !list.isEmpty()) {
@@ -37,13 +40,16 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
     }
 
     @Override
-    public Object testApi(String datasourceId, String sql, Map<String, Object> params) {
+    public Object testApi(String datasourceId, String schema, String sql, Map<String, Object> params) {
         DataSourceDriver dataSource = dataSourceManager.getDataSource(datasourceId);
         Object pageNum = params.get(BaseConstant.PAGE_NUM);
         Object pageSize = params.get(BaseConstant.PAGE_SIZE);
-        if (pageNum != null && pageSize != null){
+        if (schema != null && !"".equals(schema)) {
+            datasourceId = datasourceId + ":" + schema;
+        }
+        if (pageNum != null && pageSize != null) {
             return dataSource.selectPage(datasourceId, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
-        }else{
+        } else {
             return dataSource.selectList(datasourceId, sql, params);
         }
     }

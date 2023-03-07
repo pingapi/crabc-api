@@ -35,7 +35,7 @@ public class ApiTestController {
      */
     @PostMapping("/running")
     public Result runApiSql(@RequestBody ApiTestParam apiTest) {
-        PreviewVO previewVO = baseapitestService.sqlPreview(apiTest.getDatasourceId(),apiTest.getSqlScript());
+        PreviewVO previewVO = baseapitestService.sqlPreview(apiTest.getDatasourceId(), apiTest.getSchemaName(),apiTest.getSqlScript());
         return Result.success(previewVO);
     }
 
@@ -55,7 +55,7 @@ public class ApiTestController {
         }
         Map<String,Object> map = new HashMap<>();
         long start = System.currentTimeMillis();
-        Object list = baseapitestService.testApi(apiSql.getDatasourceId(), apiSql.getSqlScript(), params);
+        Object list = baseapitestService.testApi(apiSql.getDatasourceId(),apiSql.getSchemaName(), apiSql.getSqlScript(), params);
         long end = System.currentTimeMillis();
         map.put("data", JSON.toJSONString(Result.success(list)));
         map.put("runTime",end - start);
