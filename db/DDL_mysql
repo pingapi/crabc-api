@@ -48,15 +48,16 @@ CREATE TABLE `base_datasource` (
   `host` varchar(50) DEFAULT NULL COMMENT '服务器地址',
   `port` varchar(10) DEFAULT NULL COMMENT '端口',
   `username` varchar(100) DEFAULT NULL COMMENT '账号',
-  `password` varchar(100) DEFAULT NULL COMMENT '秘密',
-  `remarks` text,
-  `extend` text COMMENT '扩展配置',
+  `password` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '秘密',
+  `remarks` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `extend` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '扩展配置',
+  `secret_key` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '密码解密密钥',
   `create_by` varchar(128) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
   `update_by` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`datasource_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据源配置';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据源配置';
 
 CREATE TABLE `base_api_group` (
   `group_id` int NOT NULL AUTO_INCREMENT COMMENT '自增主键',
