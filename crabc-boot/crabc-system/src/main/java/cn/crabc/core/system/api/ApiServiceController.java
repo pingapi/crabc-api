@@ -45,7 +45,7 @@ public class ApiServiceController {
                 params.putAll(bodyMap);
             }
         }
-        List<Map<String, Object>> query = baseDataService.query(apiInfo.getDatasourceId(), apiInfo.getDatasourceType(), apiInfo.getSqlScript(), params);
+        List<Map<String, Object>> query = baseDataService.query(apiInfo.getDatasourceId(), apiInfo.getSchemaName(), apiInfo.getSqlScript(), params);
         return Result.success(query);
     }
 }

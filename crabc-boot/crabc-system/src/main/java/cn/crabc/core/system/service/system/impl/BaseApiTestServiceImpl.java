@@ -25,11 +25,11 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
 
     @Override
     public PreviewVO sqlPreview(String datasourceId, String schema, String sql) {
-        DataSourceDriver dataSource = dataSourceManager.getDataSource(datasourceId);
+        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
         if (schema != null && !"".equals(schema)) {
             datasourceId = datasourceId + ":" + schema;
         }
-        List<Map<String, Object>> list = dataSource.selectList(datasourceId, sql, null);
+        List<Map<String, Object>> list = dataSourceDriver.selectList(datasourceId, schema, sql, null);
         PreviewVO preview = new PreviewVO();
         if (list != null && !list.isEmpty()) {
             preview.setData(list);
@@ -41,16 +41,13 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
 
     @Override
     public Object testApi(String datasourceId, String schema, String sql, Map<String, Object> params) {
-        DataSourceDriver dataSource = dataSourceManager.getDataSource(datasourceId);
+        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
         Object pageNum = params.get(BaseConstant.PAGE_NUM);
         Object pageSize = params.get(BaseConstant.PAGE_SIZE);
-        if (schema != null && !"".equals(schema)) {
-            datasourceId = datasourceId + ":" + schema;
-        }
         if (pageNum != null && pageSize != null) {
-            return dataSource.selectPage(datasourceId, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
+            return dataSourceDriver.selectPage(datasourceId, schema, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
         } else {
-            return dataSource.selectList(datasourceId, sql, params);
+            return dataSourceDriver.selectList(datasourceId, schema, sql, params);
         }
     }
 }

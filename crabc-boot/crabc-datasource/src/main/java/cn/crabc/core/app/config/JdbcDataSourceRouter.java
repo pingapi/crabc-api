@@ -3,7 +3,6 @@ package cn.crabc.core.app.config;
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.app.exception.CustomException;
 import com.alibaba.druid.pool.DruidDataSource;
-import com.mysql.cj.jdbc.ConnectionImpl;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +123,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      *
      * @param dataSourceId
      **/
-    public static void setDataSource(String dataSourceId, DataSource dataSource) {
+    public static void setDataSource(String dataSourceId, HikariDataSource dataSource) {
         DataSourceManager.DATA_SOURCE_POOL_JDBC.put(dataSourceId, dataSource);
     }
 
@@ -160,12 +159,20 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     public Connection getConnection() throws SQLException {
         Connection connection = this.determineTargetDataSource().getConnection();
         Object dataSourceKey = this.determineCurrentLookupKey();
-        if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
-            String schema = dataSourceKey.toString().split(":")[1];
-            connection.setCatalog(schema);
-            //connection.setSchema(schema);
+        try {
+            if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
+                String[] dataSourceStr = dataSourceKey.toString().split(":");
+                HikariDataSource dataSource = (HikariDataSource) DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceStr[0]);
+                if (dataSource.getJdbcUrl().startsWith("jdbc:mysql")){
+                    connection.setCatalog(dataSourceStr[1]);
+                }else {
+                    connection.setSchema(dataSourceStr[0]);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        log.info("--Connection:{}", connection.getClientInfo());
+        log.info("--dataSourceId:{},Connection:{}", dataSourceKey, connection);
         return connection;
     }
 

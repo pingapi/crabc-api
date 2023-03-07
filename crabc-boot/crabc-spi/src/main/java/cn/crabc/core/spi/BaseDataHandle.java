@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface BaseDataHandle<T> {
 
-    T selectOne(String dataSourceId, String sql, Object params);
+    T selectOne(String dataSourceId, String schema, String sql, Object params);
 
-    List<T> selectList(String dataSourceId, String sql, Object params);
+    List<T> selectList(String dataSourceId, String schema, String sql, Object params);
 
-    Object selectPage(String dataSourceId, String sql, Object params, int pageNum, int pageSize);
+    Object selectPage(String dataSourceId, String schema, String sql, Object params, int pageNum, int pageSize);
 
-    Object execute(String dataSourceId, String sql);
+    Object execute(String dataSourceId, String schema, String sql);
 
     int insert(String sql, T entity);
 

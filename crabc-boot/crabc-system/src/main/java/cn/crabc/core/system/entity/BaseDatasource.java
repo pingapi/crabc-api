@@ -1,6 +1,6 @@
 package cn.crabc.core.system.entity;
 
-import cn.crabc.core.spi.bean.DataSource;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import java.util.Date;
  * @author yuqf
  */
 @JsonIgnoreProperties(value = {"secretKey"})
-public class BaseDatasource extends DataSource {
+public class BaseDatasource extends BaseDataSource {
 
     /**
      * 租户

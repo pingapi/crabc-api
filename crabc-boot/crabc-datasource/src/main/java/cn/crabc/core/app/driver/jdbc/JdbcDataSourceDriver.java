@@ -34,21 +34,24 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     }
 
     @Override
-    public Map<String, Object> selectOne(String dataSourceId, String sql, Object params) {
-        List<Map<String, Object>> maps = this.selectList(dataSourceId, sql, params);
+    public Map<String, Object> selectOne(String dataSourceId, String schema, String sql, Object params) {
+        List<Map<String, Object>> maps = this.selectList(dataSourceId, schema, sql, params);
         return maps.size() > 0 ? maps.get(0) : new HashMap<>();
     }
 
     @Override
-    public List<Map<String, Object>> selectList(String dataSourceId, String sql, Object params) {
+    public List<Map<String, Object>> selectList(String dataSourceId, String schema, String sql, Object params) {
         // 列表默认查询15条
-        PageInfo page = this.selectPage(dataSourceId, sql, params, PAGE_NUM, PAGE_SIZE);
+        PageInfo page = this.selectPage(dataSourceId, schema, sql, params, PAGE_NUM, PAGE_SIZE);
         return page.getList();
     }
 
     @Override
-    public PageInfo selectPage(String dataSourceId, String sql, Object params, int pageNum, int pageSize) {
+    public PageInfo selectPage(String dataSourceId, String schema, String sql, Object params, int pageNum, int pageSize) {
         // 设置线程数据源
+        if (schema != null && !"".equals(schema)) {
+            dataSourceId = dataSourceId + ":" + schema;
+        }
         JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
         PageInfo pageInfo = null;
         List<Map<String, Object>> list = new ArrayList<>();
@@ -84,7 +87,7 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     }
 
     @Override
-    public Long execute(String dataSourceId, String sql) {
+    public Long execute(String dataSourceId, String schema, String sql) {
         return null;
     }
 

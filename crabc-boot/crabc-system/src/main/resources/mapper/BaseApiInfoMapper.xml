@@ -55,7 +55,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             i.tenant_id,
             s.sql_script,
             s.datasource_id,
-            s.datasource_type
+            s.datasource_type,
+            s.schema_name
         FROM
             base_api_info i
         LEFT JOIN base_api_sql s ON i.api_id = s.api_id

@@ -4,8 +4,8 @@ package cn.crabc.core.system.service.core.impl;
 import cn.crabc.core.app.constant.BaseConstant;
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.spi.DataSourceDriver;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Table;
 import cn.crabc.core.system.service.core.IBaseDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,21 +41,21 @@ public class BaseDataServiceImpl implements IBaseDataService {
     }
 
     @Override
-    public Integer testConnection(DataSource dataSource) {
-        Integer result  = dataSourceManager.test(dataSource);
+    public Integer testConnection(BaseDataSource dataSource) {
+        Integer result = dataSourceManager.test(dataSource);
         return result;
     }
 
     @Override
-    public List<Map<String, Object>> query(String dataSourceId,String dataSourceType, String sql, Map<String, Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(dataSourceId);
-        return dataSourceDriver.selectList(dataSourceId, sql, params);
+    public List<Map<String, Object>> query(String datasourceId, String schema, String sql, Map<String, Object> params) {
+        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        return dataSourceDriver.selectList(datasourceId, schema, sql, params);
     }
 
     @Override
-    public Integer update(String dataSourceId, String sql, Map<String, Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(dataSourceId);
-        params.put(BaseConstant.DATA_SOURCE_ID, dataSourceId);
-        return dataSourceDriver.update(sql,params);
+    public Integer update(String datasourceId, String schema, String sql, Map<String, Object> params) {
+        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        params.put(BaseConstant.DATA_SOURCE_ID, datasourceId);
+        return dataSourceDriver.update(sql, params);
     }
 }

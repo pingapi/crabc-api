@@ -23,6 +23,9 @@ public class ApiInfoDTO extends BaseApiInfo {
      * 数据源类型
      */
     private String datasourceType;
+
+    private String schemaName;
+
     /**
      * 有权限的应用
      */
@@ -58,5 +61,13 @@ public class ApiInfoDTO extends BaseApiInfo {
 
     public void setAppList(List<BaseApp> appList) {
         this.appList = appList;
+    }
+
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
     }
 }

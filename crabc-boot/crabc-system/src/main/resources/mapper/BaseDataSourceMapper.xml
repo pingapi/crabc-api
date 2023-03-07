@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.crabc.core.system.mapper.BaseDataSourceMapper">
-    <select id="list" resultType="cn.crabc.core.spi.bean.DataSource">
+    <select id="list" resultType="cn.crabc.core.spi.bean.BaseDataSource">
         SELECT
             datasource_id,
             datasource_name,

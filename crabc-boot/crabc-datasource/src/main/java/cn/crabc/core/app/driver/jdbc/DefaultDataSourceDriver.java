@@ -1,15 +1,18 @@
 package cn.crabc.core.app.driver.jdbc;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
+import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.spi.DataSourceDriver;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,20 +29,16 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
     Logger log =  LoggerFactory.getLogger(DefaultDataSourceDriver.class);
 
     @Override
-    public Integer test(DataSource baseDataSource) {
+    public Integer test(BaseDataSource baseDataSource) {
         Connection connection = null;
         try {
-            DruidDataSource dataSource = new DruidDataSource();
-            dataSource.setUrl(baseDataSource.getJdbcUrl());
+            HikariDataSource dataSource = new HikariDataSource();
             dataSource.setUsername(baseDataSource.getUsername());
             dataSource.setPassword(baseDataSource.getPassword());
-            dataSource.setMaxActive(1);
-            dataSource.setConnectionErrorRetryAttempts(1);
-            dataSource.setBreakAfterAcquireFailure(true);
-            dataSource.setMaxWait(1000);
+            dataSource.setJdbcUrl(baseDataSource.getJdbcUrl());
             connection = dataSource.getConnection();
         } catch (Exception e) {
-            return 0;
+            throw new CustomException(51005, e.getMessage());
         } finally {
             try {
                 if (connection != null) {
@@ -53,7 +52,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
     }
 
     @Override
-    public void init(DataSource ds) {
+    public void init(BaseDataSource ds) {
         String datasourceId = ds.getDatasourceId();
         if (JdbcDataSourceRouter.exist(datasourceId)) {
             this.destroy(datasourceId);
@@ -61,30 +60,15 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         String username = ds.getUsername();
         String password = ds.getPassword();
         String jdbcUrl = ds.getJdbcUrl();
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl(jdbcUrl);
+        HikariDataSource dataSource = new HikariDataSource();
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-        dataSource.setInitialSize(1);
-        dataSource.setMinIdle(1);
-        dataSource.setMaxActive(20);
-        // 配置获取连接等待超时的时间
-        dataSource.setMaxWait(6000);
-        // 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-        dataSource.setTimeBetweenEvictionRunsMillis(5000);
-        dataSource.setKeepAlive(true);
-        //  配置一个连接在池中最小生存的时间，单位是毫秒
-        dataSource.setMinEvictableIdleTimeMillis(600000);
-        dataSource.setMaxEvictableIdleTimeMillis(900000);
-        // dataSource.setValidationQuery("select 1");
-        dataSource.setTestWhileIdle(true);
-        dataSource.setTestOnBorrow(false);
-        dataSource.setTestOnReturn(false);
-        // dataSource.setFilters("stat,wall");
-
-        if (ds.getDatasourceType() != null) {
-            dataSource.setDbType(ds.getDatasourceType());
-        }
+        dataSource.setJdbcUrl(jdbcUrl);
+        dataSource.setMinimumIdle(5);
+        dataSource.setMaxLifetime(1800000);
+        dataSource.setIdleTimeout(600000);
+        dataSource.setConnectionTimeout(10000);
+        dataSource.setKeepaliveTime(300000);
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
     }
 
@@ -98,7 +82,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         List<String> catalogs = new ArrayList<>();
         Connection connection = null;
         ResultSet resultSet = null;
-        javax.sql.DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
+        DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
         try {
             connection = dataSource.getConnection();
             resultSet = connection.getMetaData().getCatalogs();
@@ -128,7 +112,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         List<Schema> schemas = new ArrayList<>();
         Connection connection = null;
         ResultSet resultSet = null;
-        javax.sql.DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
+        DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
         try {
             connection = dataSource.getConnection();
             String dbType = "mysql";
@@ -170,7 +154,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
     @Override
     public List<Table> getTables(String dataSourceId, String catalog, String schema) {
         List<Table> tables = new ArrayList<>();
-        javax.sql.DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
+        DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
         String[] tableType = {"TABLE", "VIEW"};
         Connection connection = null;
         ResultSet resultSet = null;
@@ -207,7 +191,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
     @Override
     public List<Column> getColumns(String dataSourceId, String catalog, String schema, String table) {
         List<Column> columns = new ArrayList<>();
-        javax.sql.DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
+        DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
         Connection connection = null;
         ResultSet resultSet = null;
         try {

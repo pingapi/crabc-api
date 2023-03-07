@@ -1,7 +1,7 @@
 package cn.crabc.core.spi;
 
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
 
@@ -16,9 +16,9 @@ public interface DataSourceDriver<T> extends BaseDataHandle<T> {
 
     String getName();
 
-    Integer test(DataSource dataSource);
+    Integer test(BaseDataSource dataSource);
 
-    void init(DataSource dataSource);
+    void init(BaseDataSource dataSource);
 
     void destroy(String dataSourceId);
 

@@ -1,7 +1,7 @@
 package cn.crabc.core.system.component;
 
 import cn.crabc.core.app.driver.DataSourceManager;
-import cn.crabc.core.spi.bean.DataSource;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.system.entity.dto.ApiInfoDTO;
 import cn.crabc.core.system.service.system.IBaseApiInfoService;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
@@ -33,8 +33,8 @@ public class LoadingData implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         // 加载数据源
-        List<DataSource> baseDataSources = iBaseDataSourceService.getList();
-        for (DataSource dataSource : baseDataSources) {
+        List<BaseDataSource> baseDataSources = iBaseDataSourceService.getList();
+        for (BaseDataSource dataSource : baseDataSources) {
             String priKey = dataSource.getSecretKey();
             try {
                 String pwd = RSAUtils.decryptByPriKey(priKey, dataSource.getPassword());

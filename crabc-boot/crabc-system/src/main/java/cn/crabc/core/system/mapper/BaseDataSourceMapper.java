@@ -1,7 +1,7 @@
 package cn.crabc.core.system.mapper;
 
 
-import cn.crabc.core.spi.bean.DataSource;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.system.entity.BaseDatasource;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface BaseDataSourceMapper {
 
-    List<DataSource> list();
+    List<BaseDataSource> list();
 
     /**
      *

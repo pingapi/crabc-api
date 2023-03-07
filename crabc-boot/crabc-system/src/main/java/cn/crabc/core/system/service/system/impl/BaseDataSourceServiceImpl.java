@@ -1,7 +1,7 @@
 package cn.crabc.core.system.service.system.impl;
 
 import cn.crabc.core.app.driver.DataSourceManager;
-import cn.crabc.core.spi.bean.DataSource;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.system.component.BaseCache;
 import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.mapper.BaseDataSourceMapper;
@@ -34,7 +34,7 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     private IBaseDataService iBaseDataService;
 
     @Override
-    public List<DataSource> getList() {
+    public List<BaseDataSource> getList() {
         return dataSourceMapper.list();
     }
 
@@ -90,7 +90,7 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     private void addCache(BaseDatasource dataSource){
         try {
             // 新增或更新数据源
-            DataSource ds = new DataSource();
+            BaseDataSource ds = new BaseDataSource();
             BeanUtils.copyProperties(dataSource, ds);
             dataSourceManager.createDataSource(ds);
         } catch (Exception e) {

@@ -1,7 +1,7 @@
 package cn.crabc.core.system.service.core;
 
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Table;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author yuqf
  */
-public interface IBaseDataService{
+public interface IBaseDataService {
 
     List<String> getSchemas(String dataSourceId);
 
@@ -22,27 +22,30 @@ public interface IBaseDataService{
 
     /**
      * 测试数据库
+     *
      * @param dataSource
      * @return
      */
-    Integer testConnection(DataSource dataSource);
+    Integer testConnection(BaseDataSource dataSource);
 
     /**
      * 通用查询方法
-     * @param dataSourceId
-     * @param dataSourceType
+     *
+     * @param datasourceId
+     * @param schema
      * @param sql
      * @param params
      * @return
      */
-    List<Map<String, Object>> query(String dataSourceId, String dataSourceType, String sql, Map<String, Object> params);
+    List<Map<String, Object>> query(String datasourceId, String schema, String sql, Map<String, Object> params);
 
     /**
      * 通用操作方法
-     * @param dataSourceId
+     *
+     * @param datasourceId
      * @param sql
      * @param params
      * @return
      */
-    Integer update(String dataSourceId, String sql, Map<String, Object> params);
+    Integer update(String datasourceId, String schema, String sql, Map<String, Object> params);
 }

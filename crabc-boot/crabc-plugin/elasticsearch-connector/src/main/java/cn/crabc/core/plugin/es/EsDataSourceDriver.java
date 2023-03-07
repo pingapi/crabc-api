@@ -1,8 +1,8 @@
 package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.DataSourceDriver;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
-import cn.crabc.core.spi.bean.DataSource;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -29,29 +29,30 @@ public class EsDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Integer test(DataSource dataSource) {
+    public Integer test(BaseDataSource dataSource) {
         try {
             ElasticsearchClient testClient = createClient(dataSource);
             testClient.indices().exists(e -> e.index("test"));
-        }catch (Exception e) {
+        } catch (Exception e) {
             return 0;
         }
         return 1;
     }
 
     @Override
-    public void init(DataSource dataSource) {
+    public void init(BaseDataSource dataSource) {
         client = createClient(dataSource);
     }
 
     /**
      * 连接
+     *
      * @param dataSource
      * @return
      */
-    public ElasticsearchClient createClient(DataSource dataSource){
-        RestClient client = RestClient.builder(new HttpHost(dataSource.getHost(), Integer.parseInt(dataSource.getPort()),"http")).build();
-        ElasticsearchTransport transport = new RestClientTransport(client,new JacksonJsonpMapper());
+    public ElasticsearchClient createClient(BaseDataSource dataSource) {
+        RestClient client = RestClient.builder(new HttpHost(dataSource.getHost(), Integer.parseInt(dataSource.getPort()), "http")).build();
+        ElasticsearchTransport transport = new RestClientTransport(client, new JacksonJsonpMapper());
         return new ElasticsearchClient(transport);
     }
 
@@ -81,22 +82,22 @@ public class EsDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Object selectOne(String dataSourceId, String sql, Object params) {
+    public Object selectOne(String dataSourceId, String schema, String sql, Object params) {
         return null;
     }
 
     @Override
-    public List selectList(String dataSourceId, String sql, Object params) {
+    public List selectList(String dataSourceId, String schema, String sql, Object params) {
         return null;
     }
 
     @Override
-    public List selectPage(String dataSourceId, String sql, Object params, int limit, int offset) {
+    public List selectPage(String dataSourceId, String schema, String sql, Object params, int limit, int offset) {
         return null;
     }
 
     @Override
-    public Object execute(String dataSourceId, String sql) {
+    public Object execute(String dataSourceId, String schema, String sql) {
         return null;
     }
 

@@ -1,6 +1,6 @@
 package cn.crabc.core.system.service.system;
 
-import cn.crabc.core.spi.bean.DataSource;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.util.PageInfo;
 
@@ -17,7 +17,7 @@ public interface IBaseDataSourceService {
      * 数据源列表
      * @return
      */
-    List<DataSource> getList();
+    List<BaseDataSource> getList();
 
     /**
      * 数据源 分页列表

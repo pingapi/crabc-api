@@ -2,10 +2,10 @@ package cn.crabc.core.app.driver;
 
 import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.spi.DataSourceDriver;
-import cn.crabc.core.spi.bean.DataSource;
-import com.alibaba.druid.pool.DruidDataSource;
+import cn.crabc.core.spi.bean.BaseDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class DataSourceManager {
      *
      * @param dataSource
      */
-    public void createDataSource(DataSource dataSource) {
+    public void createDataSource(BaseDataSource dataSource) {
         String datasourceType = dataSource.getDatasourceType();
         DataSourceDriver dataSourceDriver = PLUGIN_TYPE.get(datasourceType);
         if (dataSourceDriver != null) {
@@ -91,7 +91,7 @@ public class DataSourceManager {
      * @param dataSource
      * @return
      */
-    public Integer test(DataSource dataSource) {
+    public Integer test(BaseDataSource dataSource) {
         String datasourceType = dataSource.getDatasourceType();
         DataSourceDriver dataSourceDriver = PLUGIN_TYPE.get(datasourceType);
         if (dataSourceDriver != null) {
@@ -115,7 +115,7 @@ public class DataSourceManager {
         javax.sql.DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
         if (dataSource != null) {
             dataSourceDriver = this.defaultDriver;
-        }else{
+        } else {
             dataSourceDriver = DATA_SOURCE_POOL_PLUGIN.get(datasourceId);
         }
         if (dataSourceDriver == null) {
@@ -135,16 +135,11 @@ public class DataSourceManager {
             dataSourceDriver.destroy(datasourceId);
             DATA_SOURCE_POOL_PLUGIN.remove(datasourceId);
         }
-        javax.sql.DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
-        if (dataSource != null) {
-            if (dataSource instanceof  DruidDataSource){
-                DruidDataSource druidDataSource = (DruidDataSource) dataSource;
-                druidDataSource.close();
-            }else if(dataSource instanceof HikariDataSource){
-                HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
-                hikariDataSource.close();
-            }
-            DATA_SOURCE_POOL_JDBC.remove(datasourceId);
+        DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
+        if (dataSource != null && dataSource instanceof HikariDataSource) {
+            HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+            hikariDataSource.close();
         }
+        DATA_SOURCE_POOL_JDBC.remove(datasourceId);
     }
 }
