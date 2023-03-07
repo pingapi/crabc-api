@@ -26,7 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             base_api_info
         <where>
             <if test="apiName !=null and apiName !=''">
-                api_name concat('%',#{apiName,jdbcType=VARCHAR},'%')
+                api_name like concat('%',#{apiName},'%')
             </if>
         </where>
         ORDER BY api_id
