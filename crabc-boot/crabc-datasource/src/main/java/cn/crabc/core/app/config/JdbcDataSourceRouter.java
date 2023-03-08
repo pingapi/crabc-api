@@ -123,7 +123,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      *
      * @param dataSourceId
      **/
-    public static void setDataSource(String dataSourceId, HikariDataSource dataSource) {
+    public static void setDataSource(String dataSourceId, DataSource dataSource) {
         DataSourceManager.DATA_SOURCE_POOL_JDBC.put(dataSourceId, dataSource);
     }
 
@@ -145,7 +145,6 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         if (dataSource == null) {
             throw new CustomException(51001, "数据源不存在！");
         }
-        log.info("--DataSource:{}", dataSource.getClass());
         return dataSource;
     }
 
@@ -162,12 +161,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         try {
             if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
                 String[] dataSourceStr = dataSourceKey.toString().split(":");
-                HikariDataSource dataSource = (HikariDataSource) DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceStr[0]);
-                if (dataSource.getJdbcUrl().startsWith("jdbc:mysql")){
-                    connection.setCatalog(dataSourceStr[1]);
-                }else {
-                    connection.setSchema(dataSourceStr[0]);
-                }
+                connection.setSchema(dataSourceStr[1]);
             }
         }catch (Exception e){
             e.printStackTrace();

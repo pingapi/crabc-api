@@ -1,6 +1,5 @@
 package cn.crabc.core.system.util;
 
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.util.Base64Utils;
 
 import javax.crypto.Cipher;

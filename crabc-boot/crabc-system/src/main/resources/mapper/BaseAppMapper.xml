@@ -13,9 +13,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             app_key,
             app_secret,
             strategy_type,
-            ips
+            ips,
+            update_time,
+            enabled
         FROM
             base_app
+        <where>
+            <if test="appName !=null and appName !=''">
+                app_name like concat('%',#{appName},'%')
+            </if>
+        </where>
         order by create_time desc
     </select>
 
@@ -36,38 +43,69 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             ap.enabled = 1
     </select>
 
-    <update id="update" parameterType="cn.crabc.core.system.entity.BaseGroup">
-        UPDATE base_api_group
+    <select id="selectOne" resultType="cn.crabc.core.system.entity.BaseApp">
+        SELECT
+            app_id,
+            app_name,
+            app_desc,
+            app_code,
+            app_key,
+            app_secret,
+            strategy_type,
+            ips,
+            update_time,
+            update_by,
+            enabled
+        FROM
+            base_app
+        where app_id =#{appId}
+    </select>
+
+    <update id="update" parameterType="cn.crabc.core.system.entity.BaseApp">
+        UPDATE base_app
         <set>
-            <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
-            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
-            <if test="groupDesc != null and groupDesc != ''">group_desc = #{groupDesc},</if>
+            <if test="appName != null and appName != ''">app_name =#{appName},</if>
+            <if test="appDesc != null and appDesc != ''">app_desc =#{appDesc},</if>
+            <if test="appCode != null and appCode != ''">app_code =#{appCode},</if>
+            <if test="appKey != null and appKey != ''">app_key =#{appKey},</if>
+            <if test="appSecret != null and appSecret != ''">app_secret =#{appSecret},</if>
+            <if test="strategyType != null and strategyType != ''">strategy_type=#{strategyType},</if>
+            <if test="ips != null and ips != ''">ips =#{ips},</if>
+            <if test="enabled != null">enabled =#{enabled},</if>
+            <if test="updateBy != null and updateBy != ''">update_by=#{updateBy},</if>
             update_time =#{updateTime}
         </set>
-        WHERE group_id = #{groupId}
+        WHERE app_id = #{appId}
     </update>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="groupId" parameterType="cn.crabc.core.system.entity.BaseGroup">
-        insert into base_api_group(
-        <if test="groupName != null and groupName != ''">group_name,</if>
-        <if test="parentId != null and parentId != ''">parent_id,</if>
-        <if test="groupDesc != null and groupDesc != ''">group_desc,</if>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="appId" parameterType="cn.crabc.core.system.entity.BaseApp">
+        insert into base_app(
+        <if test="appName != null and appName != ''">app_name,</if>
+        <if test="appDesc != null and appDesc != ''">app_desc,</if>
+        <if test="appCode != null and appCode != ''">app_code,</if>
+        <if test="appKey != null and appKey != ''">app_key,</if>
+        <if test="appSecret != null and appSecret != ''">app_secret,</if>
+        <if test="strategyType != null and strategyType != ''">strategy_type,</if>
+        <if test="ips != null and ips != ''">ips,</if>
+        <if test="enabled != null">enabled,</if>
         <if test="createBy != null and createBy != ''">create_by,</if>
         create_time
         )values(
-        <if test="groupName != null and groupName != ''">#{groupName},</if>
-        <if test="parentId != null and parentId != ''">#{parentId},</if>
-        <if test="groupDesc != null and groupDesc != ''">#{groupDesc},</if>
+        <if test="appName != null and appName != ''">#{appName},</if>
+        <if test="appDesc != null and appDesc != ''">#{appDesc},</if>
+        <if test="appCode != null and appCode != ''">#{appCode},</if>
+        <if test="appKey != null and appKey != ''">#{appKey},</if>
+        <if test="appSecret != null and appSecret != ''">#{appSecret},</if>
+        <if test="strategyType != null and strategyType != ''">#{strategyType},</if>
+        <if test="ips != null and ips != ''">#{ips},</if>
+        <if test="enabled != null">#{enabled},</if>
         <if test="createBy != null and createBy != ''">#{createBy},</if>
         #{createTime}
         )
     </insert>
 
     <delete id="delete">
-        delete from base_api_group where group_id =#{groupId}
+        delete from base_app where app_id =#{appId}
     </delete>
 
-    <delete id="deleteAll">
-        delete from base_api_group where create_by =#{userId}
-    </delete>
 </mapper>

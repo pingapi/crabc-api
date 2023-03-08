@@ -1,6 +1,7 @@
 package cn.crabc.core.system.service.system;
 
 import cn.crabc.core.system.entity.BaseApp;
+import cn.crabc.core.system.util.PageInfo;
 
 import java.util.List;
 
@@ -11,5 +12,41 @@ import java.util.List;
  */
 public interface IBaseAppService {
 
-    List<BaseApp> getAppList(String appName);
+    /**
+     * 应用分页列表
+     * @param appName
+     * @param appCode
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    PageInfo<BaseApp> appPage(String appName, String appCode, Integer pageNum, Integer pageSize);
+
+    /**
+     * 列表
+     * @param appName
+     * @return
+     */
+    List<BaseApp> appList(String appName);
+
+    /**
+     * 新增应用
+     * @param app
+     * @return
+     */
+    Integer addApp(BaseApp app);
+
+    /**
+     * 编辑应用
+     * @param app
+     * @return
+     */
+    Integer updateApp(BaseApp app);
+
+    /**
+     * 删除应用
+     * @param appId
+     * @return
+     */
+    Integer deleteApp(Long appId);
 }

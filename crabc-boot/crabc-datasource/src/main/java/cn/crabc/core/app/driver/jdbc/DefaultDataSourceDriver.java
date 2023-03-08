@@ -7,7 +7,7 @@ import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
-import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.JdbcUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @author yuqf
  */
 public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<String, Object>> {
-    Logger log =  LoggerFactory.getLogger(DefaultDataSourceDriver.class);
+    Logger log = LoggerFactory.getLogger(DefaultDataSourceDriver.class);
 
     @Override
     public Integer test(BaseDataSource baseDataSource) {
@@ -36,9 +36,13 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
             dataSource.setUsername(baseDataSource.getUsername());
             dataSource.setPassword(baseDataSource.getPassword());
             dataSource.setJdbcUrl(baseDataSource.getJdbcUrl());
+            dataSource.setInitializationFailTimeout(1);
+            dataSource.setConnectionTimeout(2000);
             connection = dataSource.getConnection();
         } catch (Exception e) {
-            throw new CustomException(51005, e.getMessage());
+            Throwable cause = e.getCause();
+            log.error("--{}", e.getMessage());
+            throw new CustomException(51005, cause == null ? e.getMessage() : cause.getLocalizedMessage());
         } finally {
             try {
                 if (connection != null) {
@@ -60,6 +64,16 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         String username = ds.getUsername();
         String password = ds.getPassword();
         String jdbcUrl = ds.getJdbcUrl();
+        // mysql数据库链接加上指定SCHEMA
+        if (jdbcUrl != null && jdbcUrl.contains(":")) {
+            boolean mysql = JdbcUtils.isMysqlDbType(jdbcUrl.trim().split(":")[1]);
+            if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && jdbcUrl.contains("?")) {
+                jdbcUrl = jdbcUrl + "&databaseTerm=SCHEMA";
+            }else if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && !jdbcUrl.contains("?")) {
+                jdbcUrl = jdbcUrl + "?databaseTerm=SCHEMA";
+            }
+        }
+
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setUsername(username);
         dataSource.setPassword(password);
@@ -69,6 +83,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         dataSource.setIdleTimeout(600000);
         dataSource.setConnectionTimeout(10000);
         dataSource.setKeepaliveTime(300000);
+
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
     }
 
@@ -115,16 +130,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
         DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
         try {
             connection = dataSource.getConnection();
-            String dbType = "mysql";
-            if (dataSource instanceof DruidDataSource){
-                DruidDataSource druidDataSource  = (DruidDataSource) dataSource;
-                dbType = druidDataSource.getDbType();
-            }
-            if ("mysql".equalsIgnoreCase(dbType)) {
-                resultSet = connection.getMetaData().getCatalogs();
-            } else {
-                resultSet = connection.getMetaData().getSchemas(catalog, null);
-            }
+            resultSet = connection.getMetaData().getSchemas(catalog, null);
             while (resultSet.next()) {
                 Schema schema = new Schema();
                 String schemaName = resultSet.getString(1);
@@ -167,7 +173,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver<Map<St
                 table.setRemarks(resultSet.getString("REMARKS"));
                 table.setTableType(resultSet.getString("TABLE_TYPE"));
                 table.setCatalog(resultSet.getString("TABLE_CAT"));
-               // table.setDatasourceId(dataSourceId);
+                // table.setDatasourceId(dataSourceId);
                 table.setSchema(schema);
                 tables.add(table);
             }

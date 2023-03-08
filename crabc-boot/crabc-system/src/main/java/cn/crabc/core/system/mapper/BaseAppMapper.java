@@ -15,11 +15,39 @@ public interface BaseAppMapper {
      * 应用列表
      * @return
      */
-    List<BaseApp> selectList();
+    List<BaseApp> selectList(String appName);
 
     /**
      * 应用和API的关系
      * @return
      */
     List<BaseApp> selectAppApi();
+
+    /**
+     * 应用对象
+     * @param appId
+     * @return
+     */
+    BaseApp selectOne(Long appId);
+
+    /**
+     * 新增应用
+     * @param app
+     * @return
+     */
+    Integer insert(BaseApp app);
+
+    /**
+     * 编辑应用
+     * @param app
+     * @return
+     */
+    Integer update(BaseApp app);
+
+    /**
+     * 删除应用
+     * @param appId
+     * @return
+     */
+    Integer delete(Long appId);
 }
