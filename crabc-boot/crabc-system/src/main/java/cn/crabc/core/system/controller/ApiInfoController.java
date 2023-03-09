@@ -1,6 +1,7 @@
 package cn.crabc.core.system.controller;
 
 import cn.crabc.core.system.entity.BaseApiInfo;
+import cn.crabc.core.system.entity.BaseAppApi;
 import cn.crabc.core.system.entity.param.ApiInfoParam;
 import cn.crabc.core.system.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.system.entity.vo.ApiInfoVO;
@@ -34,35 +35,37 @@ public class ApiInfoController {
      * API分页列表
      *
      * @param keyword
-     * @param appId
+     * @param devType
      * @param pageNum
      * @param pageSize
      * @return
      */
     @GetMapping("/page")
-    public Result page(String keyword, Integer appId, Integer pageNum, Integer pageSize) {
-        PageInfo<BaseApiInfo> page = apiInfoService.getApiPage(keyword, pageNum, pageSize);
+    public Result page(String keyword, String devType, Integer pageNum, Integer pageSize) {
+        PageInfo<BaseApiInfo> page = apiInfoService.getApiPage(keyword, devType, pageNum, pageSize);
         return Result.success(page);
     }
 
     /**
      * API详情
+     *
      * @param apiId
      * @return
      */
     @GetMapping
-    public Result info(Long apiId){
+    public Result info(Long apiId) {
         ApiInfoVO apiDetail = apiInfoService.getApiDetail(apiId);
         return Result.success(apiDetail);
     }
 
     /**
      * 分组下API列表
+     *
      * @param groupId
      * @return
      */
     @GetMapping("/group/list")
-    public Result list(Integer groupId){
+    public Result list(Integer groupId) {
         List<ApiComboBoxVO> list = apiInfoService.getApiListGroup(groupId);
         return Result.success(list);
     }
@@ -86,6 +89,7 @@ public class ApiInfoController {
 
     /**
      * api发布
+     *
      * @param apiInfoParam
      * @return
      */
@@ -109,11 +113,12 @@ public class ApiInfoController {
 
     /**
      * SQL解析
+     *
      * @param
      * @return
      */
     @PostMapping("/sqlParse")
-    public Result sqlParse(@RequestBody SqlParseVO sqlParse){
+    public Result sqlParse(@RequestBody SqlParseVO sqlParse) {
         SqlParseVO sqlParseVO = new SqlParseVO();
         // 返回字段
         Set<String> paramNames = SQLUtils.parseParams(sqlParse.getSqlScript());
@@ -121,7 +126,7 @@ public class ApiInfoController {
         // 条件字段
         Set<ColumnParseVo> resColumns = new HashSet<>();
         Set<String> resNames = SQLUtils.parseColumns(sqlParse.getSqlScript());
-        for(String name : resNames){
+        for (String name : resNames) {
             ColumnParseVo resColumn = new ColumnParseVo();
             resColumn.setColName(name);
             resColumn.setColType("STRING");
@@ -134,12 +139,46 @@ public class ApiInfoController {
 
     /**
      * 校验接口url
+     *
      * @param baseApiInfo
      * @return
      */
     @PostMapping("/check")
-    public Result checkPath(@RequestBody BaseApiInfo baseApiInfo){
+    public Result checkPath(@RequestBody BaseApiInfo baseApiInfo) {
         return Result.success();
+    }
+
+    /**
+     * 查询关联应用的API
+     *
+     * @param appId
+     * @return
+     */
+    @GetMapping("/choosed")
+    public Result chooseApi(Long appId, Integer pageNum, Integer pageSize) {
+        return Result.success(apiInfoService.getChooseApi(appId, pageNum, pageSize));
+    }
+
+    /**
+     * 查询未关联应用的API
+     *
+     * @param appId
+     * @return
+     */
+    @GetMapping("/choose/list")
+    public Result noChooseApi(Long appId, Integer pageNum, Integer pageSize) {
+        return Result.success(apiInfoService.getNotChooseApi(appId, pageNum, pageSize));
+    }
+
+    /**
+     * 保存API应用授权关系
+     *
+     * @param appApis
+     * @return
+     */
+    @PostMapping("/choosed")
+    public Result addChooseApi(@RequestBody BaseAppApi appApis) {
+        return Result.success(apiInfoService.addChooseApi(appApis));
     }
 
 }

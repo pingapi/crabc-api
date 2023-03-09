@@ -20,7 +20,7 @@ public interface BaseApiInfoMapper {
      * @param apiName
      * @return
      */
-    List<BaseApiInfo> selectList(@Param("apiName") String apiName);
+    List<BaseApiInfo> selectList(@Param("apiName") String apiName, @Param("devType") String devType);
 
     /**
      * 分组查询API信息
@@ -29,6 +29,12 @@ public interface BaseApiInfoMapper {
      */
     List<ApiComboBoxVO> selectApiGroup(Integer groupId);
 
+    /**
+     * 查询关联应用的API
+     * @param appId
+     * @return
+     */
+    List<ApiComboBoxVO> selectApiApp(Long appId);
     /**
      * 根据Id查询基本信息
      *

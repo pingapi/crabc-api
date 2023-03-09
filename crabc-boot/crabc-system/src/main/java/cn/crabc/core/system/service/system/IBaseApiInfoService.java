@@ -1,6 +1,7 @@
 package cn.crabc.core.system.service.system;
 
 import cn.crabc.core.system.entity.BaseApiInfo;
+import cn.crabc.core.system.entity.BaseAppApi;
 import cn.crabc.core.system.entity.dto.ApiInfoDTO;
 import cn.crabc.core.system.entity.param.ApiInfoParam;
 import cn.crabc.core.system.entity.vo.ApiComboBoxVO;
@@ -18,6 +19,7 @@ public interface IBaseApiInfoService {
 
     /**
      * 获取API全关联数据
+     *
      * @return
      */
     List<ApiInfoDTO> getApiDetail();
@@ -30,7 +32,7 @@ public interface IBaseApiInfoService {
      * @param pageSize
      * @return
      */
-    PageInfo<BaseApiInfo> getApiPage(String apiName, int pageNum, int pageSize);
+    PageInfo<BaseApiInfo> getApiPage(String apiName, String devType, int pageNum, int pageSize);
 
     /**
      * API列表
@@ -42,6 +44,7 @@ public interface IBaseApiInfoService {
 
     /**
      * 分组下API列表
+     *
      * @param groupId
      * @return
      */
@@ -58,6 +61,7 @@ public interface IBaseApiInfoService {
 
     /**
      * apiId获取详情
+     *
      * @param apiId
      * @return
      */
@@ -65,6 +69,7 @@ public interface IBaseApiInfoService {
 
     /**
      * 根据apiId查询详情
+     *
      * @param apiId
      * @return
      */
@@ -88,18 +93,43 @@ public interface IBaseApiInfoService {
 
     /**
      * 更新API状态
+     *
      * @param apiId
      * @param status
      * @param enabled
      * @return
      */
-    Integer updateApiState(Long apiId,String status, Integer enabled);
+    Integer updateApiState(Long apiId, String status, Integer enabled);
 
     /**
      * API发布
+     *
      * @param apiInfoParam
      * @return
      */
     Long apiPublish(ApiInfoParam apiInfoParam);
 
+    /**
+     * 获取未关联应用的API
+     *
+     * @param appId
+     * @return
+     */
+    PageInfo getNotChooseApi(Long appId, Integer pageNum, Integer pageSize);
+
+    /**
+     * 获取已关联应用的API
+     *
+     * @param appId
+     * @return
+     */
+    PageInfo getChooseApi(Long appId, Integer pageNum, Integer pageSize);
+
+    /**
+     * 保存应用API的关系
+     *
+     * @param appApi
+     * @return
+     */
+    Integer addChooseApi(BaseAppApi appApi);
 }

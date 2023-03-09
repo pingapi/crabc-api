@@ -28,6 +28,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="apiName !=null and apiName !=''">
                 api_name like concat('%',#{apiName},'%')
             </if>
+            <if test="devType !=null and devType !=''">
+                and api_status =#{devType}
+            </if>
         </where>
         ORDER BY api_id
     </select>
@@ -39,6 +42,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         api_type
         FROM
         base_api_info where  group_id = #{groupId} and api_status !='history'
+    </select>
+
+    <select id="selectApiApp" resultType="cn.crabc.core.system.entity.vo.ApiComboBoxVO">
+        SELECT
+            ai.api_id,
+            ai.api_name,
+            ai.api_type
+        FROM
+            base_api_info ai
+        left join
+            base_app_api aa on
+                ai.api_id = aa.api_id
+        WHERE
+            ai.enabled = '1'
+          AND ai.api_status = 'release'
+          <if test="appId != null">
+            and aa.app_id = #{appId}
+          </if>
     </select>
 
     <select id="selectApiDetail" resultType="cn.crabc.core.system.entity.dto.ApiInfoDTO">
@@ -61,7 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             base_api_info i
         LEFT JOIN base_api_sql s ON i.api_id = s.api_id
         WHERE
-            i.api_id = s.api_id AND i.enabled='1' AND i.api_status ='release' ORDER BY i.api_id
+            i.api_id = s.api_id AND i.enabled='1' AND i.parent_id = 0 AND i.api_status ='release' ORDER BY i.api_id desc
     </select>
 
     <select id="selectApiById" resultType="cn.crabc.core.system.entity.BaseApiInfo">

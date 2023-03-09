@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.system.mapper.BaseAppApiMapper">
+
+    <insert id="insert" parameterType="cn.crabc.core.system.entity.BaseAppApi">
+        insert into base_app_api(app_id,api_id,create_by,create_time)
+        values
+        <foreach collection ="list" item="app" separator =",">
+            (#{app.appId},#{app.apiId},#{app.createBy},#{app.createTime})
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        delete from base_app_api where app_id =#{appId} and create_by=#{userId}
+    </delete>
+
+</mapper>

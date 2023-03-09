@@ -4,6 +4,7 @@ import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.system.entity.BaseApiInfo;
 import cn.crabc.core.system.entity.BaseApiSql;
 import cn.crabc.core.system.entity.BaseApp;
+import cn.crabc.core.system.entity.BaseAppApi;
 import cn.crabc.core.system.entity.dto.ApiInfoDTO;
 import cn.crabc.core.system.entity.param.ApiInfoParam;
 import cn.crabc.core.system.entity.vo.ApiComboBoxVO;
@@ -11,6 +12,7 @@ import cn.crabc.core.system.entity.vo.ApiInfoVO;
 import cn.crabc.core.system.enums.ApiStateEnum;
 import cn.crabc.core.system.mapper.BaseApiInfoMapper;
 import cn.crabc.core.system.mapper.BaseApiSqlMapper;
+import cn.crabc.core.system.mapper.BaseAppApiMapper;
 import cn.crabc.core.system.mapper.BaseAppMapper;
 import cn.crabc.core.system.service.system.IBaseApiInfoService;
 import cn.crabc.core.system.util.PageInfo;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     private BaseApiSqlMapper apiSqlMapper;
     @Autowired
     private BaseAppMapper baseAppMapper;
+    @Autowired
+    private BaseAppApiMapper baseAppApiMapper;
 
     @Override
     public List<ApiInfoDTO> getApiDetail() {
@@ -46,7 +51,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (apiInfos.size() == 0) {
             return apiInfos;
         }
-        List<BaseApp> appApis = baseAppMapper.selectAppApi();
+        List<BaseApp> appApis = baseAppMapper.selectApiApp();
         Map<Long, List<BaseApp>> appMap = appApis.stream().collect(Collectors.groupingBy(BaseApp::getApiId));
         for (ApiInfoDTO api : apiInfos) {
             if (appMap.containsKey(api.getApiId())) {
@@ -57,15 +62,15 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     @Override
-    public PageInfo<BaseApiInfo> getApiPage(String apiName, int pageNum, int pageSize) {
+    public PageInfo<BaseApiInfo> getApiPage(String apiName, String devType, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<BaseApiInfo> list = apiInfoMapper.selectList(apiName);
+        List<BaseApiInfo> list = apiInfoMapper.selectList(apiName,devType);
         return new PageInfo<>(list, pageNum, pageSize);
     }
 
     @Override
     public List<BaseApiInfo> getApiList(String apiName) {
-        return apiInfoMapper.selectList(apiName);
+        return apiInfoMapper.selectList(apiName, null);
     }
 
     @Override
@@ -187,6 +192,44 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiSql.setUpdateBy(UserThreadLocal.getUserId());
         apiSqlMapper.updateApiSql(baseApiSql);
         return apiId;
+    }
+
+    @Override
+    public PageInfo getNotChooseApi(Long appId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ApiComboBoxVO> allApi = apiInfoMapper.selectApiApp(null);
+        List<ApiComboBoxVO> appApis = apiInfoMapper.selectApiApp(appId);
+        allApi.removeAll(appApis);
+        return new PageInfo<>(allApi, pageNum, pageSize);
+    }
+
+    @Override
+    public PageInfo getChooseApi(Long appId, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ApiComboBoxVO> list = apiInfoMapper.selectApiApp(appId);
+        return new PageInfo<>(list, pageNum, pageSize);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer addChooseApi(BaseAppApi appApi) {
+        String userId = UserThreadLocal.getUserId();
+        baseAppApiMapper.delete(appApi.getAppId(), userId);
+
+        if (appApi.getApiIds() == null || appApi.getApiIds().size() == 0){
+            return 1;
+        }
+        Date time = new Date();
+        List<BaseAppApi> list = new ArrayList<>();
+        for(Long apiId : appApi.getApiIds()) {
+            BaseAppApi a = new BaseAppApi();
+            a.setAppId(appApi.getAppId());
+            a.setApiId(apiId);
+            a.setCreateBy(userId);
+            a.setCreateTime(time);
+            list.add(a);
+        }
+        return baseAppApiMapper.insert(list);
     }
 
     /**
