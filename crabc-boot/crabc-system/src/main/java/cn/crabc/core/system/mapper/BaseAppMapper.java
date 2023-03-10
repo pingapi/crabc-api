@@ -21,7 +21,7 @@ public interface BaseAppMapper {
      * 应用和API的关系
      * @return
      */
-    List<BaseApp> selectApiApp();
+    List<BaseApp> selectApiApp(Long apiId);
 
     /**
      * 应用对象

@@ -9,6 +9,7 @@ import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
 import cn.crabc.core.system.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +46,7 @@ public class MetaDataController {
         return Result.success(listMap);
     }
 
+    @Cacheable(cacheNames = "schemaCache", cacheManager = "metaDataManager", key = "#datasourceId")
     @GetMapping("/schemas")
     public Result getSchemas(@RequestParam("datasourceId") String datasourceId, @RequestParam(defaultValue = "1", required = false) String catalog) {
         DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
@@ -52,6 +54,7 @@ public class MetaDataController {
         return Result.success(schemas);
     }
 
+    @Cacheable(cacheNames = "tableCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema")
     @GetMapping("/tables")
     public Result getTables(@RequestParam("datasourceId") String datasourceId, @RequestParam("schema") String schema) {
         DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
@@ -59,6 +62,7 @@ public class MetaDataController {
         return Result.success(tables);
     }
 
+    @Cacheable(cacheNames = "columnsCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema+'_'+#table")
     @GetMapping("/columns")
     public Result getColumns(@RequestParam("datasourceId") String datasourceId, @RequestParam("schema") String schema, @RequestParam("table") String table) {
         DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);

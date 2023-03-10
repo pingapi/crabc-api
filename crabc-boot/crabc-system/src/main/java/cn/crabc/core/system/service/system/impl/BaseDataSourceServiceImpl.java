@@ -2,7 +2,6 @@ package cn.crabc.core.system.service.system.impl;
 
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.spi.bean.BaseDataSource;
-import cn.crabc.core.system.component.BaseCache;
 import cn.crabc.core.system.entity.BaseDatasource;
 import cn.crabc.core.system.mapper.BaseDataSourceMapper;
 import cn.crabc.core.system.service.core.IBaseDataService;
@@ -10,9 +9,11 @@ import cn.crabc.core.system.service.system.IBaseDataSourceService;
 import cn.crabc.core.system.util.PageInfo;
 import cn.crabc.core.system.util.RSAUtils;
 import cn.crabc.core.system.util.UserThreadLocal;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -32,6 +33,9 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     private DataSourceManager dataSourceManager;
     @Autowired
     private IBaseDataService iBaseDataService;
+    @Autowired
+    @Qualifier("dataCache")
+    Cache<String, Object> caffeineCache;
 
     @Override
     public List<BaseDataSource> getList() {
@@ -85,9 +89,10 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
 
     /**
      * 更新到缓存
+     *
      * @param dataSource
      */
-    private void addCache(BaseDatasource dataSource){
+    private void addCache(BaseDatasource dataSource) {
         try {
             // 新增或更新数据源
             BaseDataSource ds = new BaseDataSource();
@@ -100,9 +105,10 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
 
     /**
      * 加密密码
+     *
      * @param dataSource
      */
-    private void encryptPwd(BaseDatasource dataSource){
+    private void encryptPwd(BaseDatasource dataSource) {
         try {
             // 加密数据库密码
             RSAUtils.RSAKeyPair rsaKeyPair = RSAUtils.getKey();
@@ -114,15 +120,17 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * 解析密码
+     *
      * @param password
      * @return
      */
-    private String decryptPwd(String password){
+    private String decryptPwd(String password) {
         try {
-            String pwd = RSAUtils.decryptByPriKey(BaseCache.localCeche.get("priKey_"+UserThreadLocal.getUserId()).toString(), password);
-            BaseCache.localCeche.remove("priKey_" + UserThreadLocal.getUserId());
+            Object priKey = caffeineCache.getIfPresent("priKey_" + UserThreadLocal.getUserId());
+            String pwd = RSAUtils.decryptByPriKey(priKey.toString(), password);
             return pwd;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -144,6 +152,7 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
 
     /**
      * 更新/测试时解析数据库密码
+     *
      * @param dataSource
      */
     private void parsePassword(BaseDatasource dataSource) {
@@ -155,7 +164,7 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         if (pwd == null) {
             BaseDatasource baseDatasource = dataSourceMapper.selectOne(Integer.parseInt(dataSource.getDatasourceId()));
             try {
-                pwd = RSAUtils.decryptByPriKey(baseDatasource.getSecretKey(),baseDatasource.getPassword());
+                pwd = RSAUtils.decryptByPriKey(baseDatasource.getSecretKey(), baseDatasource.getPassword());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

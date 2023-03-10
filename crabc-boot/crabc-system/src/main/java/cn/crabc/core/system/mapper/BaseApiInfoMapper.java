@@ -24,6 +24,7 @@ public interface BaseApiInfoMapper {
 
     /**
      * 分组查询API信息
+     *
      * @param groupId
      * @return
      */
@@ -31,10 +32,12 @@ public interface BaseApiInfoMapper {
 
     /**
      * 查询关联应用的API
+     *
      * @param appId
      * @return
      */
     List<ApiComboBoxVO> selectApiApp(Long appId);
+
     /**
      * 根据Id查询基本信息
      *
@@ -53,7 +56,7 @@ public interface BaseApiInfoMapper {
     BaseApiInfo selectApiInfo(@Param("apiPath") String apiPath, @Param("method") String method);
 
 
-    List<ApiInfoDTO> selectApiDetail();
+    List<ApiInfoDTO> selectApiDetail(Long apiId);
 
     /**
      * 插入API

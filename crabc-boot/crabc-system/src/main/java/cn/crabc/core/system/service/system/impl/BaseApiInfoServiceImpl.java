@@ -17,8 +17,10 @@ import cn.crabc.core.system.mapper.BaseAppMapper;
 import cn.crabc.core.system.service.system.IBaseApiInfoService;
 import cn.crabc.core.system.util.PageInfo;
 import cn.crabc.core.system.util.UserThreadLocal;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,19 +46,35 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     private BaseAppMapper baseAppMapper;
     @Autowired
     private BaseAppApiMapper baseAppApiMapper;
+    @Autowired
+    @Qualifier("apiCache")
+    Cache<String, Object> apiInfoCache;
 
     @Override
-    public List<ApiInfoDTO> getApiDetail() {
-        List<ApiInfoDTO> apiInfos = apiInfoMapper.selectApiDetail();
+    public void initApi() {
+        List<ApiInfoDTO> apis = this.getApiCache(null);
+        for (ApiInfoDTO api : apis) {
+            apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
+        }
+    }
+
+    @Override
+    public List<ApiInfoDTO> getApiCache(Long apiId) {
+        List<ApiInfoDTO> apiInfos = apiInfoMapper.selectApiDetail(apiId);
         if (apiInfos.size() == 0) {
             return apiInfos;
         }
-        List<BaseApp> appApis = baseAppMapper.selectApiApp();
+        List<BaseApp> appApis = baseAppMapper.selectApiApp(apiId);
         Map<Long, List<BaseApp>> appMap = appApis.stream().collect(Collectors.groupingBy(BaseApp::getApiId));
         for (ApiInfoDTO api : apiInfos) {
             if (appMap.containsKey(api.getApiId())) {
                 api.setAppList(appMap.get(api.getApiId()));
             }
+        }
+
+        if (apiId != null && apiInfos.size() > 0) {
+            ApiInfoDTO api = apiInfos.get(0);
+            apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
         }
         return apiInfos;
     }
@@ -64,7 +82,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Override
     public PageInfo<BaseApiInfo> getApiPage(String apiName, String devType, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<BaseApiInfo> list = apiInfoMapper.selectList(apiName,devType);
+        List<BaseApiInfo> list = apiInfoMapper.selectList(apiName, devType);
         return new PageInfo<>(list, pageNum, pageSize);
     }
 
@@ -107,6 +125,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         BaseApiInfo baseApiInfo = apiInfo.getBaseInfo();
         baseApiInfo.setApiStatus(ApiStateEnum.EDIT.getName());
         baseApiInfo.setEnabled(0);
+        baseApiInfo.setApiType("SQL");
         baseApiInfo.setCreateTime(date);
         baseApiInfo.setUpdateBy(UserThreadLocal.getUserId());
         apiInfoMapper.insertApiInfo(baseApiInfo);
@@ -132,6 +151,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiInfo.setUpdateTime(updateTime);
         baseApiInfo.setApiStatus(ApiStateEnum.EDIT.getName());
         baseApiInfo.setEnabled(0);
+        baseApiInfo.setApiType("SQL");
         baseApiInfo.setUpdateBy(UserThreadLocal.getUserId());
         apiInfoMapper.updateApiInfo(baseApiInfo);
 
@@ -191,6 +211,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiSql.setUpdateTime(updateTime);
         baseApiSql.setUpdateBy(UserThreadLocal.getUserId());
         apiSqlMapper.updateApiSql(baseApiSql);
+        // 更新缓存
+        this.getApiCache(baseApiInfo.getApiId());
         return apiId;
     }
 
@@ -216,12 +238,12 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         String userId = UserThreadLocal.getUserId();
         baseAppApiMapper.delete(appApi.getAppId(), userId);
 
-        if (appApi.getApiIds() == null || appApi.getApiIds().size() == 0){
+        if (appApi.getApiIds() == null || appApi.getApiIds().size() == 0) {
             return 1;
         }
         Date time = new Date();
         List<BaseAppApi> list = new ArrayList<>();
-        for(Long apiId : appApi.getApiIds()) {
+        for (Long apiId : appApi.getApiIds()) {
             BaseAppApi a = new BaseAppApi();
             a.setAppId(appApi.getAppId());
             a.setApiId(apiId);

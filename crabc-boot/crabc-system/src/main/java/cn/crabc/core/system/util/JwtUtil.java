@@ -18,7 +18,6 @@ public class JwtUtil {
     private static String header = "Authorization";
     // 令牌秘钥
     private static String secret = "crabc";
-    // 令牌有效期（默认30分钟）
     private static int expireTime;
     public static final String TOKEN_PREFIX = "bearer ";
 

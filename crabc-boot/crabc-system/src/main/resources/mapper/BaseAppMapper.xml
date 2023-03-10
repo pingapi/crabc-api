@@ -41,6 +41,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 aa.app_id = ap.app_id
         WHERE
             ap.enabled = 1
+        <if test="apiId != null">
+            and aa.api_id =#{apiId}
+        </if>
     </select>
 
     <select id="selectOne" resultType="cn.crabc.core.system.entity.BaseApp">

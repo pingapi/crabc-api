@@ -19,12 +19,14 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 
 /**
  * 基础通用开发平台-系统模块
  *
  * @author yuqf
  */
+@EnableCaching
 @MapperScan("cn.crabc.core.*.mapper")
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class SystemApplication {

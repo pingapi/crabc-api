@@ -2,7 +2,6 @@ package cn.crabc.core.system.component;
 
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.spi.bean.BaseDataSource;
-import cn.crabc.core.system.entity.dto.ApiInfoDTO;
 import cn.crabc.core.system.service.system.IBaseApiInfoService;
 import cn.crabc.core.system.service.system.IBaseDataSourceService;
 import cn.crabc.core.system.util.RSAUtils;
@@ -27,9 +26,6 @@ public class LoadingData implements InitializingBean {
     @Autowired
     private DataSourceManager dataSourceManager;
 
-    @Autowired
-    private BaseCache baseCache;
-
     @Override
     public void afterPropertiesSet() {
         // 加载数据源
@@ -44,8 +40,7 @@ public class LoadingData implements InitializingBean {
 
             }
         }
-
-        List<ApiInfoDTO> apis = iBaseApiInfoService.getApiDetail();
-        baseCache.setApiCache(apis);
+        // 加载发布的API
+        iBaseApiInfoService.initApi();
     }
 }

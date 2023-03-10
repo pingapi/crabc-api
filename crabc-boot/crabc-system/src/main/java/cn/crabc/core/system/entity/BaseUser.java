@@ -14,8 +14,11 @@ public class BaseUser extends BaseEntity {
     /** 用户ID */
     private Long userId;
 
-    /** 部门ID */
-    private Integer deptId;
+    /** 部门 */
+    private Integer dept;
+
+    /** 角色 */
+    private String role;
 
     /** 用户账号 */
     private String username;
@@ -49,12 +52,20 @@ public class BaseUser extends BaseEntity {
         this.userId = userId;
     }
 
-    public Integer getDeptId() {
-        return deptId;
+    public Integer getDept() {
+        return dept;
     }
 
-    public void setDeptId(Integer deptId) {
-        this.deptId = deptId;
+    public void setDept(Integer dept) {
+        this.dept = dept;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getUsername() {

@@ -1,6 +1,10 @@
 package cn.crabc.core.system.config;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
+import cn.crabc.core.app.driver.DataSourceManager;
+import cn.crabc.core.app.driver.jdbc.JdbcDataSourceDriver;
+import cn.crabc.core.app.mapper.BaseDataHandleMapper;
+import cn.crabc.core.spi.DataSourceDriver;
 import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,5 +57,28 @@ public class DataSourceConfig {
         // 设置默认数据源
         dynamic.setDefaultTargetDataSource(dataSource);
         return dynamic;
+    }
+
+    /**
+     * JDBC 数据源驱动
+     *
+     * @param baseDataHandleMapper
+     * @return
+     */
+    @Bean
+    public DataSourceDriver dataSourceDriver(BaseDataHandleMapper baseDataHandleMapper) {
+        return new JdbcDataSourceDriver(baseDataHandleMapper);
+    }
+
+    /**
+     * 数据源插件驱动
+     *
+     * @param jdbcDataSourceDriver
+     * @return
+     */
+    @Bean
+    public DataSourceManager dataSourceDriverManager(DataSourceDriver jdbcDataSourceDriver) {
+        DataSourceManager driverManager = new DataSourceManager(jdbcDataSourceDriver);
+        return driverManager;
     }
 }

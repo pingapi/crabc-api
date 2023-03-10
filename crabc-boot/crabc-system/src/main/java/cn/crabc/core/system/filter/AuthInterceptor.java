@@ -1,13 +1,14 @@
 package cn.crabc.core.system.filter;
 
 import cn.crabc.core.app.exception.CustomException;
-import cn.crabc.core.system.component.BaseCache;
 import cn.crabc.core.system.entity.BaseApp;
 import cn.crabc.core.system.entity.dto.ApiInfoDTO;
 import cn.crabc.core.system.enums.ApiAuthEnum;
 import cn.crabc.core.system.util.ApiThreadLocal;
 import cn.crabc.core.system.util.RequestUtils;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,13 +27,18 @@ public class AuthInterceptor implements HandlerInterceptor {
     // API开放接口前缀
     private final static String API_PRE = "/api/web/";
     @Autowired
-    private BaseCache baseCache;
+    @Qualifier("apiCache")
+    Cache<String, Object> apiCache;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();
         String method = request.getMethod();
-        ApiInfoDTO apiInfo = baseCache.getCacheApis(method + "_" + path.replace(API_PRE, ""));
+        Object data = apiCache.getIfPresent(method + "_" + path.replace(API_PRE, ""));
+        if (data == null) {
+            throw new CustomException(53005, "API不存在");
+        }
+        ApiInfoDTO apiInfo = (ApiInfoDTO) apiCache;
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             Boolean auth = checkAppCode(request, apiInfo);
             if (auth == false) {
