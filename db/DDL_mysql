@@ -59,7 +59,7 @@ CREATE TABLE `base_datasource` (
   PRIMARY KEY (`datasource_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据源配置';
 
-CREATE TABLE `base_api_group` (
+CREATE TABLE `base_group` (
   `group_id` int NOT NULL AUTO_INCREMENT COMMENT '自增主键',
   `parent_id` int NOT NULL COMMENT '父类Id',
   `group_name` varchar(500) NOT NULL,
