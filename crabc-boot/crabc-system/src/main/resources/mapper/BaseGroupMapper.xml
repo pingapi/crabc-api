@@ -10,7 +10,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             group_name,
             parent_id
         FROM
-            base_api_group
+            base_group
     </select>
 
     <select id="selectOne" resultType="cn.crabc.core.system.entity.BaseGroup">
@@ -21,12 +21,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             create_by,
             create_time
         FROM
-            base_api_group
+            base_group
         where group_id =#{groupId}
     </select>
 
     <update id="update" parameterType="cn.crabc.core.system.entity.BaseGroup">
-        UPDATE base_api_group
+        UPDATE base_group
         <set>
             <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
             <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="groupId" parameterType="cn.crabc.core.system.entity.BaseGroup">
-        insert into base_api_group(
+        insert into base_group(
         <if test="groupName != null and groupName != ''">group_name,</if>
         <if test="parentId != null and parentId != ''">parent_id,</if>
         <if test="groupDesc != null and groupDesc != ''">group_desc,</if>
@@ -53,10 +53,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 
     <delete id="delete">
-        delete from base_api_group where group_id =#{groupId}
+        delete from base_group where group_id =#{groupId}
     </delete>
 
     <delete id="deleteAll">
-        delete from base_api_group where create_by =#{userId}
+        delete from base_group where create_by =#{userId}
     </delete>
 </mapper>
