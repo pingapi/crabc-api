@@ -117,3 +117,26 @@ CREATE TABLE `base_app_api` (
   `create_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='应用与API授权关系';
+
+-- pingapi.base_api_log definition
+
+CREATE TABLE `base_api_log` (
+  `log_id` bigint NOT NULL AUTO_INCREMENT COMMENT '日志主键',
+  `api_id` bigint DEFAULT NULL COMMENT 'api编号',
+  `api_name` varchar(255) DEFAULT NULL COMMENT 'api名称',
+  `auth_type` varchar(50) DEFAULT NULL COMMENT '认证方式',
+  `app_name` varchar(50) DEFAULT NULL COMMENT '应用名称',
+  `api_method` varchar(20) DEFAULT NULL COMMENT '请求方式',
+  `api_path` varchar(1000) DEFAULT NULL COMMENT '请求地址',
+  `request_ip` varchar(128) DEFAULT NULL COMMENT '主机地址',
+  `query_param` varchar(2000)  COMMENT '请求参数',
+  `request_body` text COMMENT '请求Body参数',
+  `response_body` text COMMENT '返回参数',
+  `body_size` int DEFAULT NULL COMMENT '响应body大小',
+  `request_status` varchar(50) DEFAULT NULL COMMENT '操作状态',
+  `request_time` datetime DEFAULT NULL COMMENT '请求时间',
+  `response_time` datetime DEFAULT NULL COMMENT '响应时间',
+  `cost_time` int DEFAULT '0' COMMENT '消耗时间',
+  `visitor_name` varchar(50) DEFAULT NULL COMMENT '访问人员',
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='接口访问日志';
