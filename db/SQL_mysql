@@ -140,3 +140,12 @@ CREATE TABLE `base_api_log` (
   `visitor_name` varchar(50) DEFAULT NULL COMMENT '访问人员',
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='接口访问日志';
+
+-- 初始化数据
+INSERT INTO pingapi.base_sys_user
+(user_id, user_name, nick_name, user_type, password, dept, `role`, email, phone, sex, picture, status, create_by, create_time, update_by, update_time, remark)
+VALUES(1, 'admin', '管理员', '0', '0192023A7BBD73250516F069DF18B500', 'root', 'admin', '', '', '0', '', '0', '', NULL, '', NULL, '密码：admin123');
+
+INSERT INTO pingapi.base_group
+(group_id, parent_id, group_name, group_desc, create_by, create_time, update_by, update_time)
+VALUES(1, 0, '根目录', '根目录', '0', NULL, NULL, NULL);
