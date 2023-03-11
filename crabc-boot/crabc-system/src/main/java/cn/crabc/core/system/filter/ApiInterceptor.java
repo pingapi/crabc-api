@@ -80,7 +80,7 @@ public class ApiInterceptor implements HandlerInterceptor {
         ApiInfoDTO apiInfo = ApiThreadLocal.get();
         log.setApiId(apiInfo.getApiId());
         log.setApiName(apiInfo.getApiName());
-        log.setApiPath(apiInfo.getApiPath());
+        log.setApiPath(request.getRequestURI());
         log.setApiMethod(apiInfo.getApiMethod());
         log.setAuthType(apiInfo.getAuthType());
         log.setRequestIp(RequestUtils.getIp(request));
