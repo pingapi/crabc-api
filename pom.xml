@@ -30,7 +30,6 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-            <!-- SpringBoot 依赖配置 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
