@@ -53,13 +53,18 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
             dataSourceId = dataSourceId + ":" + schema;
         }
         JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
+        // 判断是否是预览运行SQL
         PageInfo pageInfo = null;
+        String execType = null;
         List<Map<String, Object>> list = new ArrayList<>();
         try {
             Map<String, Object> paramsMap = new HashMap<>();
             paramsMap.put(BaseConstant.BASE_SQL, sql);
             if (params != null && params instanceof Map) {
                 Map<String, Object> map = (Map<String, Object>) params;
+                if (map.size() == 1 && map.containsKey(BaseConstant.BASE_API_EXEC_TYPE)){
+                    execType = map.get(BaseConstant.BASE_API_EXEC_TYPE).toString();
+                }
                 paramsMap.putAll(map);
             }
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
@@ -75,9 +80,13 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
         } catch (Exception e) {
             Throwable cause = e.getCause();
             log.error("--SQL执行失败，请检查SQL是否正常: {}", cause == null ? e : cause.getMessage());
-            Map<String, Object> errorMap = new HashMap<>();
-            errorMap.put("errorMsg", cause == null ? e.getMessage() : cause.getMessage());
-            list.add(errorMap);
+            if (execType == null) {
+                throw new CustomException(51000, cause == null ? e.getMessage() : cause.getMessage());
+            }else{
+                Map<String, Object> errorMap = new HashMap<>();
+                errorMap.put("errorMsg", "SQL执行失败："+cause == null ? e.getMessage() : cause.getMessage());
+                list.add(errorMap);
+            }
         } finally {
             PageHelper.clearPage();
             JdbcDataSourceRouter.remove();

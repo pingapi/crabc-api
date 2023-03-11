@@ -8,7 +8,6 @@ import cn.crabc.core.system.entity.BaseApiSql;
  *
  * @author yuqf
  */
-
 public class ApiInfoParam {
 
     /**

@@ -65,5 +65,8 @@ public class BaseConstant {
      * redis缓存字段
      */
     public static final String CACHE_METADATA_COLUMN = "metadata_column:";
-
+    /**
+     * SQL执行方式
+     */
+    public static final String BASE_API_EXEC_TYPE = "base_api_exec_type:";
 }

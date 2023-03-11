@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and api_status =#{devType}
             </if>
         </where>
-        ORDER BY api_id
+        ORDER BY api_id desc
     </select>
 
     <select id="selectApiGroup" resultType="cn.crabc.core.system.entity.vo.ApiComboBoxVO">

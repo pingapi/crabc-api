@@ -8,6 +8,7 @@ import cn.crabc.core.system.service.system.IBaseApiTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +30,9 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
         if (schema != null && !"".equals(schema)) {
             datasourceId = datasourceId + ":" + schema;
         }
-        List<Map<String, Object>> list = dataSourceDriver.selectList(datasourceId, schema, sql, null);
+        Map<String, Object> params = new HashMap<>();
+        params.put(BaseConstant.BASE_API_EXEC_TYPE, "preview");
+        List<Map<String, Object>> list = dataSourceDriver.selectList(datasourceId, schema, sql, params);
         PreviewVO preview = new PreviewVO();
         if (list != null && !list.isEmpty()) {
             preview.setData(list);

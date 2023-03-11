@@ -3,6 +3,7 @@ package cn.crabc.core.system.entity.dto;
 import cn.crabc.core.system.entity.BaseApiInfo;
 import cn.crabc.core.system.entity.BaseApp;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,6 +26,13 @@ public class ApiInfoDTO extends BaseApiInfo {
     private String datasourceType;
 
     private String schemaName;
+
+    /**
+     * 请求时间
+     */
+    private Date requestDate;
+
+    private Long requestTime;
 
     /**
      * 有权限的应用
@@ -69,5 +77,21 @@ public class ApiInfoDTO extends BaseApiInfo {
 
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
+    }
+
+    public Date getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(Date requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public Long getRequestTime() {
+        return requestTime;
+    }
+
+    public void setRequestTime(Long requestTime) {
+        this.requestTime = requestTime;
     }
 }

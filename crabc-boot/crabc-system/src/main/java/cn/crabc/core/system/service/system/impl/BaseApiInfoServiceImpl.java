@@ -190,9 +190,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (oldApiInfo == null) {
             throw new CustomException(52002, "API不存在");
         }
-        if (apiInfoParam.getBaseInfo().getVersion().equals(oldApiInfo.getVersion())) {
-            throw new CustomException(52003, "API版本号[" + oldApiInfo.getVersion() + "]已存在，请变更版本号");
-        }
+//        if (apiInfoParam.getBaseInfo().getVersion().equals(oldApiInfo.getVersion())) {
+//            throw new CustomException(52003, "API版本号[" + oldApiInfo.getVersion() + "]已存在，请变更版本号");
+//        }
         // 已存在发布的版本则保存一条历史数据
         if (ApiStateEnum.RELEASE.getName().equals(oldApiInfo.getApiStatus())) {
             this.insertHistory(oldApiInfo);
