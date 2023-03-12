@@ -46,7 +46,7 @@ public class BaseUserServiceImpl implements IBaseUserService {
             return 0;
         }
         baseUser.setUpdateBy("1");
-        baseUser.setStatus("0");
+        baseUser.setStatus("1");
         baseUser.setUpdateTime(new Date());
         return baseUserMapper.updateUser(baseUser);
     }
