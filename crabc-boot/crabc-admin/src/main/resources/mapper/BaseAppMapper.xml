@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.admin.mapper.BaseAppMapper">
+
+    <select id="selectList" resultType="cn.crabc.core.admin.entity.BaseApp">
+        SELECT
+            app_id,
+            app_name,
+            app_desc,
+            app_code,
+            app_key,
+            app_secret,
+            strategy_type,
+            ips,
+            update_time,
+            enabled
+        FROM
+            base_app
+        <where>
+            <if test="appName !=null and appName !=''">
+                app_name like concat('%',#{appName},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectApiApp" resultType="cn.crabc.core.admin.entity.BaseApp">
+        SELECT
+            aa.api_id,
+            ap.app_id,
+            ap.app_code,
+            ap.app_key,
+            ap.app_secret,
+            ap.strategy_type,
+            ap.ips
+        FROM
+            base_app_api aa
+        LEFT JOIN base_app ap ON
+                aa.app_id = ap.app_id
+        WHERE
+            ap.enabled = 1
+        <if test="apiId != null">
+            and aa.api_id =#{apiId}
+        </if>
+    </select>
+
+    <select id="selectOne" resultType="cn.crabc.core.admin.entity.BaseApp">
+        SELECT
+            app_id,
+            app_name,
+            app_desc,
+            app_code,
+            app_key,
+            app_secret,
+            strategy_type,
+            ips,
+            update_time,
+            update_by,
+            enabled
+        FROM
+            base_app
+        where app_id =#{appId}
+    </select>
+
+    <update id="update" parameterType="cn.crabc.core.admin.entity.BaseApp">
+        UPDATE base_app
+        <set>
+            <if test="appName != null and appName != ''">app_name =#{appName},</if>
+            <if test="appDesc != null and appDesc != ''">app_desc =#{appDesc},</if>
+            <if test="appCode != null and appCode != ''">app_code =#{appCode},</if>
+            <if test="appKey != null and appKey != ''">app_key =#{appKey},</if>
+            <if test="appSecret != null and appSecret != ''">app_secret =#{appSecret},</if>
+            <if test="strategyType != null and strategyType != ''">strategy_type=#{strategyType},</if>
+            <if test="ips != null and ips != ''">ips =#{ips},</if>
+            <if test="enabled != null">enabled =#{enabled},</if>
+            <if test="updateBy != null and updateBy != ''">update_by=#{updateBy},</if>
+            update_time =#{updateTime}
+        </set>
+        WHERE app_id = #{appId}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="appId" parameterType="cn.crabc.core.admin.entity.BaseApp">
+        insert into base_app(
+        <if test="appName != null and appName != ''">app_name,</if>
+        <if test="appDesc != null and appDesc != ''">app_desc,</if>
+        <if test="appCode != null and appCode != ''">app_code,</if>
+        <if test="appKey != null and appKey != ''">app_key,</if>
+        <if test="appSecret != null and appSecret != ''">app_secret,</if>
+        <if test="strategyType != null and strategyType != ''">strategy_type,</if>
+        <if test="ips != null and ips != ''">ips,</if>
+        <if test="enabled != null">enabled,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="appName != null and appName != ''">#{appName},</if>
+        <if test="appDesc != null and appDesc != ''">#{appDesc},</if>
+        <if test="appCode != null and appCode != ''">#{appCode},</if>
+        <if test="appKey != null and appKey != ''">#{appKey},</if>
+        <if test="appSecret != null and appSecret != ''">#{appSecret},</if>
+        <if test="strategyType != null and strategyType != ''">#{strategyType},</if>
+        <if test="ips != null and ips != ''">#{ips},</if>
+        <if test="enabled != null">#{enabled},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        #{createTime}
+        )
+    </insert>
+
+    <delete id="delete">
+        delete from base_app where app_id =#{appId}
+    </delete>
+
+</mapper>

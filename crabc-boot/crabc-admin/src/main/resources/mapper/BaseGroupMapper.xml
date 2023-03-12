@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.admin.mapper.BaseGroupMapper">
+
+    <select id="selectList" resultType="cn.crabc.core.admin.entity.vo.BaseGroupVO">
+        SELECT
+            group_id,
+            group_name,
+            parent_id
+        FROM
+            base_group
+    </select>
+
+    <select id="selectOne" resultType="cn.crabc.core.admin.entity.BaseGroup">
+        SELECT
+            group_id,
+            group_name,
+            parent_id,
+            create_by,
+            create_time
+        FROM
+            base_group
+        where group_id =#{groupId}
+    </select>
+
+    <update id="update" parameterType="cn.crabc.core.admin.entity.BaseGroup">
+        UPDATE base_group
+        <set>
+            <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="groupDesc != null and groupDesc != ''">group_desc = #{groupDesc},</if>
+            update_time =#{updateTime}
+        </set>
+        WHERE group_id = #{groupId}
+    </update>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="groupId" parameterType="cn.crabc.core.admin.entity.BaseGroup">
+        insert into base_group(
+        <if test="groupName != null and groupName != ''">group_name,</if>
+        <if test="parentId != null and parentId != ''">parent_id,</if>
+        <if test="groupDesc != null and groupDesc != ''">group_desc,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="groupName != null and groupName != ''">#{groupName},</if>
+        <if test="parentId != null and parentId != ''">#{parentId},</if>
+        <if test="groupDesc != null and groupDesc != ''">#{groupDesc},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        #{createTime}
+        )
+    </insert>
+
+    <delete id="delete">
+        delete from base_group where group_id =#{groupId}
+    </delete>
+
+    <delete id="deleteAll">
+        delete from base_group where create_by =#{userId}
+    </delete>
+</mapper>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.admin.mapper.BaseApiInfoMapper">
+
+    <select id="selectList" resultType="cn.crabc.core.admin.entity.BaseApiInfo">
+        SELECT
+            api_id,
+            api_name,
+            api_path,
+            api_type,
+            api_method,
+            auth_type,
+            api_status,
+            enabled,
+            group_id,
+            tenant_id,
+            remarks,
+            version,
+            create_by,
+            create_time,
+            update_by,
+            update_time
+        FROM
+            base_api_info
+        <where>
+            <if test="apiName !=null and apiName !=''">
+                api_name like concat('%',#{apiName},'%')
+            </if>
+            <if test="devType !=null and devType !=''">
+                and api_status =#{devType}
+            </if>
+        </where>
+        ORDER BY api_id desc
+    </select>
+
+    <select id="selectApiGroup" resultType="cn.crabc.core.admin.entity.vo.ApiComboBoxVO">
+        SELECT
+        api_id,
+        api_name,
+        api_type
+        FROM
+        base_api_info where  group_id = #{groupId} and api_status !='history'
+    </select>
+
+    <select id="selectApiApp" resultType="cn.crabc.core.admin.entity.vo.ApiComboBoxVO">
+        SELECT
+            ai.api_id,
+            ai.api_name,
+            ai.api_type
+        FROM
+            base_api_info ai
+        left join
+            base_app_api aa on
+                ai.api_id = aa.api_id
+        WHERE
+            ai.enabled = '1'
+          AND ai.api_status = 'release'
+          <if test="appId != null">
+            and aa.app_id = #{appId}
+          </if>
+    </select>
+
+    <select id="selectApiDetail" resultType="cn.crabc.core.admin.entity.dto.ApiInfoDTO">
+        SELECT
+            i.api_id,
+            i.api_name,
+            i.api_path,
+            i.api_type,
+            i.api_method,
+            i.auth_type,
+            i.api_status,
+            i.enabled,
+            i.group_id,
+            i.tenant_id,
+            s.sql_script,
+            s.datasource_id,
+            s.datasource_type,
+            s.schema_name
+        FROM
+            base_api_info i
+        LEFT JOIN base_api_sql s ON i.api_id = s.api_id
+        WHERE
+            i.api_id = s.api_id AND i.enabled='1' AND i.parent_id = 0 AND i.api_status ='release'
+        <if test="apiId != null">
+            and i.api_id =#{apiId}
+        </if>
+    </select>
+
+    <select id="selectApiById" resultType="cn.crabc.core.admin.entity.BaseApiInfo">
+        SELECT
+            api_id,
+            api_name,
+            api_path,
+            api_type,
+            api_method,
+            auth_type,
+            api_status,
+            enabled,
+            group_id,
+            tenant_id,
+            remarks,
+            create_by,
+            create_time,
+            update_by,
+            update_time,
+            version
+        FROM
+            base_api_info
+        WHERE
+            api_id =#{apiId}
+    </select>
+
+    <select id="selectApiInfo" resultType="cn.crabc.core.admin.entity.BaseApiInfo">
+        SELECT
+            api_id,
+            api_name,
+            api_path,
+            api_type,
+            api_method,
+            auth_type,
+            api_status,
+            enabled,
+            group_id,
+            tenant_id,
+            version
+        FROM
+            base_api_info where api_path =#{apiPath} and api_method =#{method}
+    </select>
+
+    <insert id="insertApiInfo" useGeneratedKeys="true" keyProperty="apiId" parameterType="cn.crabc.core.admin.entity.BaseApiInfo">
+        INSERT into base_api_info(
+        <if test="apiName != null and apiName != ''">api_name,</if>
+        <if test="apiPath != null and apiPath != ''">api_path,</if>
+        <if test="apiType != null and apiType != ''">api_type,</if>
+        <if test="apiMethod != null and apiMethod != ''">api_method,</if>
+        <if test="authType != null and authType != ''">auth_type,</if>
+        <if test="apiStatus != null and apiStatus != ''">api_status,</if>
+        <if test="groupId != null">group_id,</if>
+        <if test="tenantId != null">tenant_id,</if>
+        <if test="version != null and version != ''">version,</if>
+        <if test="parentId != null">parent_id,</if>
+        <if test="remarks != null and remarks != ''">remarks,</if>
+        enabled,
+        create_by,
+        create_time
+        )values(
+        <if test="apiName != null and apiName != ''">#{apiName},</if>
+        <if test="apiPath != null and apiPath != ''">#{apiPath},</if>
+        <if test="apiType != null and apiType != ''">#{apiType},</if>
+        <if test="apiMethod != null and apiMethod != ''">#{apiMethod},</if>
+        <if test="authType != null and authType != ''">#{authType},</if>
+        <if test="apiStatus != null and apiStatus != ''">#{apiStatus},</if>
+        <if test="groupId != null">#{groupId},</if>
+        <if test="tenantId != null">#{tenantId},</if>
+        <if test="version != null and version != ''">#{version},</if>
+        <if test="parentId != null and parentId != ''">#{parentId},</if>
+        <if test="remarks != null and remarks != ''">#{remarks},</if>
+        #{enabled},
+        #{createBy},
+        #{createTime}
+        )
+    </insert>
+
+    <update id="updateApiInfo" parameterType="cn.crabc.core.admin.entity.BaseApiInfo">
+        UPDATE base_api_info
+        <set>
+            <if test="apiName != null and apiName != ''">api_name= #{apiName},</if>
+            <if test="apiPath != null and apiPath != ''">api_path = #{apiPath},</if>
+            <if test="apiType != null and apiType != ''">api_type = #{apiType},</if>
+            <if test="apiMethod != null and apiMethod != ''">api_method = #{apiMethod},</if>
+            <if test="authType != null and authType != ''">auth_type = #{authType},</if>
+            <if test="groupId != null">group_id = #{groupId},</if>
+            <if test="apiStatus != null and apiStatus != ''">api_status = #{apiStatus},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+            <if test="version != null and version != ''">version = #{version},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="tenantId != null">tenant_id = #{tenantId},</if>
+            <if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = #{updateTime}
+        </set>
+        WHERE api_id =#{apiId}
+    </update>
+
+    <update id="updateApiState" parameterType="cn.crabc.core.admin.entity.BaseApiInfo">
+        UPDATE base_api_info
+        <set>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="apiStatus != null and apiStatus != ''">api_status = #{apiStatus},</if>
+            <if test="releaseTime != null">release_time = #{releaseTime},</if>
+            update_by = #{updateBy},
+            update_time = #{updateTime},
+        </set>
+        WHERE api_id =#{apiId}
+    </update>
+
+    <select id="countApi" resultType="java.lang.Integer">
+        select count(1) from base_api_info
+        <where>
+            <if test="apiId != null and apiId !=''">
+                api_id =#{apiId}
+            </if>
+        </where>
+    </select>
+</mapper>
