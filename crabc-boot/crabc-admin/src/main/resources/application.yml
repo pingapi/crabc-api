@@ -4,12 +4,12 @@ server:
 
 spring:
   application:
-    name: crabc-system
+    name: crabc-admin
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   redis:
-    host: 127.0.0.1
+    host: localhost
     port: 6379
     database: 0
     password:
@@ -31,7 +31,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: admin
+    password: root
     druid:
       initial-size: 1
       max-active: 20
@@ -65,7 +65,7 @@ spring:
 # mybatis配置
 mybatis:
   # 搜索指定包别名
-  typeAliasesPackage: cn.crabc.core.system.entity
+  typeAliasesPackage: cn.crabc.core.admin.entity
   # 配置mapper的扫描，找到所有的mapper.xml映射文件
   mapperLocations: classpath*:mapper/**/*.xml
   config-location: classpath:mybatis-config.xml
