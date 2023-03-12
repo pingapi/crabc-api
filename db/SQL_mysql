@@ -83,7 +83,7 @@ CREATE TABLE `base_sys_user` (
   `phone` varchar(13) DEFAULT '' COMMENT '手机号码',
   `sex` char(1) DEFAULT '0' COMMENT '用户性别（0男 1女 2未知）',
   `picture` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '头像',
-  `status` char(1) DEFAULT '0' COMMENT '帐号状态（0正常 1停用）',
+  `status` char(1) DEFAULT '1' COMMENT '帐号状态（1正常 0停用）',
   `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
@@ -142,10 +142,10 @@ CREATE TABLE `base_api_log` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='接口访问日志';
 
 -- 初始化数据
-INSERT INTO pingapi.base_sys_user
+INSERT INTO base_sys_user
 (user_id, user_name, nick_name, user_type, password, dept, `role`, email, phone, sex, picture, status, create_by, create_time, update_by, update_time, remark)
-VALUES(1, 'admin', '管理员', '0', '0192023A7BBD73250516F069DF18B500', 'root', 'admin', '', '', '0', '', '0', '', NULL, '', NULL, '密码：admin123');
+VALUES(1, 'admin', '管理员', '0', '0192023A7BBD73250516F069DF18B500', 'root', 'admin', '', '', '0', '', '1', '1', '2023-03-11 00:00:00', '1', '2023-03-11 00:00:00', '密码：admin123');
 
-INSERT INTO pingapi.base_group
+INSERT INTO base_group
 (group_id, parent_id, group_name, group_desc, create_by, create_time, update_by, update_time)
-VALUES(1, 0, '根目录', '根目录', '0', NULL, NULL, NULL);
+VALUES(1, 0, '根目录', '根目录', '1', '2023-03-11 00:00:00', '1', '2023-03-11 00:00:00');
