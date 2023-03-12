@@ -13,7 +13,7 @@
 
     <modules>
         <module>crabc-plugin</module>
-        <module>crabc-system</module>
+        <module>crabc-admin</module>
         <module>crabc-spi</module>
         <module>crabc-datasource</module>
     </modules>
