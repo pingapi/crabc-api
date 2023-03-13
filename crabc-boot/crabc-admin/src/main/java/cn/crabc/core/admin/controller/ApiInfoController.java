@@ -145,6 +145,10 @@ public class ApiInfoController {
      */
     @PostMapping("/check")
     public Result checkPath(@RequestBody BaseApiInfo baseApiInfo) {
+        Boolean result = apiInfoService.checkApiPath(baseApiInfo.getApiPath(), baseApiInfo.getApiMethod());
+        if (result) {
+            return Result.error("50011", "该接口地址已存在");
+        }
         return Result.success();
     }
 

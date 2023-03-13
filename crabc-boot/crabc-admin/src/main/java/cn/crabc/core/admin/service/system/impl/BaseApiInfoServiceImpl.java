@@ -97,8 +97,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     @Override
-    public BaseApiInfo getApiInfo(String apiPath, String method) {
-        return apiInfoMapper.selectApiInfo(apiPath, method);
+    public Boolean checkApiPath(String apiPath, String method) {
+        BaseApiInfo baseApiInfo = apiInfoMapper.selectApiInfo(apiPath, method);
+        return baseApiInfo != null ? true : false;
     }
 
     @Override

@@ -32,6 +32,6 @@ import org.springframework.cache.annotation.EnableCaching;
 public class AdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class, args);
-        System.out.println("crabc-admin 启动成功!!!");
+        System.out.println("crabc-admin start success!!!");
     }
 }

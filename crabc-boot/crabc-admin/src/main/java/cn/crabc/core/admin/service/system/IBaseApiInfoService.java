@@ -53,13 +53,13 @@ public interface IBaseApiInfoService {
     List<ApiComboBoxVO> getApiListGroup(Integer groupId);
 
     /**
-     * 根据API地址查询详情
+     * 校验接口URL是否存在
      *
      * @param apiPath
      * @param method
      * @return
      */
-    BaseApiInfo getApiInfo(String apiPath, String method);
+    Boolean checkApiPath(String apiPath, String method);
 
     /**
      * apiId获取详情
