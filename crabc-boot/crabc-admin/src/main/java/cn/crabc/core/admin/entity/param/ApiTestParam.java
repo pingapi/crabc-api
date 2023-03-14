@@ -1,5 +1,7 @@
 package cn.crabc.core.admin.entity.param;
 
+import java.util.Map;
+
 public class ApiTestParam {
 
     private String sqlScript;
@@ -17,6 +19,8 @@ public class ApiTestParam {
     private String schemaName;
 
     private String sqlParams;
+
+    private Map<String,Object> requestParams;
 
     public String getSqlScript() {
         return sqlScript;
@@ -56,5 +60,13 @@ public class ApiTestParam {
 
     public void setSchemaName(String schemaName) {
         this.schemaName = schemaName;
+    }
+
+    public Map<String, Object> getRequestParams() {
+        return requestParams;
+    }
+
+    public void setRequestParams(Map<String, Object> requestParams) {
+        this.requestParams = requestParams;
     }
 }

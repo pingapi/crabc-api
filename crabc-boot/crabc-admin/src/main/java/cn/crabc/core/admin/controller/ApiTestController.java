@@ -45,17 +45,17 @@ public class ApiTestController {
      * @return
      */
     @PostMapping("/verify/{apiId}")
-    public Result testApiSql(@PathVariable Long apiId, @RequestBody Map<String,Object> params) {
-        BaseApiSql apiSql = baseApiSqlService.getApiSql(apiId);
-        if (apiSql == null){
-            return Result.error(52002,"API不存在");
-        }
-        if (apiSql.getDatasourceType() == null){
-            apiSql.setDatasourceType("mysql");
+    public Result testApiSql(@PathVariable Long apiId, @RequestBody ApiTestParam params) {
+//        BaseApiSql apiSql = baseApiSqlService.getApiSql(apiId);
+//        if (apiSql == null){
+//            return Result.error(52002,"API不存在");
+//        }
+        if (params.getDatasourceType() == null){
+            params.setDatasourceType("mysql");
         }
         Map<String,Object> map = new HashMap<>();
         long start = System.currentTimeMillis();
-        Object list = baseapitestService.testApi(apiSql.getDatasourceId(),apiSql.getSchemaName(), apiSql.getSqlScript(), params);
+        Object list = baseapitestService.testApi(params.getDatasourceId(),params.getSchemaName(), params.getSqlScript(), params.getRequestParams());
         long end = System.currentTimeMillis();
         map.put("data", JSON.toJSONString(Result.success(list)));
         map.put("runTime",end - start);

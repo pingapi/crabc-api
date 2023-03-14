@@ -21,6 +21,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +51,10 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Qualifier("apiCache")
     Cache<String, Object> apiInfoCache;
 
+    @Scheduled(cron = "*/30 * * * * ?")
+    public void task(){
+        initApi();
+    }
     @Override
     public void initApi() {
         List<ApiInfoDTO> apis = this.getApiCache(null);
@@ -132,6 +137,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         apiInfoMapper.insertApiInfo(baseApiInfo);
 
         BaseApiSql baseApiSql = apiInfo.getSqlInfo();
+        if (baseApiSql.getDatasourceId() == null && baseApiSql.getSqlScript() == null){
+            return 1L;
+        }
         baseApiSql.setApiId(baseApiInfo.getApiId());
         baseApiSql.setPageSetup(baseApiInfo.getPageSetup());
         baseApiSql.setUpdateTime(date);
@@ -160,7 +168,14 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiSql.setUpdateTime(updateTime);
         baseApiSql.setUpdateBy(UserThreadLocal.getUserId());
         baseApiSql.setPageSetup(baseApiInfo.getPageSetup());
-        apiSqlMapper.updateApiSql(baseApiSql);
+
+        BaseApiSql apiSql = apiSqlMapper.selectApiSql(baseApiInfo.getApiId());
+        if (apiSql == null) {
+            baseApiSql.setApiId(baseApiInfo.getApiId());
+            apiSqlMapper.insertApiSql(baseApiSql);
+        }else{
+            apiSqlMapper.updateApiSql(baseApiSql);
+        }
         return apiInfo.getSqlInfo().getApiId();
     }
 
