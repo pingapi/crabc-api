@@ -36,5 +36,5 @@ public interface IBaseApiSqlService {
      * @param apiId
      * @return
      */
-    Integer deleteApiSql(Integer apiId);
+    Integer deleteApiSql(Long apiId, String userId);
 }

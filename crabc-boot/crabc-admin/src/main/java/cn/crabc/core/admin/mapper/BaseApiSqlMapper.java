@@ -1,6 +1,7 @@
 package cn.crabc.core.admin.mapper;
 
 import cn.crabc.core.admin.entity.BaseApiSql;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * API SQL配置 Mapper接口
@@ -35,5 +36,5 @@ public interface BaseApiSqlMapper{
      * @param apiId
      * @return
      */
-    Integer deleteApiSql(Integer apiId);
+    Integer deleteApiSql(@Param("apiId") Long apiId, @Param("userId") String userId);
 }

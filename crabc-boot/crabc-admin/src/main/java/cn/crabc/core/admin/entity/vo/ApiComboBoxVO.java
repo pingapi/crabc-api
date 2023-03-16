@@ -8,6 +8,8 @@ public class ApiComboBoxVO {
 
     private String apiType;
 
+    private String apiStatus;
+
     public Long getApiId() {
         return apiId;
     }
@@ -30,5 +32,13 @@ public class ApiComboBoxVO {
 
     public void setApiType(String apiType) {
         this.apiType = apiType;
+    }
+
+    public String getApiStatus() {
+        return apiStatus;
+    }
+
+    public void setApiStatus(String apiStatus) {
+        this.apiStatus = apiStatus;
     }
 }

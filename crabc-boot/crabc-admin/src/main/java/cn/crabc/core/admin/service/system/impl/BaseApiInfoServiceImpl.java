@@ -1,6 +1,5 @@
 package cn.crabc.core.admin.service.system.impl;
 
-import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.admin.entity.BaseApiInfo;
 import cn.crabc.core.admin.entity.BaseApiSql;
 import cn.crabc.core.admin.entity.BaseApp;
@@ -11,14 +10,15 @@ import cn.crabc.core.admin.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.admin.entity.vo.ApiInfoVO;
 import cn.crabc.core.admin.enums.ApiStateEnum;
 import cn.crabc.core.admin.mapper.BaseApiInfoMapper;
-import cn.crabc.core.admin.mapper.BaseApiSqlMapper;
 import cn.crabc.core.admin.mapper.BaseAppApiMapper;
 import cn.crabc.core.admin.mapper.BaseAppMapper;
 import cn.crabc.core.admin.service.system.IBaseApiInfoService;
 import cn.crabc.core.admin.util.PageInfo;
 import cn.crabc.core.admin.util.UserThreadLocal;
+import cn.crabc.core.app.exception.CustomException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -41,8 +41,6 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     @Autowired
     private BaseApiInfoMapper apiInfoMapper;
-    @Autowired
-    private BaseApiSqlMapper apiSqlMapper;
     @Autowired
     private BaseAppMapper baseAppMapper;
     @Autowired
@@ -102,9 +100,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     @Override
-    public Boolean checkApiPath(String apiPath, String method) {
-        BaseApiInfo baseApiInfo = apiInfoMapper.selectApiInfo(apiPath, method);
-        return baseApiInfo != null ? true : false;
+    public Boolean checkApiPath(Long apiId, String apiPath, String method) {
+        Integer count = apiInfoMapper.checkApiPath(apiId, apiPath, method);
+        return count > 0 ? true : false;
     }
 
     @Override
@@ -116,7 +114,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     public ApiInfoVO getApiDetail(Long apiId) {
         ApiInfoVO result = new ApiInfoVO();
         BaseApiInfo baseApiInfo = apiInfoMapper.selectApiById(apiId);
-        BaseApiSql baseApiSql = apiSqlMapper.selectApiSql(apiId);
+        BaseApiSql baseApiSql = new BaseApiSql();
+        BeanUtils.copyProperties(baseApiInfo, baseApiSql);
         result.setSqlInfo(baseApiSql);
         baseApiInfo.setPageSetup(baseApiSql.getPageSetup());
         result.setBaseInfo(baseApiInfo);
@@ -128,24 +127,22 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Transactional(rollbackFor = Exception.class)
     public Long addApiInfo(ApiInfoParam apiInfo) {
         Date date = new Date();
-        BaseApiInfo baseApiInfo = apiInfo.getBaseInfo();
-        baseApiInfo.setApiStatus(ApiStateEnum.EDIT.getName());
-        baseApiInfo.setEnabled(0);
-        baseApiInfo.setApiType("SQL");
-        baseApiInfo.setCreateTime(date);
-        baseApiInfo.setUpdateBy(UserThreadLocal.getUserId());
-        apiInfoMapper.insertApiInfo(baseApiInfo);
-
-        BaseApiSql baseApiSql = apiInfo.getSqlInfo();
-        if (baseApiSql.getDatasourceId() == null && baseApiSql.getSqlScript() == null){
-            return 1L;
+        BaseApiInfo api = apiInfo.getBaseInfo();
+        BaseApiSql sql = apiInfo.getSqlInfo();
+        api.setApiStatus(ApiStateEnum.EDIT.getName());
+        api.setEnabled(0);
+        api.setApiType("SQL");
+        api.setDatasourceId(sql.getDatasourceId());
+        api.setSchemaName(sql.getSchemaName());
+        api.setDatasourceType(sql.getDatasourceType());
+        api.setSqlScript(sql.getSqlScript());
+        api.setCreateTime(date);
+        api.setCreateBy(UserThreadLocal.getUserId());
+        if (api.getGroupId() == null) {
+            api.setGroupId(1);
         }
-        baseApiSql.setApiId(baseApiInfo.getApiId());
-        baseApiSql.setPageSetup(baseApiInfo.getPageSetup());
-        baseApiSql.setUpdateTime(date);
-        baseApiSql.setUpdateBy(UserThreadLocal.getUserId());
-        apiSqlMapper.insertApiSql(baseApiSql);
-        return baseApiInfo.getApiId();
+        apiInfoMapper.insertApiInfo(api);
+        return api.getApiId();
     }
 
     @Override
@@ -155,28 +152,23 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (count == 0) {
             throw new CustomException(52002, "API不存在");
         }
-        BaseApiInfo baseApiInfo = apiInfo.getBaseInfo();
+        BaseApiInfo api = apiInfo.getBaseInfo();
+        BaseApiSql sql = apiInfo.getSqlInfo();
         Date updateTime = new Date();
-        baseApiInfo.setUpdateTime(updateTime);
-        baseApiInfo.setApiStatus(ApiStateEnum.EDIT.getName());
-        baseApiInfo.setEnabled(0);
-        baseApiInfo.setApiType("SQL");
-        baseApiInfo.setUpdateBy(UserThreadLocal.getUserId());
-        apiInfoMapper.updateApiInfo(baseApiInfo);
-
-        BaseApiSql baseApiSql = apiInfo.getSqlInfo();
-        baseApiSql.setUpdateTime(updateTime);
-        baseApiSql.setUpdateBy(UserThreadLocal.getUserId());
-        baseApiSql.setPageSetup(baseApiInfo.getPageSetup());
-
-        BaseApiSql apiSql = apiSqlMapper.selectApiSql(baseApiInfo.getApiId());
-        if (apiSql == null) {
-            baseApiSql.setApiId(baseApiInfo.getApiId());
-            apiSqlMapper.insertApiSql(baseApiSql);
-        }else{
-            apiSqlMapper.updateApiSql(baseApiSql);
+        api.setApiStatus(ApiStateEnum.EDIT.getName());
+        api.setEnabled(0);
+        api.setApiType("SQL");
+        api.setDatasourceId(sql.getDatasourceId());
+        api.setSchemaName(sql.getSchemaName());
+        api.setDatasourceType(sql.getDatasourceType());
+        api.setSqlScript(sql.getSqlScript());
+        api.setUpdateTime(updateTime);
+        api.setUpdateBy(UserThreadLocal.getUserId());
+        if (api.getGroupId() == null) {
+            api.setGroupId(1);
         }
-        return apiInfo.getSqlInfo().getApiId();
+        apiInfoMapper.updateApiInfo(api);
+        return apiInfo.getBaseInfo().getApiId();
     }
 
     @Override
@@ -197,6 +189,13 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         }
         apiInfoMapper.updateApiState(baseApiInfo);
         return 1;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer deleteApi(Long apiId, String userId) {
+        Integer result = apiInfoMapper.deleteApiInfo(apiId, userId);
+        return result;
     }
 
     @Override
@@ -222,11 +221,6 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiInfo.setUpdateBy(UserThreadLocal.getUserId());
         baseApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
         apiInfoMapper.updateApiInfo(baseApiInfo);
-
-        BaseApiSql baseApiSql = apiInfoParam.getSqlInfo();
-        baseApiSql.setUpdateTime(updateTime);
-        baseApiSql.setUpdateBy(UserThreadLocal.getUserId());
-        apiSqlMapper.updateApiSql(baseApiSql);
         // 更新缓存
         this.getApiCache(baseApiInfo.getApiId());
         return apiId;
@@ -284,11 +278,5 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         apiInfo.setUpdateTime(updateTime);
         apiInfo.setApiId(null);
         apiInfoMapper.insertApiInfo(apiInfo);
-
-        BaseApiSql oldApiSql = apiSqlMapper.selectApiSql(apiId);
-        oldApiSql.setSqlId(null);
-        oldApiSql.setUpdateTime(updateTime);
-        oldApiSql.setApiId(apiInfo.getApiId());
-        apiSqlMapper.insertApiSql(oldApiSql);
     }
 }

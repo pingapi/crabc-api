@@ -26,6 +26,6 @@ public interface BaseDataHandleMapper {
      * @return
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "executeUpdate")
-    Integer executeUpdate(Map<String, Object> params);
+    Object executeUpdate(Map<String, Object> params);
 
 }

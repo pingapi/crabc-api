@@ -15,7 +15,7 @@ public interface BaseDataHandle<T> {
 
     Object selectPage(String dataSourceId, String schema, String sql, Object params, int pageNum, int pageSize);
 
-    Object execute(String dataSourceId, String schema, String sql);
+    Object execute(String dataSourceId, String schema, String sql, Object params);
 
     int insert(String sql, T entity);
 

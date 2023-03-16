@@ -39,7 +39,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
         api_id,
         api_name,
-        api_type
+        api_type,
+        api_status
         FROM
         base_api_info where  group_id = #{groupId} and api_status !='history'
     </select>
@@ -64,27 +65,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectApiDetail" resultType="cn.crabc.core.admin.entity.dto.ApiInfoDTO">
         SELECT
-            i.api_id,
-            i.api_name,
-            i.api_path,
-            i.api_type,
-            i.api_method,
-            i.auth_type,
-            i.api_status,
-            i.enabled,
-            i.group_id,
-            i.tenant_id,
-            s.sql_script,
-            s.datasource_id,
-            s.datasource_type,
-            s.schema_name
+            api_id,
+            api_name,
+            api_path,
+            api_type,
+            api_method,
+            auth_type,
+            api_status,
+            enabled,
+            group_id,
+            tenant_id,
+            remarks,
+            version,
+            datasource_id,
+            datasource_type,
+            schema_name,
+            sql_script
         FROM
-            base_api_info i
-        LEFT JOIN base_api_sql s ON i.api_id = s.api_id
+            base_api_info
         WHERE
-            i.api_id = s.api_id AND i.enabled='1' AND i.parent_id = 0 AND i.api_status ='release'
+             enabled='1' AND parent_id = 0 AND api_status ='release'
         <if test="apiId != null">
-            and i.api_id =#{apiId}
+            and api_id =#{apiId}
         </if>
     </select>
 
@@ -105,28 +107,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             create_time,
             update_by,
             update_time,
-            version
+            version,
+            datasource_id,
+            datasource_type,
+            schema_name,
+            sql_script,
+            page_setup
         FROM
             base_api_info
         WHERE
             api_id =#{apiId}
     </select>
 
-    <select id="selectApiInfo" resultType="cn.crabc.core.admin.entity.BaseApiInfo">
+    <select id="checkApiPath">
         SELECT
-            api_id,
-            api_name,
-            api_path,
-            api_type,
-            api_method,
-            auth_type,
-            api_status,
-            enabled,
-            group_id,
-            tenant_id,
-            version
+            count(1)
         FROM
-            base_api_info where api_path =#{apiPath} and api_method =#{method}
+            base_api_info where api_path =#{apiPath} and api_method =#{method} and api_id !=#{apiId}
     </select>
 
     <insert id="insertApiInfo" useGeneratedKeys="true" keyProperty="apiId" parameterType="cn.crabc.core.admin.entity.BaseApiInfo">
@@ -142,6 +139,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="version != null and version != ''">version,</if>
         <if test="parentId != null">parent_id,</if>
         <if test="remarks != null and remarks != ''">remarks,</if>
+        <if test="sqlScript != null and sqlScript !=''">sql_script,</if>
+        <if test="datasourceId != null and datasourceId != ''">datasource_id,</if>
+        <if test="datasourceType != null and datasourceType != ''">datasource_type,</if>
+        <if test="schemaName != null and schemaName != ''">schema_name,</if>
+        <if test="pageSetup != null">page_setup,</if>
         enabled,
         create_by,
         create_time
@@ -157,6 +159,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="version != null and version != ''">#{version},</if>
         <if test="parentId != null and parentId != ''">#{parentId},</if>
         <if test="remarks != null and remarks != ''">#{remarks},</if>
+        <if test="sqlScript != null and sqlScript !=''">#{sqlScript},</if>
+        <if test="datasourceId != null and datasourceId != ''">#{datasourceId},</if>
+        <if test="datasourceType != null and datasourceType != ''">#{datasourceType},</if>
+        <if test="schemaName != null and schemaName != ''">#{schemaName},</if>
+        <if test="pageSetup != null">#{pageSetup},</if>
         #{enabled},
         #{createBy},
         #{createTime}
@@ -179,6 +186,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="parentId != null">parent_id = #{parentId},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
+            <if test="sqlScript != null and sqlScript !=''">sql_script = #{sqlScript},</if>
+            <if test="datasourceId != null and datasourceId != ''">datasource_id =#{datasourceId},</if>
+            <if test="datasourceType != null and datasourceType != ''">datasource_type =#{datasourceType},</if>
+            <if test="schemaName != null and schemaName != ''">schema_name =#{schemaName},</if>
+            <if test="pageSetup != null">page_setup =#{pageSetup},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
             update_time = #{updateTime}
         </set>
@@ -196,6 +208,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </set>
         WHERE api_id =#{apiId}
     </update>
+
+    <delete id="deleteApiInfo">
+        DELETE FROM base_api_info where api_status ='edit' and api_id =#{apiId} and create_by =#{userId}
+    </delete>
 
     <select id="countApi" resultType="java.lang.Integer">
         select count(1) from base_api_info

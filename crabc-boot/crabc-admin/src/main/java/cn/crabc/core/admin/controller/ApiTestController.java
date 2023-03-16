@@ -1,9 +1,7 @@
 package cn.crabc.core.admin.controller;
 
-import cn.crabc.core.admin.entity.BaseApiSql;
 import cn.crabc.core.admin.entity.param.ApiTestParam;
 import cn.crabc.core.admin.entity.vo.PreviewVO;
-import cn.crabc.core.admin.service.system.IBaseApiSqlService;
 import cn.crabc.core.admin.service.system.IBaseApiTestService;
 import cn.crabc.core.admin.util.Result;
 import com.alibaba.fastjson2.JSON;
@@ -24,8 +22,6 @@ public class ApiTestController {
 
     @Autowired
     private IBaseApiTestService baseapitestService;
-    @Autowired
-    private IBaseApiSqlService baseApiSqlService;
 
 
     /**
@@ -46,10 +42,6 @@ public class ApiTestController {
      */
     @PostMapping("/verify/{apiId}")
     public Result testApiSql(@PathVariable Long apiId, @RequestBody ApiTestParam params) {
-//        BaseApiSql apiSql = baseApiSqlService.getApiSql(apiId);
-//        if (apiSql == null){
-//            return Result.error(52002,"API不存在");
-//        }
         if (params.getDatasourceType() == null){
             params.setDatasourceType("mysql");
         }

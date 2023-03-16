@@ -27,8 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="datasourceType != null and datasourceType != ''">datasource_type,</if>
         <if test="schemaName != null and schemaName != ''">schema_name,</if>
         <if test="pageSetup != null">page_setup,</if>
-        <if test="updateBy != null and updateBy != ''">update_by,</if>
-        update_time
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
         )values(
         <if test="apiId != null and apiId !=''">#{apiId},</if>
         <if test="sqlScript != null and sqlScript !=''">#{sqlScript},</if>
@@ -36,8 +36,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="datasourceType != null and datasourceType != ''">#{datasourceType},</if>
         <if test="schemaName != null and schemaName != ''">#{schemaName},</if>
         <if test="pageSetup != null">#{pageSetup},</if>
-        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
-        #{updateTime}
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        #{createTime}
         )
     </insert>
 
@@ -56,6 +56,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteApiSql">
-        DELETE FROM base_api_sql where api_id =#{apiId}
+        DELETE FROM base_api_sql where api_id =#{apiId} and create_by =#{userId}
     </delete>
 </mapper>

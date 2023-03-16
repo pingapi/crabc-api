@@ -3,13 +3,11 @@ package cn.crabc.core.admin.api;
 import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.service.core.IBaseDataService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
-import cn.crabc.core.admin.util.RequestUtils;
 import cn.crabc.core.admin.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,26 +24,60 @@ public class ApiServiceController {
     private IBaseDataService baseDataService;
 
     /**
-     * API请求方法
+     * API GET请求方法
      *
-     * @param request
      * @return
      */
-    @RequestMapping("/**")
-    public Result service(HttpServletRequest request) {
-        ApiInfoDTO apiInfo = ApiThreadLocal.get();
-        if (apiInfo == null) {
-            return Result.error(5001,  "请求地址不存在！");
+    @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.PATCH})
+    public Result getService(@RequestParam Map<String, Object> paramMap) {
+        ApiInfoDTO api = ApiThreadLocal.get();
+        if (api == null) {
+            return Result.error(5001, "请求地址不存在！");
         }
-        Map<String, Object> params = RequestUtils.getParameters(request);
-        // post请求才解析body
-        if ("POST".equals(request.getMethod().toUpperCase())) {
-            Map<String, Object> bodyMap = RequestUtils.getBodyMap(request);
-            if (bodyMap != null && !bodyMap.isEmpty()) {
-                params.putAll(bodyMap);
-            }
+        List<Object> params = new ArrayList<>();
+        if (paramMap != null && paramMap.size() > 0) {
+            params.add(paramMap);
         }
-        List<Map<String, Object>> query = baseDataService.query(apiInfo.getDatasourceId(), apiInfo.getSchemaName(), apiInfo.getSqlScript(), params);
+        Object query = null;
+        if (api.getSqlScript().trim().startsWith("select") || api.getSqlScript().trim().startsWith("SELECT")) {
+            query = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+        } else {
+            query = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+        }
+        return Result.success(query);
+    }
+
+    /**
+     * API post请求
+     *
+     * @param paramMap
+     * @param body
+     * @return
+     */
+    @RequestMapping(value = "/**", method = {RequestMethod.POST, RequestMethod.PUT})
+    public Result postService(@RequestParam Map<String, Object> paramMap, @RequestBody Object body) {
+        ApiInfoDTO api = ApiThreadLocal.get();
+        if (api == null) {
+            return Result.error(5001, "请求地址不存在！");
+        }
+        List<Object> params = new ArrayList<>();
+        if (paramMap != null && paramMap.size() > 0) {
+            params.add(paramMap);
+        }
+        if (body instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) body;
+            params.add(map);
+        } else if (body instanceof List) {
+            List<Object> list = (List<Object>) body;
+            params.addAll(list);
+        }
+
+        Object query = null;
+        if (api.getSqlScript().trim().startsWith("select") || api.getSqlScript().trim().startsWith("SELECT")) {
+            query = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+        } else {
+            query = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+        }
         return Result.success(query);
     }
 }

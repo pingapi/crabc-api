@@ -10,7 +10,8 @@ import cn.crabc.core.admin.entity.vo.SqlParseVO;
 import cn.crabc.core.admin.service.system.IBaseApiInfoService;
 import cn.crabc.core.admin.util.PageInfo;
 import cn.crabc.core.admin.util.Result;
-import cn.crabc.core.admin.util.SQLUtils;
+import cn.crabc.core.admin.util.SQLUtil;
+import cn.crabc.core.admin.util.UserThreadLocal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -112,6 +113,17 @@ public class ApiInfoController {
     }
 
     /**
+     * 删除API
+     *
+     * @param apiId
+     * @return
+     */
+    @DeleteMapping("/{apiId}")
+    public Result deleteApi(@PathVariable Long apiId) {
+        return Result.success(apiInfoService.deleteApi(apiId, UserThreadLocal.getUserId()));
+    }
+
+    /**
      * SQL解析
      *
      * @param
@@ -120,12 +132,12 @@ public class ApiInfoController {
     @PostMapping("/sqlParse")
     public Result sqlParse(@RequestBody SqlParseVO sqlParse) {
         SqlParseVO sqlParseVO = new SqlParseVO();
-        // 返回字段
-        Set<String> paramNames = SQLUtils.parseParams(sqlParse.getSqlScript());
-        sqlParseVO.setReqColumns(paramNames);
         // 条件字段
+        Set<String> paramNames = SQLUtil.parseParams(sqlParse.getSqlScript());
+        sqlParseVO.setReqColumns(paramNames);
+        // 返回字段
         Set<ColumnParseVo> resColumns = new HashSet<>();
-        Set<String> resNames = SQLUtils.parseColumns(sqlParse.getSqlScript());
+        Set<String> resNames = SQLUtil.analyzeSQL(sqlParse.getSqlScript(), sqlParse.getDatasourceType());
         for (String name : resNames) {
             ColumnParseVo resColumn = new ColumnParseVo();
             resColumn.setColName(name);
@@ -140,12 +152,12 @@ public class ApiInfoController {
     /**
      * 校验接口url
      *
-     * @param baseApiInfo
+     * @param api
      * @return
      */
     @PostMapping("/check")
-    public Result checkPath(@RequestBody BaseApiInfo baseApiInfo) {
-        Boolean result = apiInfoService.checkApiPath(baseApiInfo.getApiPath(), baseApiInfo.getApiMethod());
+    public Result checkPath(@RequestBody BaseApiInfo api) {
+        Boolean result = apiInfoService.checkApiPath(api.getApiId(),api.getApiPath(), api.getApiMethod());
         if (result) {
             return Result.error("50011", "该接口地址已存在");
         }

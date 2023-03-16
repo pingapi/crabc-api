@@ -97,7 +97,7 @@ public class EsDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Object execute(String dataSourceId, String schema, String sql) {
+    public Object execute(String dataSourceId, String schema, String sql, Object params) {
         return null;
     }
 

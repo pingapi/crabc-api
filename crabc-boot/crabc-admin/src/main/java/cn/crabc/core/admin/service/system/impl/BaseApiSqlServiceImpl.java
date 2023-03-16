@@ -33,7 +33,7 @@ public class BaseApiSqlServiceImpl implements IBaseApiSqlService {
     }
 
     @Override
-    public Integer deleteApiSql(Integer apiId) {
-        return apiSqlMapper.deleteApiSql(apiId);
+    public Integer deleteApiSql(Long apiId, String userId) {
+        return apiSqlMapper.deleteApiSql(apiId, userId);
     }
 }

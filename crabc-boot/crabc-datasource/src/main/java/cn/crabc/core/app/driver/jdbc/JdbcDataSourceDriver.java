@@ -62,7 +62,7 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
             paramsMap.put(BaseConstant.BASE_SQL, sql);
             if (params != null && params instanceof Map) {
                 Map<String, Object> map = (Map<String, Object>) params;
-                if (map.size() == 1 && map.containsKey(BaseConstant.BASE_API_EXEC_TYPE)){
+                if (map.size() == 1 && map.containsKey(BaseConstant.BASE_API_EXEC_TYPE)) {
                     execType = map.get(BaseConstant.BASE_API_EXEC_TYPE).toString();
                 }
                 paramsMap.putAll(map);
@@ -82,9 +82,9 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
             log.error("--SQL执行失败，请检查SQL是否正常: {}", cause == null ? e : cause.getMessage());
             if (execType == null) {
                 throw new CustomException(51000, cause == null ? e.getMessage() : cause.getMessage());
-            }else{
+            } else {
                 Map<String, Object> errorMap = new HashMap<>();
-                errorMap.put("errorMsg", "SQL执行失败："+cause == null ? e.getMessage() : cause.getMessage());
+                errorMap.put("errorMsg", "SQL执行失败：" + cause == null ? e.getMessage() : cause.getMessage());
                 list.add(errorMap);
             }
         } finally {
@@ -96,8 +96,25 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     }
 
     @Override
-    public Long execute(String dataSourceId, String schema, String sql) {
-        return null;
+    public Long execute(String dataSourceId, String schema, String sql, Object params) {
+        JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
+        Object result = null;
+        try {
+            Map<String, Object> paramsMap = new HashMap<>();
+            paramsMap.put(BaseConstant.BASE_SQL, sql);
+            if (params != null && params instanceof Map) {
+                Map<String, Object> map = (Map<String, Object>) params;
+                paramsMap.putAll(map);
+            }
+            result = baseDataHandleMapper.executeUpdate(paramsMap);
+        } catch (Exception e) {
+            log.error("--SQL执行失败，请检查SQL是否正常", e);
+            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
+        } finally {
+            // 移除线程
+            JdbcDataSourceRouter.remove();
+        }
+        return 1L;
     }
 
     @Override
@@ -112,18 +129,6 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
 
     @Override
     public int update(String sql, Map<String, Object> entity) {
-        JdbcDataSourceRouter.setDataSourceKey(entity.get(BaseConstant.DATA_SOURCE_ID).toString());
-        Integer result = 0;
-        try {
-            entity.remove(BaseConstant.DATA_SOURCE_ID);
-            result = baseDataHandleMapper.executeUpdate(entity);
-        } catch (Exception e) {
-            log.error("--SQL执行失败，请检查SQL是否正常", e);
-            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
-        } finally {
-            // 移除线程
-            JdbcDataSourceRouter.remove();
-        }
-        return result;
+        return 0;
     }
 }

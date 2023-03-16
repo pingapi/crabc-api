@@ -47,13 +47,13 @@ public interface BaseApiInfoMapper {
     BaseApiInfo selectApiById(Long apiId);
 
     /**
-     * 根据API地址查询详情
+     * 校验api地址是否已经存在
      *
      * @param apiPath
      * @param method
      * @return
      */
-    BaseApiInfo selectApiInfo(@Param("apiPath") String apiPath, @Param("method") String method);
+    Integer checkApiPath(@Param("apiId") Long apiId, @Param("apiPath") String apiPath, @Param("method") String method);
 
 
     List<ApiInfoDTO> selectApiDetail(Long apiId);
@@ -81,6 +81,13 @@ public interface BaseApiInfoMapper {
      * @return
      */
     Integer updateApiState(BaseApiInfo apiInfo);
+
+    /**
+     * 删除API
+     * @param apiId
+     * @return
+     */
+    Integer deleteApiInfo(@Param("apiId") Long apiId,@Param("userId") String userId);
 
     /**
      * API校验统计

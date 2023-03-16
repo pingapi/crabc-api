@@ -20,11 +20,10 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring-boot.version>2.7.9</spring-boot.version>
-        <spring-boot.mybatis.version>2.2.2</spring-boot.mybatis.version>
+        <spring-boot.mybatis.version>2.3.0</spring-boot.mybatis.version>
         <pagehelper.boot.version>1.4.6</pagehelper.boot.version>
         <spring-boot.druid.version>1.2.16</spring-boot.druid.version>
-        <jsqlparser.version>4.5</jsqlparser.version>
-        <fastjson.version>2.0.24</fastjson.version>
+        <fastjson.version>2.0.25</fastjson.version>
         <jwt.version>0.9.1</jwt.version>
         <commons-pool2.version>2.11.1</commons-pool2.version>
     </properties>

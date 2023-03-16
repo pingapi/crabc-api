@@ -43,15 +43,25 @@ public class BaseGroupController {
         return Result.success();
     }
 
+    /**
+     * 编辑分组
+     * @param baseGroup
+     * @return
+     */
     @PutMapping
     public Result updateGroup(@RequestBody BaseGroup baseGroup){
         iBaseGroupService.updateGroup(baseGroup,UserThreadLocal.getUserId());
         return Result.success();
     }
 
-    @DeleteMapping
+    /**
+     * 删除分组
+     * @param groupId
+     * @return
+     */
+    @DeleteMapping("/{groupId}")
     public Result deleteGroup(@PathVariable Integer groupId){
-        iBaseGroupService.delteGroup(groupId,UserThreadLocal.getUserId());
+        iBaseGroupService.delteGroup(groupId, UserThreadLocal.getUserId());
         return Result.success();
     }
 }

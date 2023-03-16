@@ -1,13 +1,12 @@
 package cn.crabc.core.admin.service.core.impl;
 
 
-import cn.crabc.core.app.constant.BaseConstant;
+import cn.crabc.core.admin.service.core.IBaseDataService;
 import cn.crabc.core.app.driver.DataSourceManager;
 import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Table;
-import cn.crabc.core.admin.service.core.IBaseDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,15 +46,17 @@ public class BaseDataServiceImpl implements IBaseDataService {
     }
 
     @Override
-    public List<Map<String, Object>> query(String datasourceId, String schema, String sql, Map<String, Object> params) {
+    public List<Map<String, Object>> query(String datasourceId, String schema, String sql, List<Object> params) {
         DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
-        return dataSourceDriver.selectList(datasourceId, schema, sql, params);
+        return dataSourceDriver.selectList(datasourceId, schema, sql, params.get(0));
     }
 
     @Override
-    public Integer update(String datasourceId, String schema, String sql, Map<String, Object> params) {
+    public Integer execute(String datasourceId, String schema, String sql, List<Object> params) {
         DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
-        params.put(BaseConstant.DATA_SOURCE_ID, datasourceId);
-        return dataSourceDriver.update(sql, params);
+        for(Object param : params) {
+            dataSourceDriver.execute(datasourceId, schema, sql, param);
+        }
+        return 1;
     }
 }

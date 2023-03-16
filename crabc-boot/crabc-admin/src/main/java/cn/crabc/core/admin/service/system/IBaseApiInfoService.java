@@ -59,7 +59,7 @@ public interface IBaseApiInfoService {
      * @param method
      * @return
      */
-    Boolean checkApiPath(String apiPath, String method);
+    Boolean checkApiPath(Long apiId, String apiPath, String method);
 
     /**
      * apiId获取详情
@@ -102,6 +102,14 @@ public interface IBaseApiInfoService {
      * @return
      */
     Integer updateApiState(Long apiId, String status, Integer enabled);
+
+    /**
+     * 删除API
+     * @param apiId
+     * @param userId
+     * @return
+     */
+    Integer deleteApi(Long apiId, String userId);
 
     /**
      * API发布

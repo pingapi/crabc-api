@@ -1,11 +1,11 @@
 package cn.crabc.core.admin.service.system.impl;
 
-import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.admin.entity.BaseApp;
 import cn.crabc.core.admin.mapper.BaseAppMapper;
 import cn.crabc.core.admin.service.system.IBaseAppService;
 import cn.crabc.core.admin.util.PageInfo;
 import cn.crabc.core.admin.util.UserThreadLocal;
+import cn.crabc.core.app.exception.CustomException;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -11,6 +11,8 @@ public class SqlParseVO {
 
     private String sqlScript;
 
+    private String datasourceType;
+
     public Set<String> getReqColumns() {
         return reqColumns;
     }
@@ -33,5 +35,13 @@ public class SqlParseVO {
 
     public void setSqlScript(String sqlScript) {
         this.sqlScript = sqlScript;
+    }
+
+    public String getDatasourceType() {
+        return datasourceType;
+    }
+
+    public void setDatasourceType(String datasourceType) {
+        this.datasourceType = datasourceType;
     }
 }
