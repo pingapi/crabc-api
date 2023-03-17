@@ -97,22 +97,18 @@ public class EsDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Object execute(String dataSourceId, String schema, String sql, Object params) {
-        return null;
-    }
-
-    @Override
-    public int insert(String sql, Object entity) {
+    public int insert(String dataSourceId, String schema, String sql, Object params) {
         return 0;
     }
 
     @Override
-    public int delete(String sql, Object entity) {
+    public int delete(String dataSourceId, String schema, String sql, Object params) {
         return 0;
     }
 
     @Override
-    public int update(String sql, Object entity) {
+    public int update(String dataSourceId, String schema, String sql, Object params) {
         return 0;
     }
+
 }

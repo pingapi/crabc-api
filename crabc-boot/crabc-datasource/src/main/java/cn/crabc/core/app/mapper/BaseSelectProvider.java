@@ -17,16 +17,42 @@ public class BaseSelectProvider {
      * @return
      */
     public String executeQuery(Map<String,Object> params) {
-        return params.get(BaseConstant.BASE_SQL).toString();
+        String sql = params.get(BaseConstant.BASE_SQL).toString();
+        params.remove(BaseConstant.BASE_SQL);
+        return sql;
     }
 
 
     /**
-     * 操作类
+     * 新增类
+     * @param params
+     * @return
+     */
+    public String executeInsert(Map<String,Object> params) {
+        String sql = params.get(BaseConstant.BASE_SQL).toString();
+        params.remove(BaseConstant.BASE_SQL);
+        return sql;
+    }
+
+    /**
+     * 修改类
      * @param params
      * @return
      */
     public String executeUpdate(Map<String,Object> params) {
-        return params.get(BaseConstant.BASE_SQL).toString();
+        String sql = params.get(BaseConstant.BASE_SQL).toString();
+        params.remove(BaseConstant.BASE_SQL);
+        return sql;
+    }
+
+    /**
+     * 删除类
+     * @param params
+     * @return
+     */
+    public String executeDelete(Map<String,Object> params) {
+        String sql = params.get(BaseConstant.BASE_SQL).toString();
+        params.remove(BaseConstant.BASE_SQL);
+        return sql;
     }
 }

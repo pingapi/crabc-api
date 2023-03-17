@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -65,13 +66,16 @@ public class BaseGroupServiceImpl implements IBaseGroupService {
     public List<BaseGroupVO> groupTree(String userId, Long apiId) {
         List<BaseGroupVO> treeList = new ArrayList<>();
         List<BaseGroupVO> list = baseGroupMapper.selectList(userId);
-        if (apiId != null) {
-            this.getApiInfo(apiId, list);
-        }
+        List<ApiComboBoxVO> apiList = apiInfoMapper.selectApiGroup(null, userId);
+        Map<Integer, List<ApiComboBoxVO>> apiMap =apiList.stream().collect(Collectors.groupingBy(ApiComboBoxVO::getGroupId));
+
+//        if (apiId != null) {
+//            this.getApiInfo(apiId, list);
+//        }
         List<BaseGroupVO> rootList = list.stream().filter(vo -> vo.getParentId() == 0).collect(Collectors.toList());
         //寻找子节点
         rootList.forEach(tree -> treeList.add(findChildren(tree, list)));
-        return treeList;
+        return this.findApis(treeList, apiMap);
     }
 
     /**
@@ -84,7 +88,7 @@ public class BaseGroupServiceImpl implements IBaseGroupService {
         BaseApiInfo baseApiInfo = apiInfoMapper.selectApiById(apiId);
         if (baseApiInfo != null) {
             for(BaseGroupVO group : list) {
-                if (group.getGroupId() == baseApiInfo.getGroupId()){
+                if (group.getGroupId().equals(baseApiInfo.getGroupId())){
                     List<ApiComboBoxVO> apis = new ArrayList<>();
                     ApiComboBoxVO api = new ApiComboBoxVO();
                     BeanUtils.copyProperties(baseApiInfo, api);
@@ -110,5 +114,18 @@ public class BaseGroupServiceImpl implements IBaseGroupService {
             tree.getChildren().add(findChildren(node, list));
         });
         return tree;
+    }
+
+    private List<BaseGroupVO> findApis(List<BaseGroupVO> list, Map<Integer, List<ApiComboBoxVO>> map) {
+        for(BaseGroupVO group : list) {
+            if (map.containsKey(group.getGroupId())){
+                group.setApis(map.get(group.getGroupId()));
+                map.remove(group.getGroupId());
+            }
+            if (group.getChildren() != null && group.getChildren().size() > 0) {
+                findApis(group.getChildren(), map);
+            }
+        }
+        return list;
     }
 }

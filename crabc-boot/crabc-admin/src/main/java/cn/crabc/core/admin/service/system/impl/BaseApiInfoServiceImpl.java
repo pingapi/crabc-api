@@ -96,7 +96,12 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     @Override
     public List<ApiComboBoxVO> getApiListGroup(Integer groupId) {
-        return apiInfoMapper.selectApiGroup(groupId);
+        return apiInfoMapper.selectApiGroup(groupId, null);
+    }
+
+    @Override
+    public List<ApiComboBoxVO> getApiListUser(String userId) {
+        return apiInfoMapper.selectApiGroup(null, userId);
     }
 
     @Override

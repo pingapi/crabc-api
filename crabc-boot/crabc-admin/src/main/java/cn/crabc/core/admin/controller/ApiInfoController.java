@@ -91,12 +91,16 @@ public class ApiInfoController {
     /**
      * api发布
      *
-     * @param apiInfoParam
+     * @param api
      * @return
      */
     @PostMapping("/publish")
-    public Result publish(@RequestBody ApiInfoParam apiInfoParam) {
-        apiInfoService.apiPublish(apiInfoParam);
+    public Result publish(@RequestBody ApiInfoParam api) {
+        boolean check = SQLUtil.checkSql(api.getBaseInfo().getSqlScript(), api.getBaseInfo().getDatasourceType());
+        if (check == false) {
+            return Result.error("不支持该SQL的操作类型!");
+        }
+        apiInfoService.apiPublish(api);
         return Result.success();
     }
 

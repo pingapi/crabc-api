@@ -48,24 +48,14 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
 
     @Override
     public PageInfo selectPage(String dataSourceId, String schema, String sql, Object params, int pageNum, int pageSize) {
-        // 设置线程数据源
-        if (schema != null && !"".equals(schema)) {
-            dataSourceId = dataSourceId + ":" + schema;
-        }
-        JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
-        // 判断是否是预览运行SQL
         PageInfo pageInfo = null;
+        // 判断是否是预览运行SQL
         String execType = null;
         List<Map<String, Object>> list = new ArrayList<>();
         try {
-            Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put(BaseConstant.BASE_SQL, sql);
-            if (params != null && params instanceof Map) {
-                Map<String, Object> map = (Map<String, Object>) params;
-                if (map.size() == 1 && map.containsKey(BaseConstant.BASE_API_EXEC_TYPE)) {
-                    execType = map.get(BaseConstant.BASE_API_EXEC_TYPE).toString();
-                }
-                paramsMap.putAll(map);
+            Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
+            if (paramsMap.containsKey(BaseConstant.BASE_API_EXEC_TYPE)) {
+                execType = paramsMap.get(BaseConstant.BASE_API_EXEC_TYPE).toString();
             }
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
             Integer pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
@@ -96,17 +86,11 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     }
 
     @Override
-    public Long execute(String dataSourceId, String schema, String sql, Object params) {
-        JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
-        Object result = null;
+    public int insert(String dataSourceId, String schema, String sql, Object params) {
+        Integer result;
         try {
-            Map<String, Object> paramsMap = new HashMap<>();
-            paramsMap.put(BaseConstant.BASE_SQL, sql);
-            if (params != null && params instanceof Map) {
-                Map<String, Object> map = (Map<String, Object>) params;
-                paramsMap.putAll(map);
-            }
-            result = baseDataHandleMapper.executeUpdate(paramsMap);
+            Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
+            result = baseDataHandleMapper.executeInsert(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
             throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
@@ -114,21 +98,61 @@ public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
             // 移除线程
             JdbcDataSourceRouter.remove();
         }
-        return 1L;
+        return result;
     }
 
     @Override
-    public int insert(String sql, Map entity) {
-        return 0;
+    public int delete(String dataSourceId, String schema, String sql, Object params) {
+        try {
+            Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
+            Integer result = baseDataHandleMapper.executeDelete(paramsMap);
+        } catch (Exception e) {
+            log.error("--SQL执行失败，请检查SQL是否正常", e);
+            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
+        } finally {
+            // 移除线程
+            JdbcDataSourceRouter.remove();
+        }
+        return 1;
     }
 
     @Override
-    public int delete(String sql, Map entity) {
-        return 0;
+    public int update(String dataSourceId, String schema, String sql, Object params) {
+        try {
+            Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
+            Integer result = baseDataHandleMapper.executeUpdate(paramsMap);
+        } catch (Exception e) {
+            log.error("--SQL执行失败，请检查SQL是否正常", e);
+            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
+        } finally {
+            // 移除线程
+            JdbcDataSourceRouter.remove();
+        }
+        return 1;
     }
 
-    @Override
-    public int update(String sql, Map<String, Object> entity) {
-        return 0;
+
+    /**
+     * 设置请求参数
+     *
+     * @param dataSourceId
+     * @param schema
+     * @param sql
+     * @param params
+     * @return
+     */
+    public Map<String, Object> setParams(String dataSourceId, String schema, String sql, Object params) {
+        // 设置线程数据源
+        if (schema != null && !"".equals(schema)) {
+            dataSourceId = dataSourceId + ":" + schema;
+        }
+        JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
+        Map<String, Object> paramsMap = new HashMap<>();
+        paramsMap.put(BaseConstant.BASE_SQL, sql);
+        if (params != null && params instanceof Map) {
+            Map<String, Object> map = (Map<String, Object>) params;
+            paramsMap.putAll(map);
+        }
+        return paramsMap;
     }
 }

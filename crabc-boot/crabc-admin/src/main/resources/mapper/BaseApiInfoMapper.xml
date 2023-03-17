@@ -40,9 +40,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         api_id,
         api_name,
         api_type,
-        api_status
+        api_status,
+        group_id
         FROM
-        base_api_info where  group_id = #{groupId} and api_status !='history'
+        base_api_info where  api_status !='history'
+        <if test="groupId !=null">
+            and group_id = #{groupId}
+        </if>
+        <if test="userId !=null and userId !=''">
+            and create_by = #{userId}
+        </if>
     </select>
 
     <select id="selectApiApp" resultType="cn.crabc.core.admin.entity.vo.ApiComboBoxVO">
@@ -80,7 +87,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             datasource_id,
             datasource_type,
             schema_name,
-            sql_script
+            sql_script,
+            sql_type
         FROM
             base_api_info
         WHERE
@@ -112,7 +120,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             datasource_type,
             schema_name,
             sql_script,
-            page_setup
+            page_setup,
+            sql_type
         FROM
             base_api_info
         WHERE
@@ -139,6 +148,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="version != null and version != ''">version,</if>
         <if test="parentId != null">parent_id,</if>
         <if test="remarks != null and remarks != ''">remarks,</if>
+        <if test="sqlType != null and sqlType != ''">sql_type,</if>
         <if test="sqlScript != null and sqlScript !=''">sql_script,</if>
         <if test="datasourceId != null and datasourceId != ''">datasource_id,</if>
         <if test="datasourceType != null and datasourceType != ''">datasource_type,</if>
@@ -159,6 +169,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="version != null and version != ''">#{version},</if>
         <if test="parentId != null and parentId != ''">#{parentId},</if>
         <if test="remarks != null and remarks != ''">#{remarks},</if>
+        <if test="sqlType != null and sqlType != ''">#{sqlType},</if>
         <if test="sqlScript != null and sqlScript !=''">#{sqlScript},</if>
         <if test="datasourceId != null and datasourceId != ''">#{datasourceId},</if>
         <if test="datasourceType != null and datasourceType != ''">#{datasourceType},</if>
@@ -186,6 +197,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="parentId != null">parent_id = #{parentId},</if>
             <if test="tenantId != null">tenant_id = #{tenantId},</if>
             <if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
+            <if test="sqlType != null and sqlType != ''">sql_type = #{sqlType},</if>
             <if test="sqlScript != null and sqlScript !=''">sql_script = #{sqlScript},</if>
             <if test="datasourceId != null and datasourceId != ''">datasource_id =#{datasourceId},</if>
             <if test="datasourceType != null and datasourceType != ''">datasource_type =#{datasourceType},</if>

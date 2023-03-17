@@ -53,6 +53,14 @@ public interface IBaseApiInfoService {
     List<ApiComboBoxVO> getApiListGroup(Integer groupId);
 
     /**
+     * 分组用户API列表
+     *
+     * @param userId
+     * @return
+     */
+    List<ApiComboBoxVO> getApiListUser(String userId);
+
+    /**
      * 校验接口URL是否存在
      *
      * @param apiPath

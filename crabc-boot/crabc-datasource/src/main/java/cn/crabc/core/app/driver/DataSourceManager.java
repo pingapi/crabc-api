@@ -32,7 +32,7 @@ public class DataSourceManager {
     /**
      * JDBC数据源连接池
      */
-    public static final Map<String, javax.sql.DataSource> DATA_SOURCE_POOL_JDBC = new ConcurrentHashMap<>();
+    public static final Map<String, DataSource> DATA_SOURCE_POOL_JDBC = new ConcurrentHashMap<>();
 
     /**
      * 支持的关系型数据源类型
@@ -112,7 +112,7 @@ public class DataSourceManager {
      */
     public DataSourceDriver getDataSource(String datasourceId) {
         DataSourceDriver dataSourceDriver = null;
-        javax.sql.DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
+        DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
         if (dataSource != null) {
             dataSourceDriver = this.defaultDriver;
         } else {

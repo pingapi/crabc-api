@@ -40,12 +40,32 @@ public interface IBaseDataService {
     List<Map<String, Object>> query(String datasourceId, String schema, String sql, List<Object> params);
 
     /**
-     * 通用操作方法
+     * 新增操作
      *
      * @param datasourceId
      * @param sql
      * @param params
      * @return
      */
-    Integer execute(String datasourceId, String schema, String sql, List<Object> params);
+    Integer add(String datasourceId, String schema, String sql, List<Object> params);
+
+    /**
+     * 修改操作
+     *
+     * @param datasourceId
+     * @param sql
+     * @param params
+     * @return
+     */
+    Integer update(String datasourceId, String schema, String sql, List<Object> params);
+
+    /**
+     * 删除操作
+     *
+     * @param datasourceId
+     * @param sql
+     * @param params
+     * @return
+     */
+    Integer delete(String datasourceId, String schema, String sql, List<Object> params);
 }

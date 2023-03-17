@@ -11,15 +11,15 @@ import java.util.List;
  */
 public class BaseGroupVO extends BaseGroup {
 
-    private List<BaseGroup> children = new ArrayList<>();
+    private List<BaseGroupVO> children = new ArrayList<>();
 
     private List<ApiComboBoxVO> apis = new ArrayList<>();
 
-    public List<BaseGroup> getChildren() {
+    public List<BaseGroupVO> getChildren() {
         return children;
     }
 
-    public void setChildren(List<BaseGroup> children) {
+    public void setChildren(List<BaseGroupVO> children) {
         this.children = children;
     }
 

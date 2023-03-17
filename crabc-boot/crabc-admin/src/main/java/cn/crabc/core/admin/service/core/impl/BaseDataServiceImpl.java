@@ -52,11 +52,26 @@ public class BaseDataServiceImpl implements IBaseDataService {
     }
 
     @Override
-    public Integer execute(String datasourceId, String schema, String sql, List<Object> params) {
+    public Integer add(String datasourceId, String schema, String sql, List<Object> params) {
         DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
-        for(Object param : params) {
-            dataSourceDriver.execute(datasourceId, schema, sql, param);
+        // TODO 后面改为批量插入
+        for (Object param : params) {
+            dataSourceDriver.insert(datasourceId, schema, sql, param);
         }
         return 1;
+    }
+
+    @Override
+    public Integer update(String datasourceId, String schema, String sql, List<Object> params) {
+        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        dataSourceDriver.update(datasourceId, schema, sql, params.get(0));
+        return null;
+    }
+
+    @Override
+    public Integer delete(String datasourceId, String schema, String sql, List<Object> params) {
+        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        dataSourceDriver.delete(datasourceId, schema, sql, params.get(0));
+        return null;
     }
 }

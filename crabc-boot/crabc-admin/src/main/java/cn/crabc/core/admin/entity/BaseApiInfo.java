@@ -61,7 +61,10 @@ public class BaseApiInfo extends BaseEntity {
      */
     private String version;
 
-
+    /**
+     * sql类型，select、insert、update、delete
+     */
+    private String sqlType;
     /**
      * sql语句脚本
      */
@@ -247,5 +250,13 @@ public class BaseApiInfo extends BaseEntity {
 
     public void setDatasourceType(String datasourceType) {
         this.datasourceType = datasourceType;
+    }
+
+    public String getSqlType() {
+        return sqlType;
+    }
+
+    public void setSqlType(String sqlType) {
+        this.sqlType = sqlType;
     }
 }

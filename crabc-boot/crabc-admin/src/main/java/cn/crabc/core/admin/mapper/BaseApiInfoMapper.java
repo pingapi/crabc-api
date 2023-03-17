@@ -28,7 +28,7 @@ public interface BaseApiInfoMapper {
      * @param groupId
      * @return
      */
-    List<ApiComboBoxVO> selectApiGroup(Integer groupId);
+    List<ApiComboBoxVO> selectApiGroup(@Param("groupId") Integer groupId, @Param("userId") String userId);
 
     /**
      * 查询关联应用的API

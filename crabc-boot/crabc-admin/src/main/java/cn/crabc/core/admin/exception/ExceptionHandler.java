@@ -1,7 +1,7 @@
 package cn.crabc.core.admin.exception;
 
-import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.admin.util.Result;
+import cn.crabc.core.app.exception.CustomException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;

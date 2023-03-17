@@ -10,6 +10,8 @@ public class ApiComboBoxVO {
 
     private String apiStatus;
 
+    public Integer groupId;
+
     public Long getApiId() {
         return apiId;
     }
@@ -40,5 +42,13 @@ public class ApiComboBoxVO {
 
     public void setApiStatus(String apiStatus) {
         this.apiStatus = apiStatus;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 }

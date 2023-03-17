@@ -28,7 +28,7 @@ public class ApiServiceController {
      *
      * @return
      */
-    @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE, RequestMethod.PATCH})
+    @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE})
     public Result getService(@RequestParam Map<String, Object> paramMap) {
         ApiInfoDTO api = ApiThreadLocal.get();
         if (api == null) {
@@ -38,13 +38,7 @@ public class ApiServiceController {
         if (paramMap != null && paramMap.size() > 0) {
             params.add(paramMap);
         }
-        Object query = null;
-        if (api.getSqlScript().trim().startsWith("select") || api.getSqlScript().trim().startsWith("SELECT")) {
-            query = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
-        } else {
-            query = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
-        }
-        return Result.success(query);
+        return Result.success(this.execute(api,params));
     }
 
     /**
@@ -71,13 +65,25 @@ public class ApiServiceController {
             List<Object> list = (List<Object>) body;
             params.addAll(list);
         }
+        return Result.success(this.execute(api,params));
+    }
 
-        Object query = null;
-        if (api.getSqlScript().trim().startsWith("select") || api.getSqlScript().trim().startsWith("SELECT")) {
-            query = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+    /**
+     * 执行方法
+     *
+     * @param api
+     * @param params
+     * @return
+     */
+    private Object execute(ApiInfoDTO api, List<Object> params) {
+        Object result = null;
+        if ("select".equalsIgnoreCase(api.getSqlType())) {
+            result = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+        } else if ("insert".equalsIgnoreCase(api.getSqlType())) {
+            result = baseDataService.add(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
         } else {
-            query = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+            result = baseDataService.update(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
         }
-        return Result.success(query);
+        return result;
     }
 }
