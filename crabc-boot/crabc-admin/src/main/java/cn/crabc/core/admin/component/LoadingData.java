@@ -33,8 +33,10 @@ public class LoadingData implements InitializingBean {
         for (BaseDataSource dataSource : baseDataSources) {
             String priKey = dataSource.getSecretKey();
             try {
-                String pwd = RSAUtils.decryptByPriKey(priKey, dataSource.getPassword());
-                dataSource.setPassword(pwd);
+                if (dataSource.getPassword() != null) {
+                    String pwd = RSAUtils.decryptByPriKey(priKey, dataSource.getPassword());
+                    dataSource.setPassword(pwd);
+                }
                 dataSourceManager.createDataSource(dataSource);
             } catch (Exception e) {
 

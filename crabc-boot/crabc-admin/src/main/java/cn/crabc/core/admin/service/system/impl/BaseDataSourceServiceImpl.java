@@ -62,16 +62,21 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     @Override
     public Integer addDataSource(BaseDatasource dataSource) {
         String password = dataSource.getPassword();
-        // 解密后的密码
-        String pwd = this.decryptPwd(password);
-        dataSource.setPassword(pwd);
         dataSource.setClassify("jdbc");
         dataSource.setCreateBy(UserThreadLocal.getUserId());
         dataSource.setCreateTime(new Date());
-        // 加密
-        this.encryptPwd(dataSource);
+        String pwd = null;
+        if (password != null && !"".equals(password)) {
+            // 解密后的密码
+            pwd = this.decryptPwd(password);
+            dataSource.setPassword(pwd);
+            // 再次加密
+            this.encryptPwd(dataSource);
+        }
         dataSourceMapper.insertDataSource(dataSource);
-        dataSource.setPassword(pwd);
+        if (pwd != null) {
+            dataSource.setPassword(pwd);
+        }
         this.addCache(dataSource);
         return 1;
     }
