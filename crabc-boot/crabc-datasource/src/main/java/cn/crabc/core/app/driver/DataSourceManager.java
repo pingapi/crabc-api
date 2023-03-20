@@ -2,6 +2,8 @@ package cn.crabc.core.app.driver;
 
 import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.spi.DataSourceDriver;
+import cn.crabc.core.spi.MetaDataMapper;
+import cn.crabc.core.spi.StatementMapper;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -124,6 +126,26 @@ public class DataSourceManager {
         return dataSourceDriver;
     }
 
+    /**
+     * 元数据对象
+     * @param datasourceId
+     * @return
+     */
+    public MetaDataMapper getMetaData(String datasourceId){
+        DataSourceDriver dataSource = this.getDataSource(datasourceId);
+        return dataSource.getMetaData();
+    }
+
+    /**
+     * 数据处理对象
+     * @param datasourceId
+     * @return
+     */
+    public StatementMapper getStatementMapper(String datasourceId){
+        DataSourceDriver dataSource = this.getDataSource(datasourceId);
+        return dataSource.getStatement();
+    }
+    
     /**
      * 删除数据源驱动
      *

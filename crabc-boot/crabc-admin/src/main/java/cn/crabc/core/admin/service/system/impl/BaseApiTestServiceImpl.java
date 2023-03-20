@@ -4,7 +4,7 @@ import cn.crabc.core.admin.entity.vo.PreviewVO;
 import cn.crabc.core.admin.service.system.IBaseApiTestService;
 import cn.crabc.core.app.constant.BaseConstant;
 import cn.crabc.core.app.driver.DataSourceManager;
-import cn.crabc.core.spi.DataSourceDriver;
+import cn.crabc.core.spi.StatementMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +26,13 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
 
     @Override
     public PreviewVO sqlPreview(String datasourceId, String schema, String sql) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
         if (schema != null && !"".equals(schema)) {
             datasourceId = datasourceId + ":" + schema;
         }
         Map<String, Object> params = new HashMap<>();
         params.put(BaseConstant.BASE_API_EXEC_TYPE, "preview");
-        List<Map<String, Object>> list = dataSourceDriver.selectList(datasourceId, schema, sql, params);
+        List<Map<String, Object>> list = statementMapper.selectList(datasourceId, schema, sql, params);
         PreviewVO preview = new PreviewVO();
         if (list != null && !list.isEmpty()) {
             preview.setData(list);
@@ -44,13 +44,13 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
 
     @Override
     public Object testApi(String datasourceId, String schema, String sql, Map<String, Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
         Object pageNum = params.get(BaseConstant.PAGE_NUM);
         Object pageSize = params.get(BaseConstant.PAGE_SIZE);
         if (pageNum != null && pageSize != null) {
-            return dataSourceDriver.selectPage(datasourceId, schema, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
+            return statementMapper.selectPage(datasourceId, schema, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
         } else {
-            return dataSourceDriver.selectList(datasourceId, schema, sql, params);
+            return statementMapper.selectList(datasourceId, schema, sql, params);
         }
     }
 }

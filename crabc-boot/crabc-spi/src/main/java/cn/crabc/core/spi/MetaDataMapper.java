@@ -15,55 +15,54 @@
  */
 package cn.crabc.core.spi;
 
-import cn.crabc.core.spi.bean.BaseDataSource;
+import cn.crabc.core.spi.bean.Column;
+import cn.crabc.core.spi.bean.Schema;
+import cn.crabc.core.spi.bean.Table;
+
+import java.util.List;
 
 /**
- * 数据源驱动
+ * 元数据操作 Mapper
  *
  * @author yuqf
  */
-public interface DataSourceDriver<T> {
+public interface MetaDataMapper<T> extends Mapper<T> {
 
     /**
-     * 数据源名称
-     *
-     * @return
-     */
-    String getName();
-
-    /**
-     * 测试连接
-     *
-     * @param dataSource
-     * @return
-     */
-    Integer test(BaseDataSource dataSource);
-
-    /**
-     * 初始化
-     *
-     * @param dataSource
-     */
-    void init(BaseDataSource dataSource);
-
-    /**
-     * 销毁
+     * 获取数据源的Catalog
      *
      * @param dataSourceId
-     */
-    void destroy(String dataSourceId);
-
-    /**
-     * 元数据对象
-     *
      * @return
      */
-    MetaDataMapper getMetaData();
+    List<String> getCatalogs(String dataSourceId);
 
     /**
-     * 处理对象
+     * 获取数据源Schema
      *
+     * @param dataSourceId
+     * @param catalog
      * @return
      */
-    StatementMapper getStatement();
+    List<Schema> getSchemas(String dataSourceId, String catalog);
+
+    /**
+     * 获取数据表列表
+     *
+     * @param dataSourceId
+     * @param catalog
+     * @param schema
+     * @return
+     */
+    List<Table> getTables(String dataSourceId, String catalog, String schema);
+
+    /**
+     * 获取数据表字段列表
+     *
+     * @param dataSourceId
+     * @param catalog
+     * @param schema
+     * @param table
+     * @return
+     */
+    List<Column> getColumns(String dataSourceId, String catalog, String schema, String table);
 }

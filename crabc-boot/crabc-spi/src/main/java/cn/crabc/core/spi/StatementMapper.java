@@ -18,14 +18,15 @@ package cn.crabc.core.spi;
 import java.util.List;
 
 /**
- * 数据操作
+ * 基础操作 Mapper
  *
  * @author yuqf
  */
-public interface BaseDataHandle<T> {
+public interface StatementMapper<T> extends Mapper<T> {
 
     /**
      * 查询单个对象
+     *
      * @param dataSourceId
      * @param schema
      * @param sql
@@ -36,6 +37,7 @@ public interface BaseDataHandle<T> {
 
     /**
      * 查询对象列表
+     *
      * @param dataSourceId
      * @param schema
      * @param sql
@@ -46,6 +48,7 @@ public interface BaseDataHandle<T> {
 
     /**
      * 查询分页对象
+     *
      * @param dataSourceId
      * @param schema
      * @param sql
@@ -58,6 +61,7 @@ public interface BaseDataHandle<T> {
 
     /**
      * 新增
+     *
      * @param dataSourceId
      * @param schema
      * @param sql
@@ -68,6 +72,7 @@ public interface BaseDataHandle<T> {
 
     /**
      * 删除
+     *
      * @param dataSourceId
      * @param schema
      * @param sql
@@ -78,6 +83,7 @@ public interface BaseDataHandle<T> {
 
     /**
      * 修改
+     *
      * @param dataSourceId
      * @param schema
      * @param sql

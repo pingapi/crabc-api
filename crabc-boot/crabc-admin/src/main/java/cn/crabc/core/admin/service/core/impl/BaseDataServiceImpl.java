@@ -3,7 +3,7 @@ package cn.crabc.core.admin.service.core.impl;
 
 import cn.crabc.core.admin.service.core.IBaseDataService;
 import cn.crabc.core.app.driver.DataSourceManager;
-import cn.crabc.core.spi.DataSourceDriver;
+import cn.crabc.core.spi.StatementMapper;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Table;
@@ -47,31 +47,31 @@ public class BaseDataServiceImpl implements IBaseDataService {
 
     @Override
     public List<Map<String, Object>> query(String datasourceId, String schema, String sql, List<Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
-        return dataSourceDriver.selectList(datasourceId, schema, sql, params.get(0));
+        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
+        return statementMapper.selectList(datasourceId, schema, sql, params.get(0));
     }
 
     @Override
     public Integer add(String datasourceId, String schema, String sql, List<Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
+        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
         // TODO 后面改为批量插入
         for (Object param : params) {
-            dataSourceDriver.insert(datasourceId, schema, sql, param);
+            statementMapper.insert(datasourceId, schema, sql, param);
         }
         return 1;
     }
 
     @Override
     public Integer update(String datasourceId, String schema, String sql, List<Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
-        dataSourceDriver.update(datasourceId, schema, sql, params.get(0));
+        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
+        statementMapper.update(datasourceId, schema, sql, params.get(0));
         return null;
     }
 
     @Override
     public Integer delete(String datasourceId, String schema, String sql, List<Object> params) {
-        DataSourceDriver dataSourceDriver = dataSourceManager.getDataSource(datasourceId);
-        dataSourceDriver.delete(datasourceId, schema, sql, params.get(0));
+        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
+        statementMapper.delete(datasourceId, schema, sql, params.get(0));
         return null;
     }
 }
