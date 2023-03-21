@@ -1,10 +1,11 @@
 # Tomcat
 server:
-  port: 1325
-
+  port: 9377
 spring:
   application:
     name: crabc-admin
+  main:
+    banner-mode: off
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -29,7 +30,7 @@ spring:
         max-wait: -1
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
     password: root
     druid:
@@ -71,8 +72,3 @@ mybatis:
   config-location: classpath:mybatis-config.xml
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-#crabc配置
-crabc:
-  # 缓存类型redis、local
-  cache:
-    type: local
