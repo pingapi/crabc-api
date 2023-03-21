@@ -175,6 +175,7 @@ public class SQLUtil {
 
         } catch (Exception e) {
             log.error("解析SQL异常", e);
+            throw new CustomException(55001, "SQL解析失败，如果SQL中包含特殊字符,请使用双引号括起来");
         }
 
         map.put("tableName", tableName);
