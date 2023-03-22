@@ -36,11 +36,18 @@ public class ElasticsearchMetaData implements MetaDataMapper {
     public List<Schema> getSchemas(String dataSourceId, String catalog) {
         List<Schema> schemas = new ArrayList<>();
         try {
-            Schema schema = new Schema();
-            schema.setSchema("index");
-            schema.setCatalog(dataSourceId);
-            schemas.add(schema);
-        } catch (Exception e) {
+            RestHighLevelClient client = ElasticsearchDataSourceDriver.getConnectionClient(dataSourceId);
+            GetAliasesResponse alias = client.indices().getAlias(new GetAliasesRequest(), RequestOptions.DEFAULT);
+            Map<String, Set<AliasMetadata>> map = alias.getAliases();
+            map.forEach((index, v) -> {
+                if (!index.startsWith(".")) {
+                    Schema schema = new Schema();
+                    schema.setSchema(index);
+                    schema.setCatalog(dataSourceId);
+                    schemas.add(schema);
+                }
+            });
+        }catch (Exception e){
             log.error("查询ES Schema清单失败!", e);
             throw new RuntimeException("查询ES Schema清单失败!", e);
         }
@@ -49,22 +56,13 @@ public class ElasticsearchMetaData implements MetaDataMapper {
 
     @Override
     public List<Table> getTables(String dataSourceId, String catalog, String schema) {
+        List<Table> tables = new ArrayList<>();
         try {
-            RestHighLevelClient client = ElasticsearchDataSourceDriver.getConnectionClient(dataSourceId);
-            List<Table> tables = new ArrayList<>();
-            GetAliasesResponse alias = client.indices().getAlias(new GetAliasesRequest(), RequestOptions.DEFAULT);
-            Map<String, Set<AliasMetadata>> map = alias.getAliases();
-            map.forEach((index, v) -> {
-                if (!index.startsWith(".")) {
-                    Table table = new Table();
-                    table.setTableName(index);
-                    table.setRemarks(null);
-                    table.setTableType(null);
-                    table.setCatalog(dataSourceId);
-                    table.setSchema(schema);
-                    tables.add(table);
-                }
-            });
+            Table table = new Table();
+            table.setTableName("_doc");
+            table.setSchema(schema);
+            table.setCatalog(dataSourceId);
+            tables.add(table);
             return tables;
         } catch (Exception e) {
             log.error("-查询ES的索引异常", e);
@@ -77,20 +75,18 @@ public class ElasticsearchMetaData implements MetaDataMapper {
         try {
             List<Column> columns = new ArrayList<>();
             RestHighLevelClient client = ElasticsearchDataSourceDriver.getConnectionClient(dataSourceId);
-            GetIndexResponse response = client.indices().get(new GetIndexRequest(table), RequestOptions.DEFAULT);
+            GetIndexResponse response = client.indices().get(new GetIndexRequest(schema), RequestOptions.DEFAULT);
             //响应状态
-            System.out.println(response.getAliases());
-            Object properties = response.getMappings().get(table).sourceAsMap().get("properties");
+            Object properties = response.getMappings().get(schema).sourceAsMap().get("properties");
             JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(properties));
             jsonObject.forEach((k, v) -> {
                 JSONObject json = JSONObject.parseObject(v.toString());
-                System.out.println();
                 Column column = new Column();
                 column.setColumnName(k);
                 column.setColumnType(json.get("type").toString());
                 column.setSchema(schema);
                 column.setCatalog(dataSourceId);
-                column.setTableName(table);
+                column.setTableName("_doc");
                 columns.add(column);
             });
             return columns;
