@@ -48,7 +48,7 @@ public class BaseDataServiceImpl implements IBaseDataService {
     @Override
     public List<Map<String, Object>> query(String datasourceId, String schema, String sql, List<Object> params) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
-        return statementMapper.selectList(datasourceId, schema, sql, params.get(0));
+        return statementMapper.selectList(datasourceId, schema, sql, params.size() > 0 ? params.get(0) : null);
     }
 
     @Override
@@ -64,14 +64,14 @@ public class BaseDataServiceImpl implements IBaseDataService {
     @Override
     public Integer update(String datasourceId, String schema, String sql, List<Object> params) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
-        statementMapper.update(datasourceId, schema, sql, params.get(0));
+        statementMapper.update(datasourceId, schema, sql, params.size() > 0 ? params.get(0) : null);
         return null;
     }
 
     @Override
     public Integer delete(String datasourceId, String schema, String sql, List<Object> params) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
-        statementMapper.delete(datasourceId, schema, sql, params.get(0));
+        statementMapper.delete(datasourceId, schema, sql, params.size() > 0 ? params.get(0) : null);
         return null;
     }
 }
