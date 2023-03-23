@@ -56,4 +56,4 @@ cn.crabc
 ![img_3.png](doc/img_3.png)
 ![img_4.png](doc/img_4.png)
 ![img_5.png](doc/img_5.png)
-![img.png](doc/img6.png)
+![img.png](doc/img_6.png)
