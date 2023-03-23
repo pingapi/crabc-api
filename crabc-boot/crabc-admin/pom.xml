@@ -61,11 +61,11 @@
             <artifactId>crabc-datasource</artifactId>
             <version>1.0.0</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>cn.crabc</groupId>-->
-<!--            <artifactId>elasticsearch-connector</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.crabc</groupId>
+            <artifactId>elasticsearch-connector</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>

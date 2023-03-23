@@ -18,7 +18,7 @@ import java.util.Map;
 public class JdbcStatement implements StatementMapper {
     private static Logger log = LoggerFactory.getLogger(JdbcStatement.class);
     private BaseDataHandleMapper baseMapper;
-    private static final Integer PAGE_SIZE = 15;
+    private static final Integer PAGE_SIZE = 10;
 
     private static final Integer PAGE_NUM = 1;
 

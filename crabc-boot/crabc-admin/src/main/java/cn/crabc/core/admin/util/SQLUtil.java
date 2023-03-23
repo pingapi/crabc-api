@@ -221,6 +221,9 @@ public class SQLUtil {
                 return false;
             }
             String type = operate.get(0);
+            if (("elasticsearch".equals(dbType) || "mongodb".equals(dbType)) && !"select".equals(type.toLowerCase())){
+                return false;
+            }
             return DML_TYPE.contains(type.toLowerCase());
         }
         return false;

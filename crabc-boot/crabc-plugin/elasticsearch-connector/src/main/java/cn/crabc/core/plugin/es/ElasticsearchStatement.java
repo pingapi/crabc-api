@@ -2,18 +2,11 @@ package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.StatementMapper;
 import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.util.EntityUtils;
-import org.apache.lucene.search.TotalHits;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Request;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.script.ScriptType;
-import org.elasticsearch.script.mustache.SearchTemplateRequest;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +18,8 @@ import java.util.Map;
 public class ElasticsearchStatement implements StatementMapper {
 
     private static Logger log = LoggerFactory.getLogger(ElasticsearchStatement.class);
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public Object selectOne(String dataSourceId, String schema, String sql, Object params) {
         return null;
@@ -32,7 +27,52 @@ public class ElasticsearchStatement implements StatementMapper {
 
     @Override
     public List selectList(String dataSourceId, String schema, String sql, Object params) {
-        return this.selectPage(dataSourceId, schema, sql, params, 1, 15);
+        return this.selectPage(dataSourceId, schema, sql, params, 1, 10);
+    }
+
+    /**
+     * 配置查询参数
+     * @param params
+     * @param sql
+     * @return
+     */
+    private String makeSql(Object params, String sql){
+        if (params == null) {
+            return sql;
+        }
+        Map<String,Object> paramMap = (Map<String, Object>) params;
+        for (String key : paramMap.keySet()) {
+            String filed = "#{" +key+"}";
+            Object valueObj = paramMap.get(key);
+            if (sql.contains(filed)) {
+                String value = null;
+                if (valueObj instanceof List) {
+                    List<String> list = (List<String>) valueObj;
+                    value = this.inSql(list);
+                }else{
+                    value = valueObj.toString();
+                }
+                sql = sql.replace(filed, paramMap.get(key) != null ? "'" + value + "'" : null);
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * 组装in查询
+     * @param list
+     * @return
+     */
+    private String inSql(List<String> list){
+        String value = null;
+        for(int i = 0; i< list.size(); i++) {
+             if (i == list.size() -1){
+                value = value+"";
+            }else {
+                value = value +"',";
+            }
+        }
+        return  value;
     }
 
     @Override
@@ -44,60 +84,39 @@ public class ElasticsearchStatement implements StatementMapper {
         if (client == null) {
             throw new RuntimeException("es数据源为空");
         }
-        Request post = new Request("POST", "/_sql/translate");
+        // 参数
+        sql = makeSql(params, sql);
+        //String query = "/_xpack/_sql?format=json";   //es 8 以上语法
+        String query = "/_xpack/sql?format=json";      //es 8 以下语法
+        Request post = new Request("POST", query);
         List<String> replaces = new ArrayList<>();
 
         JSONObject map = new JSONObject();
         map.put("query", String.format(sql, replaces.toArray()));
+        map.put("fetch_size", pageSize);
         post.setJsonEntity(map.toJSONString());
-        List<Map<String, Object>> result = new ArrayList<>();
+        List<Map<String,Object>> result = new ArrayList<>();
         try {
             Response response = client.getLowLevelClient().performRequest(post);
-            Map<String, Object> scriptParameters = new HashMap<>();
-            SearchTemplateRequest request = new SearchTemplateRequest();
-            //添加分页
-            if (pageSize != 0) {
-                JSONObject jsonObject = JSONObject.parseObject(EntityUtils.toString(response.getEntity()));
-                jsonObject.put("from", (pageNum -1) * pageSize);
-                request.setScript(jsonObject.toString());
-            } else {
-                request.setScript(EntityUtils.toString(response.getEntity()));
-            }
-            //指定索引
-            request.setRequest(new SearchRequest(index));
-            //设置为内联
-            request.setScriptType(ScriptType.INLINE);
-            //设置查询参数
-            request.setScriptParams(scriptParameters);
-
-            SearchResponse searchResponse = client.searchTemplate(request, RequestOptions.DEFAULT).getResponse();
-            SearchHits searchHits = searchResponse.getHits();
-//            log.info("es查询返回结果："+JSONObject.toJSONString(searchHits));
-            if (pageSize != 0) {
-                SearchHit[] hits = searchHits.getHits();
-                if (hits != null && hits.length > 0) {
-                    for (SearchHit sh : hits) {
-                        Map<String, Object> m = new HashMap<>();
-                        if (sh.getSourceAsMap() != null && sh.getSourceAsMap().size() > 0) {
-                            m.putAll(sh.getSourceAsMap());
+            String body = EntityUtils.toString(response.getEntity());
+            Map<String,Object> dataMap = objectMapper.readValue(body, Map.class);
+            Object columns = dataMap.get("columns");
+            Object rows = dataMap.get("rows");
+            if (columns != null && rows != null) {
+                List<Map<String,Object>> fields = (List<Map<String, Object>>) columns;
+                List<List<Object>> values = (List<List<Object>>) rows;
+                for(List<Object> row : values) {
+                    Map<String,Object> rowMap = new HashMap<>();
+                    for(int i = 0; i < row.size(); i++) {
+                        Object key = fields.get(i).get("name");
+                        if (key == null || "".equals(key.toString().trim())){
+                            continue;
                         }
-                        if (sh.getFields() != null && sh.getFields().size() > 0) {
-                            sh.getFields().entrySet().forEach(e -> {
-                                if (e.getValue() != null && e.getValue().getValues() != null && e.getValue().getValues().size() > 0) {
-                                    m.put(e.getKey(), e.getValue().getValues().get(0));
-                                } else {
-                                    m.put(e.getKey(), null);
-                                }
-                            });
-                        }
-                        result.add(m);
+                        Object value = row.get(i);
+                        rowMap.put(key.toString(), value);
                     }
+                    result.add(rowMap);
                 }
-            } else {
-                TotalHits totalHits = searchHits.getTotalHits();
-                Map<String, Object> objectMap = new HashMap<>();
-                objectMap.put("count", totalHits.value);
-                result.add(objectMap);
             }
         } catch (Exception e) {
             log.error("--es数据查询失败,sql:" + sql, e);
