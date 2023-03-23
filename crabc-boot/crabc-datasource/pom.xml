@@ -84,10 +84,10 @@
             <version>11.1.4.4</version>
         </dependency>
         <!-- 插件包 -->
-<!--        <dependency>-->
-<!--            <groupId>cn.crabc</groupId>-->
-<!--            <artifactId>elasticsearch-connector</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>cn.crabc</groupId>
+            <artifactId>elasticsearch-connector</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 </project>
