@@ -72,17 +72,6 @@
             <artifactId>Dm8JdbcDriver18</artifactId>
             <version>8.1.1.49</version>
         </dependency>
-        <dependency>
-            <groupId>com.ibm.db2</groupId>
-            <artifactId>db2jcc4</artifactId>
-            <version>11.1.4.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.ibm.db2</groupId>
-            <artifactId>db2jcc_license_cu</artifactId>
-            <version>11.1.4.4</version>
-        </dependency>
         <!-- 插件包 -->
         <dependency>
             <groupId>cn.crabc</groupId>

@@ -137,6 +137,7 @@ public class JdbcStatement implements StatementMapper {
     public Map<String, Object> setParams(String dataSourceId, String schema, String sql, Object params) {
         // 设置线程数据源
         if (schema != null && !"".equals(schema)) {
+            // 拼接数据源ID和schema
             dataSourceId = dataSourceId + ":" + schema;
         }
         JdbcDataSourceRouter.setDataSourceKey(dataSourceId);

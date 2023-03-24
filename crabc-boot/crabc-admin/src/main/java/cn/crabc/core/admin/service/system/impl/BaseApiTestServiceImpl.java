@@ -27,9 +27,6 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
     @Override
     public PreviewVO sqlPreview(String datasourceId, String schema, String sql) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
-        if (schema != null && !"".equals(schema)) {
-            datasourceId = datasourceId + ":" + schema;
-        }
         Map<String, Object> params = new HashMap<>();
         params.put(BaseConstant.BASE_API_EXEC_TYPE, "preview");
         List<Map<String, Object>> list = statementMapper.selectList(datasourceId, schema, sql, params);
