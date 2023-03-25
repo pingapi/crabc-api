@@ -24,13 +24,13 @@ cn.crabc
 ├── crabc-auth               // 授权服务(开发中)
 ├── crabc-boot               // 业务模块
 │     └── crabc-admin        // 后台管理
-│           └── static       // 管理操作界面 [9377]
+│           └── static       // 前端静态页面 [9377]
 │     └── crabc-datasource   // 数据源加载模块
 │     └── crabc-api          // API调用执行模块
 │     └── crabc-spi          // 插件定义模块
 │     └── crabc-plugin       // 插件中心
-├── crabc-common             // 公共模块(开发中)
-├── web                      // 前端页面
+├── crabc-common             // 公共模块
+├── web                      // 前端页面（nginx部署）
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
