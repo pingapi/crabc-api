@@ -40,6 +40,32 @@ public class UserThreadLocal {
     }
 
     /**
+     * 是否管理员
+     * @return
+     */
+    public static boolean isAdmin() {
+        Map map = userInfo.get();
+        if (map != null && "admin".equals(map.get("role").toString().toLowerCase())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 是否超级管理员
+     * @return
+     */
+    public static boolean isSuperAdmin() {
+        Map map = userInfo.get();
+        if (map != null && "1".equals(map.get("userId").toString()) && "admin".equals(map.get("role").toString().toLowerCase())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 清除
      */
     public static void remove() {

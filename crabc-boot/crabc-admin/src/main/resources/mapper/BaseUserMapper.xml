@@ -10,7 +10,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             user_name username,
             nick_name nickname,
             email,
-            dept,
             role,
             phone,
             sex,
@@ -31,7 +30,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             user_id,
             user_name username,
             nick_name nickname,
-            dept,
             role,
             email,
             phone,
@@ -53,7 +51,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateUser" parameterType="cn.crabc.core.admin.entity.BaseUser">
         update base_sys_user
         <set>
-            <if test="dept != null">dept = #{dept},</if>
             <if test="username != null and username != ''">user_name = #{username},</if>
             <if test="nickname != null and nickname != ''">nick_name = #{nickname},</if>
             <if test="email != null ">email = #{email},</if>
@@ -72,7 +69,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertUser" parameterType="cn.crabc.core.admin.entity.BaseUser" useGeneratedKeys="true" keyProperty="userId">
         insert into base_sys_user(
         <if test="userId != null and userId != 0">user_id,</if>
-        <if test="dept != null">dept,</if>
         <if test="role != null">role,</if>
         <if test="username != null and username != ''">user_name,</if>
         <if test="nickname != null and nickname != ''">nick_name,</if>
@@ -87,7 +83,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         create_time
         )values(
         <if test="userId != null and userId != 0">#{userId},</if>
-        <if test="dept != null">#{dept},</if>
         <if test="role != null">#{role},</if>
         <if test="username != null and username != ''">#{username},</if>
         <if test="nickname != null and nickname != ''">#{nickname},</if>
