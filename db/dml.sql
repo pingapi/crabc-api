@@ -138,7 +138,6 @@ CREATE TABLE `base_sys_user` (
                                  `nick_name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户名称',
                                  `user_type` varchar(2) DEFAULT '0' COMMENT '用户类型',
                                  `password` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '密码',
-                                 `dept` varchar(128) DEFAULT NULL COMMENT '部门',
                                  `role` varchar(128) DEFAULT NULL COMMENT '角色',
                                  `email` varchar(50) DEFAULT '' COMMENT '用户邮箱',
                                  `phone` varchar(13) DEFAULT '' COMMENT '手机号码',
@@ -154,8 +153,8 @@ CREATE TABLE `base_sys_user` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
 -- 初始化数据
 INSERT INTO base_sys_user
-(user_id, user_name, nick_name, user_type, password, dept, `role`, email, phone, sex, picture, status, create_by, create_time, update_by, update_time, remark)
-VALUES(1, 'admin', '管理员', '0', '0192023A7BBD73250516F069DF18B500', 'root', 'admin', '', '', '1', '', '1', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00', '密码：admin123');
+(user_id, user_name, nick_name, user_type, password, `role`, email, phone, sex, picture, status, create_by, create_time, update_by, update_time, remark)
+VALUES(1, 'admin', '管理员', '0', '0192023A7BBD73250516F069DF18B500', 'admin', '', '', '1', '', '1', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00', '密码：admin123');
 
 INSERT INTO base_group
 (group_id, parent_id, group_name, group_desc, create_by, create_time, update_by, update_time)
