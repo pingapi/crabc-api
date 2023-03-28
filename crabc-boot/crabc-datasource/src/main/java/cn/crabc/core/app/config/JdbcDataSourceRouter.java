@@ -135,7 +135,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     @Override
     protected DataSource determineTargetDataSource() {
         Object dataSourceKey = this.determineCurrentLookupKey();
-        log.info("-当前数据源id：{}", dataSourceKey);
+        log.debug("-当前数据源id：{}", dataSourceKey);
         // 默认系统数据源
         if (dataSourceKey == null) {
             return super.getResolvedDefaultDataSource();
@@ -159,12 +159,11 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     public Connection getConnection() throws SQLException {
         Connection connection = this.determineTargetDataSource().getConnection();
         Object dataSourceKey = this.determineCurrentLookupKey();
-        log.info("-当前数据源：{}", dataSourceKey);
         try {
             if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
                 String[] dataSourceStr = dataSourceKey.toString().split(":");
                 String schema = dataSourceStr[1];
-                log.info("-当前数据源-schema：{}", schema);
+                log.debug("-当前数据源-schema：{}", schema);
                 connection.setSchema(schema);
             }
         }catch (Exception e){
