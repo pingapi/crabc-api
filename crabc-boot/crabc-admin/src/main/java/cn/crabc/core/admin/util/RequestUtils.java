@@ -41,7 +41,7 @@ public class RequestUtils {
                 return bodyMap;
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+
         }
         return null;
     }
