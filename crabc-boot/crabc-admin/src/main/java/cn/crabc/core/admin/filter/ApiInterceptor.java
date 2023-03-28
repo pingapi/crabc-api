@@ -6,6 +6,7 @@ import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.enums.ApiAuthEnum;
 import cn.crabc.core.admin.service.system.IBaseApiLogService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
+import cn.crabc.core.admin.util.HmacSHAUtils;
 import cn.crabc.core.admin.util.RequestUtils;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -18,8 +19,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * API开放接口鉴权过滤 拦截器
@@ -45,13 +45,15 @@ public class ApiInterceptor implements HandlerInterceptor {
             throw new CustomException(53005, "API不存在");
         }
         ApiInfoDTO apiInfo = (ApiInfoDTO) apiData;
+        boolean auth = true;
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
-            Boolean auth = checkAppCode(request, apiInfo);
-            if (auth == false) {
-                throw new CustomException(53001, "您没有访问该API的权限");
-            }
+            auth = checkAppCode(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
+
         } else if (ApiAuthEnum.APP_SECRET.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
-            // TODO
+           auth = checkHmac(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
+        }
+        if (auth == false) {
+            throw new CustomException(53001, "您没有访问该API的权限");
         }
         // 存入当前时间，当作是日志的请求时间
         apiInfo.setRequestDate(new Date());
@@ -105,16 +107,12 @@ public class ApiInterceptor implements HandlerInterceptor {
      * 验证接口访问权限
      *
      * @param request
-     * @param apiInfo
+     * @param appList
      * @return
      */
-    private Boolean checkAppCode(HttpServletRequest request, ApiInfoDTO apiInfo) {
+    private boolean checkAppCode(HttpServletRequest request, List<BaseApp> appList) {
         String appCode = RequestUtils.getAppCode(request);
         if (appCode == null || "".equals(appCode)) {
-            return false;
-        }
-        List<BaseApp> appList = apiInfo.getAppList();
-        if (appList == null || appList.size() == 0) {
             return false;
         }
         for (BaseApp app : appList) {
@@ -125,4 +123,55 @@ public class ApiInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    /**
+     * 参数签名认证
+     * @param request
+     * @param appList
+     * @return
+     * @throws Exception
+     */
+    public boolean checkHmac(HttpServletRequest request, List<BaseApp> appList){
+        String method = request.getMethod();
+        StringBuffer bodyStr = new StringBuffer();
+        String sign = request.getHeader("sign");
+        String timestamp = request.getHeader("timestamp");
+        String appkey = request.getHeader("appkey");
+        if (appkey == null || sign == null || timestamp == null) {
+            throw new CustomException(53002, "认证参数不能为空！");
+        }
+        // 校验时间戳,超过10分钟失效
+        Long authTime = Long.valueOf(timestamp);
+        long nowTime = System.currentTimeMillis() - authTime;
+        if (nowTime > 10 * 60 * 1000) {
+            throw new CustomException(53003, "timestamp过期！");
+        }
+        Map<String, Object> bodyMap = new HashMap<>();
+        if ("POST".equals(method) || "PUT".equals(method)) {
+            bodyMap = RequestUtils.getBodyMap(request);
+        }
+        bodyMap.putAll(request.getParameterMap());
+        ArrayList<String> keys = new ArrayList<>(bodyMap.keySet());
+        Collections.sort(keys);
+        for(String key : keys) {
+            bodyStr.append(request.getParameter(key));
+        }
+        bodyStr.append(appkey);
+        bodyStr.append(timestamp);
+        String appSecret = "";
+        for (BaseApp app : appList) {
+            if (app.getAppKey().equals(appkey)) {
+                appSecret = app.getAppSecret();
+            }
+        }
+        String signature = null;
+        try {
+            signature = HmacSHAUtils.HmacSHA256(bodyStr.toString(), appSecret);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (sign.equalsIgnoreCase(signature)){
+            return true;
+        }
+        return false;
+    }
 }
