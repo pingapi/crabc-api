@@ -62,5 +62,4 @@ cn.crabc
 ## 交流群
 微信群：
 ![img.png](doc/wechart.png)
-QQ群：
-![img.png](doc/qq.png)
+QQ群：748993036
