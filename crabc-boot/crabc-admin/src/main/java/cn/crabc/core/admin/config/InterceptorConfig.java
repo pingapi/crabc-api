@@ -1,6 +1,6 @@
 package cn.crabc.core.admin.config;
 
-import cn.crabc.core.admin.filter.ApiInterceptor;
+import cn.crabc.core.admin.filter.AuthInterceptor;
 import cn.crabc.core.admin.filter.JwtInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
 
     @Bean
-    public ApiInterceptor apiInterceptor() {
-        return new ApiInterceptor();
+    public AuthInterceptor apiInterceptor() {
+        return new AuthInterceptor();
     }
 
     @Bean

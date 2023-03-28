@@ -1,9 +1,9 @@
 package cn.crabc.core.admin.util;
 
-import com.alibaba.fastjson2.JSON;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -18,6 +18,8 @@ import java.util.Set;
  */
 public class RequestUtils {
 
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
     /**
      * 获取body
      *
@@ -26,6 +28,7 @@ public class RequestUtils {
      */
     public static Map<String, Object> getBodyMap(HttpServletRequest req) {
         BufferedReader reader = null;
+        Map<String, Object> bodyMap = new HashMap<>();
         try {
             reader = req.getReader();
             StringBuilder builder = new StringBuilder();
@@ -37,13 +40,12 @@ public class RequestUtils {
             reader.close();
             String bodyString = builder.toString();
             if (!"".equals(bodyString)) {
-                Map<String, Object> bodyMap = JSON.parseObject(bodyString, Map.class);
-                return bodyMap;
+                bodyMap = objectMapper.readValue(bodyString, Map.class);
             }
         } catch (Exception e) {
 
         }
-        return null;
+        return bodyMap;
     }
 
     /**
