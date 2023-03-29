@@ -29,7 +29,10 @@ import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
-import org.elasticsearch.client.*;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestClientBuilder;
+import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.GetIndexRequest;
 
 import javax.net.ssl.SSLContext;
@@ -56,16 +59,17 @@ public class ElasticsearchDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Integer test(BaseDataSource dataSource) {
+    public String test(BaseDataSource dataSource) {
         try {
             // 构建
             RestHighLevelClient client = this.buildClient(dataSource);
             // 测试联通性
-            client.indices().exists(new GetIndexRequest(), RequestOptions.DEFAULT);
+            client.indices().exists(new GetIndexRequest("test"), RequestOptions.DEFAULT);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            Throwable cause = e.getCause();
+            return cause == null ? e.getMessage() : cause.getLocalizedMessage();
         }
-        return 1;
+        return "1";
     }
 
     /**

@@ -4,8 +4,7 @@ import cn.crabc.core.spi.MetaDataMapper;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.action.admin.indices.alias.get.GetAliasesRequest;
 import org.elasticsearch.client.GetAliasesResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -15,15 +14,21 @@ import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.AliasMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+/**
+ * es数据源 元数据获取
+ *
+ * @author yuqf
+ */
 public class ElasticsearchMetaData implements MetaDataMapper {
     private static Logger log = LoggerFactory.getLogger(ElasticsearchMetaData.class);
 
     private RestHighLevelClient client;
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public List<String> getCatalogs(String dataSourceId) {
@@ -47,7 +52,7 @@ public class ElasticsearchMetaData implements MetaDataMapper {
                     schemas.add(schema);
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("查询ES Schema清单失败!", e);
             throw new RuntimeException("查询ES Schema清单失败!", e);
         }
@@ -78,12 +83,20 @@ public class ElasticsearchMetaData implements MetaDataMapper {
             GetIndexResponse response = client.indices().get(new GetIndexRequest(schema), RequestOptions.DEFAULT);
             //响应状态
             Object properties = response.getMappings().get(schema).sourceAsMap().get("properties");
-            JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(properties));
-            jsonObject.forEach((k, v) -> {
-                JSONObject json = JSONObject.parseObject(v.toString());
+            Map<String, Object> columnMap = null;
+            if (properties instanceof Map) {
+                columnMap = (Map<String, Object>) properties;
+            } else {
+                columnMap = objectMapper.readValue(objectMapper.writeValueAsString(properties), Map.class);
+            }
+            columnMap.forEach((k, v) -> {
+                Map<String, Object> json = null;
+                if (v instanceof Map) {
+                    json = (Map<String, Object>) v;
+                }
                 Column column = new Column();
                 column.setColumnName(k);
-                column.setColumnType(json.get("type").toString());
+                column.setColumnType(json != null && json.get("type") != null ? json.get("type").toString() : null);
                 column.setSchema(schema);
                 column.setCatalog(dataSourceId);
                 column.setTableName("_doc");

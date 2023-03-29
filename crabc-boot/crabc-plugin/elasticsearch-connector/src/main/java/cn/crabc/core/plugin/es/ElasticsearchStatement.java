@@ -1,7 +1,6 @@
 package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.StatementMapper;
-import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.util.EntityUtils;
 import org.apache.lucene.search.TotalHits;
@@ -24,6 +23,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * es数据源 操作执行类
+ *
+ * @author yuqf
+ */
 public class ElasticsearchStatement implements StatementMapper {
 
     private static Logger log = LoggerFactory.getLogger(ElasticsearchStatement.class);
@@ -102,16 +106,17 @@ public class ElasticsearchStatement implements StatementMapper {
         String query = "/_sql?format=json";
         Request request = new Request("POST", query);
 
-        JSONObject queryMap = new JSONObject();
+        Map<String, Object>  queryMap = new HashMap<>();
         queryMap.put("query", sql);
         queryMap.put("fetch_size", pageSize);
         if (paramsMap != null && paramsMap.containsKey("pageCursor")) {
             queryMap.put("cursor", paramsMap.get("pageCursor").toString());
         }
-        request.setJsonEntity(queryMap.toJSONString());
+
         Map<String, Object> result = new HashMap<>();
         List<Map<String, Object>> list = new ArrayList<>();
         try {
+            request.setJsonEntity(objectMapper.writeValueAsString(queryMap));
             Response response = client.getLowLevelClient().performRequest(request);
             String body = EntityUtils.toString(response.getEntity());
             Map<String, Object> dataMap = objectMapper.readValue(body, Map.class);
@@ -158,18 +163,18 @@ public class ElasticsearchStatement implements StatementMapper {
             Map<String, Object> paramsMap = (Map<String, Object>) params;
             sql = makeSql(paramsMap, sql);
         }
-        JSONObject map = new JSONObject();
-        map.put("query", sql);
-        map.put("fetch_size", pageSize);
-        post.setJsonEntity(map.toJSONString());
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("query", sql);
+        queryMap.put("fetch_size", pageSize);
         List<Map<String, Object>> result = new ArrayList<>();
         try {
+            post.setJsonEntity(objectMapper.writeValueAsString(queryMap));
             Response response = client.getLowLevelClient().performRequest(post);
             SearchTemplateRequest request = new SearchTemplateRequest();
             if (pageSize > 0) {
-                JSONObject jsonObject = JSONObject.parseObject(EntityUtils.toString(response.getEntity()));
-                jsonObject.put("from", (pageNum - 1) * pageSize);
-                request.setScript(jsonObject.toString());
+                Map<String, Object> jsonMap = objectMapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
+                jsonMap.put("from", (pageNum - 1) * pageSize);
+                request.setScript(objectMapper.writeValueAsString(jsonMap));
             } else {
                 request.setScript(EntityUtils.toString(response.getEntity()));
             }
