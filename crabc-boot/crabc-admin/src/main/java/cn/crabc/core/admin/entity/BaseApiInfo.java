@@ -81,6 +81,11 @@ public class BaseApiInfo extends BaseEntity {
     private String datasourceId;
 
     /**
+     * 数据源名称
+     */
+    private String datasourceName;
+
+    /**
      * schema
      */
     private String schemaName;
@@ -258,5 +263,13 @@ public class BaseApiInfo extends BaseEntity {
 
     public void setSqlType(String sqlType) {
         this.sqlType = sqlType;
+    }
+
+    public String getDatasourceName() {
+        return datasourceName;
+    }
+
+    public void setDatasourceName(String datasourceName) {
+        this.datasourceName = datasourceName;
     }
 }

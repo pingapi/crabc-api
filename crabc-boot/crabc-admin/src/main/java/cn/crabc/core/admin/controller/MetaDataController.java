@@ -46,9 +46,9 @@ public class MetaDataController {
         return Result.success(listMap);
     }
 
-    //@Cacheable(cacheNames = "schemaCache", cacheManager = "metaDataManager", key = "#datasourceId")
+    @Cacheable(cacheNames = "schemaCache", cacheManager = "metaDataManager", key = "#datasourceId")
     @GetMapping("/schemas")
-    public Result getSchemas(@RequestParam("datasourceId") String datasourceId, @RequestParam(defaultValue = "1", required = false) String catalog) {
+    public Result getSchemas(@RequestParam("datasourceId") String datasourceId, String catalog) {
         MetaDataMapper metaData = dataSourceManager.getMetaData(datasourceId);
         List<Schema> schemas = metaData.getSchemas(datasourceId, catalog);
         return Result.success(schemas);

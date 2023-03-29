@@ -6,33 +6,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectList" resultType="cn.crabc.core.admin.entity.BaseApiInfo">
         SELECT
-            api_id,
-            api_name,
-            api_path,
-            api_type,
-            api_method,
-            auth_type,
-            api_status,
-            enabled,
-            group_id,
-            tenant_id,
-            remarks,
-            version,
-            create_by,
-            create_time,
-            update_by,
-            update_time
+            i.api_id,
+            i.api_name,
+            i.api_path,
+            i.api_type,
+            i.api_method,
+            i.auth_type,
+            i.api_status,
+            i.enabled,
+            i.group_id,
+            i.tenant_id,
+            i.remarks,
+            i.version,
+            i.create_by,
+            i.create_time,
+            i.update_by,
+            i.update_time,
+            i.release_time,
+            d.datasource_name
         FROM
-            base_api_info
+            base_api_info i
+        left join base_datasource d
+        on i.datasource_id = d.datasource_id
         <where>
             <if test="apiName !=null and apiName !=''">
-                api_name like concat('%',#{apiName},'%')
+                i.api_name like concat('%',#{apiName},'%')
             </if>
             <if test="devType !=null and devType !=''">
-                and api_status =#{devType}
+                and i.api_status =#{devType}
             </if>
         </where>
-        ORDER BY api_id desc
+        ORDER BY i.api_id desc
     </select>
 
     <select id="selectApiGroup" resultType="cn.crabc.core.admin.entity.vo.ApiComboBoxVO">

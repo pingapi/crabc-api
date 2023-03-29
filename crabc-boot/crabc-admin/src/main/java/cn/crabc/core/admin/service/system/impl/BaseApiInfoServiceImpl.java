@@ -142,6 +142,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         api.setDatasourceType(sql.getDatasourceType());
         api.setSqlScript(sql.getSqlScript());
         api.setCreateTime(date);
+        api.setUpdateTime(date);
         api.setCreateBy(UserThreadLocal.getUserId());
         if (api.getGroupId() == null) {
             api.setGroupId(1);
