@@ -63,9 +63,9 @@ public class JdbcMeataData implements MetaDataMapper {
                 schema.setSchema(schemaName);
                 schema.setCatalog(catalog);
 //                schema.setDatasourceId(dataSourceId);
-                if ("information_schema".equalsIgnoreCase(schemaName) || "performance_schema".equalsIgnoreCase(schemaName) || "pg_catalog".equals(schemaName)) {
-                    continue;
-                }
+//                if ("information_schema".equalsIgnoreCase(schemaName) || "performance_schema".equalsIgnoreCase(schemaName) || "pg_catalog".equals(schemaName)) {
+//                    continue;
+//                }
                 schemas.add(schema);
             }
         } catch (Exception e) {
