@@ -1,25 +1,15 @@
 package cn.crabc.core.app.driver.jdbc;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
-import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.bean.BaseDataSource;
-import cn.crabc.core.spi.bean.Column;
-import cn.crabc.core.spi.bean.Schema;
-import cn.crabc.core.spi.bean.Table;
 import com.alibaba.druid.util.JdbcUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 默认通用方法实现类
@@ -35,7 +25,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Integer test(BaseDataSource baseDataSource) {
+    public String test(BaseDataSource baseDataSource) {
         Connection connection = null;
         try {
             HikariDataSource dataSource = new HikariDataSource();
@@ -48,7 +38,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         } catch (Exception e) {
             Throwable cause = e.getCause();
             log.error("--{}", e.getMessage());
-            throw new CustomException(51005, cause == null ? e.getMessage() : cause.getLocalizedMessage());
+            return cause == null ? e.getMessage() : cause.getLocalizedMessage();
         } finally {
             try {
                 if (connection != null) {
@@ -58,7 +48,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
                 throw new RuntimeException(e);
             }
         }
-        return 1;
+        return "1";
     }
 
     @Override

@@ -37,7 +37,7 @@ public interface DataSourceDriver<T> {
      * @param dataSource
      * @return
      */
-    Integer test(BaseDataSource dataSource);
+    String test(BaseDataSource dataSource);
 
     /**
      * 初始化

@@ -93,7 +93,7 @@ public class DataSourceManager {
      * @param dataSource
      * @return
      */
-    public Integer test(BaseDataSource dataSource) {
+    public String test(BaseDataSource dataSource) {
         String datasourceType = dataSource.getDatasourceType();
         DataSourceDriver dataSourceDriver = PLUGIN_TYPE.get(datasourceType);
         if (dataSourceDriver != null) {

@@ -18,7 +18,7 @@ public class MongodbDataSourceDriver implements DataSourceDriver {
     }
 
     @Override
-    public Integer test(BaseDataSource dataSource) {
+    public String test(BaseDataSource dataSource) {
         return null;
     }
 
