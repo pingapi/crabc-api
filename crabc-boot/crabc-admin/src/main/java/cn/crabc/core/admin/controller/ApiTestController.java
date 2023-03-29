@@ -5,7 +5,7 @@ import cn.crabc.core.admin.entity.vo.PreviewVO;
 import cn.crabc.core.admin.service.system.IBaseApiTestService;
 import cn.crabc.core.admin.util.Result;
 import cn.crabc.core.admin.util.SQLUtil;
-import com.alibaba.fastjson2.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,8 @@ public class ApiTestController {
 
     @Autowired
     private IBaseApiTestService baseapitestService;
-
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 运行预览
@@ -48,7 +49,7 @@ public class ApiTestController {
      * @return
      */
     @PostMapping("/verify/{apiId}")
-    public Result testApiSql(@PathVariable Long apiId, @RequestBody ApiTestParam params) {
+    public Result testApiSql(@PathVariable Long apiId, @RequestBody ApiTestParam params) throws Exception {
         boolean check = SQLUtil.checkSql(params.getSqlScript(), params.getDatasourceType());
         if (check == false) {
             return Result.error("不支持该SQL的操作类型");
@@ -60,7 +61,7 @@ public class ApiTestController {
         long start = System.currentTimeMillis();
         Object list = baseapitestService.testApi(params.getDatasourceId(), params.getSchemaName(), params.getSqlScript(), params.getRequestParams());
         long end = System.currentTimeMillis();
-        map.put("data", JSON.toJSONString(Result.success(list)));
+        map.put("data", objectMapper.writeValueAsString(Result.success(list)));
         map.put("runTime", end - start);
         map.put("code", 0);
         return Result.success(map);
