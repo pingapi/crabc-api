@@ -62,6 +62,9 @@ public class RSAUtils {
      * @throws Exception
      */
     public static String decryptByPriKey(String priKey, String text) throws Exception {
+        if (text == null || priKey == null) {
+            return null;
+        }
         byte[] bytes = Base64Utils.decodeFromString(priKey);
         PKCS8EncodedKeySpec pkcs8EncodedKeySpec5 = new PKCS8EncodedKeySpec(bytes);
         KeyFactory keyFactory = KeyFactory.getInstance(RSA);
@@ -80,6 +83,9 @@ public class RSAUtils {
      * @return
      */
     public static String encryptByPubKey(String pubKey, String text) throws Exception {
+        if (text == null || pubKey == null) {
+            return null;
+        }
         byte[] bytes = Base64Utils.decodeFromString(pubKey);
 
         X509EncodedKeySpec x509EncodedKeySpec2 = new X509EncodedKeySpec(bytes);

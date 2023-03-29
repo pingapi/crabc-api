@@ -40,9 +40,8 @@ public class BaseDataServiceImpl implements IBaseDataService {
     }
 
     @Override
-    public Integer testConnection(BaseDataSource dataSource) {
-        Integer result = dataSourceManager.test(dataSource);
-        return result;
+    public String testConnection(BaseDataSource dataSource) {
+        return dataSourceManager.test(dataSource);
     }
 
     @Override

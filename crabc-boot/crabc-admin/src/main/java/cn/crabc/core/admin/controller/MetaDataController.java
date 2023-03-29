@@ -4,7 +4,6 @@ import cn.crabc.core.admin.entity.BaseDatasource;
 import cn.crabc.core.admin.service.system.IBaseDataSourceService;
 import cn.crabc.core.admin.util.Result;
 import cn.crabc.core.app.driver.DataSourceManager;
-import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.MetaDataMapper;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;

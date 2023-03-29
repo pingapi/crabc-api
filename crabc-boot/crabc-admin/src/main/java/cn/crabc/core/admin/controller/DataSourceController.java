@@ -67,11 +67,11 @@ public class DataSourceController {
      */
     @PostMapping("/test")
     public Result test(BaseDatasource dataSource) {
-        Integer test = baseDataSourceService.test(dataSource);
-        if(test == 1){
+        String test = baseDataSourceService.test(dataSource);
+        if("1".equals(test)){
             return Result.success("测试成功");
         }
-        return Result.error("测试失败,请检查输入值是否正确");
+        return Result.error("测试失败：" + test);
     }
 
     /**

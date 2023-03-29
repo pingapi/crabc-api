@@ -64,7 +64,7 @@ public interface IBaseDataSourceService {
     /**
      * 测试数据源连接
      * @param dataSource
-     * @return
+     * @return 1(成功) 或 errorMessage
      */
-    Integer test(BaseDatasource dataSource);
+    String test(BaseDatasource dataSource);
 }

@@ -26,7 +26,7 @@ public interface IBaseDataService {
      * @param dataSource
      * @return
      */
-    Integer testConnection(BaseDataSource dataSource);
+    String testConnection(BaseDataSource dataSource);
 
     /**
      * 通用查询方法
