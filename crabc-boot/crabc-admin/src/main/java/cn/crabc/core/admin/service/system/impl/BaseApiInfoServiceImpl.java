@@ -55,7 +55,11 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
     @Override
     public void initApi() {
-        List<ApiInfoDTO> apis = this.getApiCache(null);
+        updateCache(null);
+    }
+
+    private void updateCache(Long apiId){
+        List<ApiInfoDTO> apis = this.getApiCache(apiId);
         for (ApiInfoDTO api : apis) {
             apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
         }
@@ -73,11 +77,6 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             if (appMap.containsKey(api.getApiId())) {
                 api.setAppList(appMap.get(api.getApiId()));
             }
-        }
-
-        if (apiId != null && apiInfos.size() > 0) {
-            ApiInfoDTO api = apiInfos.get(0);
-            apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
         }
         return apiInfos;
     }
@@ -170,9 +169,6 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         api.setSqlScript(sql.getSqlScript());
         api.setUpdateTime(updateTime);
         api.setUpdateBy(UserThreadLocal.getUserId());
-        if (api.getGroupId() == null) {
-            api.setGroupId(1);
-        }
         apiInfoMapper.updateApiInfo(api);
         return apiInfo.getBaseInfo().getApiId();
     }
@@ -193,6 +189,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (enabled != null) {
             baseApiInfo.setEnabled(enabled);
         }
+        // 更新缓存
+        this.updateCache(apiId);
         apiInfoMapper.updateApiState(baseApiInfo);
         return 1;
     }
@@ -228,7 +226,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
         apiInfoMapper.updateApiInfo(baseApiInfo);
         // 更新缓存
-        this.getApiCache(baseApiInfo.getApiId());
+        this.updateCache(baseApiInfo.getApiId());
         return apiId;
     }
 

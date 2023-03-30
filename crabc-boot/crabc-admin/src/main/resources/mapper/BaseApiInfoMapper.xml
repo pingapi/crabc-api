@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             base_app_api aa on
                 ai.api_id = aa.api_id
         WHERE
-            ai.enabled = '1'
+            ai.enabled = 1
           AND ai.api_status = 'release'
           <if test="appId != null">
             and aa.app_id = #{appId}
@@ -96,7 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM
             base_api_info
         WHERE
-             enabled='1' AND parent_id = 0 AND api_status ='release'
+            parent_id = 0 AND api_status ='release'
         <if test="apiId != null">
             and api_id =#{apiId}
         </if>

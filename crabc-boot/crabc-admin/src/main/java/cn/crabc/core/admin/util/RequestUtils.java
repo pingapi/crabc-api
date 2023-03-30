@@ -81,7 +81,13 @@ public class RequestUtils {
     public static String getAppCode(HttpServletRequest req) {
         String appCode = req.getHeader("appCode");
         if (appCode == null) {
-            appCode = req.getParameter("appCode");
+            String[] codeNames = new String[]{"appCode","AppCode", "appcode", "app_code"};
+            for(String codeName : codeNames) {
+                appCode = req.getParameter(codeName);
+                if (appCode != null) {
+                    break;
+                }
+            }
         }
         return appCode;
     }

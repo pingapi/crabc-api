@@ -46,9 +46,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         Object apiData = apiCache.getIfPresent(method + "_" + path.replace(API_PRE, ""));
         if (apiData == null) {
-            throw new CustomException(53005, "API不存在");
+            throw new CustomException(53005, "API不存在！");
         }
         ApiInfoDTO apiInfo = (ApiInfoDTO) apiData;
+        if (apiInfo.getEnabled() == 0) {
+            throw new CustomException(53006, "该API已下线！");
+        }
         boolean auth = true;
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             auth = checkAppCode(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
