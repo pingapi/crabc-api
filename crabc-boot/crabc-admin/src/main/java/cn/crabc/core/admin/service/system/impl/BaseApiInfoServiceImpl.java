@@ -147,6 +147,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (api.getGroupId() == null) {
             api.setGroupId(1);
         }
+        if (api.getPageSetup() == null){
+            api.setPageSetup(0);
+        }
         apiInfoMapper.insertApiInfo(api);
         return api.getApiId();
     }
@@ -161,9 +164,6 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         BaseApiInfo api = apiInfo.getBaseInfo();
         BaseApiSql sql = apiInfo.getSqlInfo();
         Date updateTime = new Date();
-        api.setApiStatus(ApiStateEnum.EDIT.getName());
-        api.setEnabled(0);
-        api.setApiType("SQL");
         api.setDatasourceId(sql.getDatasourceId());
         api.setSchemaName(sql.getSchemaName());
         api.setDatasourceType(sql.getDatasourceType());
