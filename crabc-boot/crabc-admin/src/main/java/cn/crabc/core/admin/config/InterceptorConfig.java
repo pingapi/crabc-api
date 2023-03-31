@@ -1,7 +1,9 @@
 package cn.crabc.core.admin.config;
 
+import cn.crabc.core.admin.filter.ApiFilter;
 import cn.crabc.core.admin.filter.AuthInterceptor;
 import cn.crabc.core.admin.filter.JwtInterceptor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -35,5 +37,21 @@ public class InterceptorConfig implements WebMvcConfigurer {
         // API开放接口拦截器
         registry.addInterceptor(apiInterceptor())
                 .addPathPatterns("/api/web/**"); // 需要拦截的请求
+    }
+
+    /**
+     * 添加过滤器
+     * @return
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Bean
+    public FilterRegistrationBean builderRegistrationBean(){
+
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new ApiFilter());
+        registration.addUrlPatterns("/api/web/*");
+        registration.setName("apiFilter");
+        registration.setOrder(-1);
+        return registration;
     }
 }

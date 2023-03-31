@@ -20,7 +20,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -103,8 +103,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         apiLog.setRequestStatus(response.getStatus() == 200 ? "success" : "fail");
         // 响应结果
         try {
-            String requestBody = StreamUtils.copyToString(request.getInputStream(), Charset.forName("UTF-8"));
-            apiLog.setRequestBody(requestBody);
+            if (request instanceof  BaseRequestWrapper){
+                String requestBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+                apiLog.setRequestBody(requestBody);
+            }
         } catch (Exception e) {
             log.error("响应结果转换异常", e);
         }
@@ -155,13 +157,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             throw new CustomException(53003, "timestamp已过期！");
         }
         String method = request.getMethod();
-        StringBuffer bodyStr = new StringBuffer();
-
+        StringBuilder bodyStr = new StringBuilder();
         // 参数解析
         Map<String, Object> paramsMap = new HashMap<>();
         if ("POST".equals(method) || "PUT".equals(method)) {
-            Map<String, Object> bodyMap = RequestUtils.getBodyMap(request);
-            paramsMap.putAll(bodyMap);
+            if (request instanceof BaseRequestWrapper){
+                Map<String, Object> bodyMap = RequestUtils.getBodyMap(request);
+                paramsMap.putAll(bodyMap);
+            }
         }
         Map<String, String[]> parameterMap = request.getParameterMap();
         for (String key : parameterMap.keySet()) {

@@ -42,7 +42,7 @@ public class ExceptionHandler {
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, NullPointerException e) {
         log.error("发生空指针异常！原因是:", e);
-        return Result.error(50001, "空指针异常");
+        return Result.error(50001, "必传参数不能为空！");
     }
 
     /**
@@ -56,6 +56,6 @@ public class ExceptionHandler {
     @ResponseBody
     public Result exceptionHandler(HttpServletRequest req, HttpMessageNotReadableException e) {
         log.error("参数校验异常-json转换异常:", e);
-        return Result.error(50002, "json转换异常");
+        return Result.error(50002, "Body参数异常，请检查Body/json是否正确传参");
     }
 }
