@@ -142,17 +142,17 @@ public class AuthInterceptor implements HandlerInterceptor {
      */
     public boolean checkHmacSHA256(HttpServletRequest request, List<BaseApp> appList) {
         // 校验参数
-        String sign = request.getHeader("sign");
-        String timeStamp = request.getHeader("timestamp");
-        String appKey = request.getHeader("appkey");
+        String sign = request.getHeader("sign") == null ? request.getParameter("sign") : request.getHeader("sign");
+        String timeStamp = request.getHeader("timestamp") == null ? request.getParameter("timestamp") : request.getHeader("timestamp");
+        String appKey = request.getHeader("appkey") == null ? request.getParameter("appkey") : request.getHeader("appkey");
         if (appKey == null || sign == null || timeStamp == null) {
-            throw new CustomException(53002, "认证参数不能为空！");
+            throw new CustomException(53002, "认证参数(appkey/timestamp/sign)不能为空！");
         }
         // 校验时间戳,超过10分钟失效
-        Long authTime = Long.valueOf(timeStamp);
+        long authTime = Long.parseLong(timeStamp);
         long nowTime = System.currentTimeMillis() - authTime;
         if (nowTime > 10 * 60 * 1000) {
-            throw new CustomException(53003, "timestamp过期！");
+            throw new CustomException(53003, "timestamp已过期！");
         }
         String method = request.getMethod();
         StringBuffer bodyStr = new StringBuffer();
@@ -165,6 +165,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
         Map<String, String[]> parameterMap = request.getParameterMap();
         for (String key : parameterMap.keySet()) {
+            if (request.getHeader("sign") == null && ("sign".equals(key) || "appkey".equals(key) || "timestamp".equals(key))) {
+                continue;
+            }
             String[] values = parameterMap.get(key);
             if (values.length == 1) {
                 paramsMap.put(key, values[0]);
