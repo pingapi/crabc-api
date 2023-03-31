@@ -166,7 +166,7 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         if (password != null && !"".equals(password.trim())) {
             pwd = this.decryptPwd(password);
         }
-        if (pwd == null) {
+        if (pwd == null && dataSource.getDatasourceId() !=null && !"".equals(dataSource.getDatasourceId())) {
             BaseDatasource baseDatasource = dataSourceMapper.selectOne(Integer.parseInt(dataSource.getDatasourceId()));
             try {
                 pwd = RSAUtils.decryptByPriKey(baseDatasource.getSecretKey(), baseDatasource.getPassword());
