@@ -37,7 +37,7 @@ public interface IBaseDataService {
      * @param params
      * @return
      */
-    List<Map<String, Object>> query(String datasourceId, String schema, String sql, List<Object> params);
+    List<Map<String, Object>> query(String datasourceId, String schema, String sql, Object params);
 
     /**
      * 新增操作
@@ -57,7 +57,7 @@ public interface IBaseDataService {
      * @param params
      * @return
      */
-    Integer update(String datasourceId, String schema, String sql, List<Object> params);
+    Integer update(String datasourceId, String schema, String sql, Object params);
 
     /**
      * 删除操作
@@ -67,5 +67,5 @@ public interface IBaseDataService {
      * @param params
      * @return
      */
-    Integer delete(String datasourceId, String schema, String sql, List<Object> params);
+    Integer delete(String datasourceId, String schema, String sql, Object params);
 }

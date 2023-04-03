@@ -1,6 +1,7 @@
 package cn.crabc.core.admin.util;
 
 
+import cn.crabc.core.admin.entity.BaseApiParam;
 import cn.crabc.core.app.exception.CustomException;
 import com.alibaba.druid.DbType;
 import com.alibaba.druid.sql.SQLUtils;
@@ -221,7 +222,8 @@ public class SQLUtil {
                 return false;
             }
             String type = operate.get(0);
-            if (("elasticsearch".equals(dbType) || "mongodb".equals(dbType)) && !"select".equals(type.toLowerCase())){
+            if (("elasticsearch".equals(dbType) || "mongodb".equals(dbType)) &&
+                    ("update".equalsIgnoreCase(type) || "delete".equalsIgnoreCase(type))) {
                 return false;
             }
             return DML_TYPE.contains(type.toLowerCase());
@@ -230,12 +232,33 @@ public class SQLUtil {
     }
 
     /**
-     * 校验并返回类型
+     * 校验SQL的合法性
+     *
      * @param sql
      * @param dbType
      * @return
      */
-    public static String getSqlType(String sql, String dbType){
+    public static boolean previewCheckSql(String sql, String dbType) {
+        Map<String, Object> map = parseSqlTable(sql, dbType);
+        if (map.containsKey("operateName")) {
+            List<String> operate = (List<String>) map.get("operateName");
+            if (operate == null || operate.size() == 0) {
+                return false;
+            }
+            String type = operate.get(0);
+            return "select".equalsIgnoreCase(type);
+        }
+        return false;
+    }
+
+    /**
+     * 校验并返回类型
+     *
+     * @param sql
+     * @param dbType
+     * @return
+     */
+    public static String getSqlType(String sql, String dbType) {
         Map<String, Object> map = parseSqlTable(sql, dbType);
         if (map.containsKey("operateName")) {
             List<String> operate = (List<String>) map.get("operateName");
@@ -243,10 +266,69 @@ public class SQLUtil {
                 return null;
             }
             String type = operate.get(0);
-            if(DML_TYPE.contains(type.toLowerCase())){
+            if (("elasticsearch".equals(dbType) || "mongodb".equals(dbType)) &&
+                    ("update".equalsIgnoreCase(type) || "delete".equalsIgnoreCase(type))) {
+                return null;
+            }
+            if (DML_TYPE.contains(type.toLowerCase())) {
                 return type;
             }
         }
         return null;
+    }
+
+    /**
+     * 过滤SQL中的参数
+     * @param sql
+     * @param reqParams
+     * @param paramsConfig
+     * @return
+     */
+    public static String filterParams(String sql, Object reqParams, List<BaseApiParam> paramsConfig) {
+        if (paramsConfig == null || paramsConfig.size() == 0) {
+            // 没有查询请求参数设置，清空当前的请求参数
+            return sql;
+        }
+        // TODO 暂不支持数组集合
+        if (reqParams instanceof Map) {
+            Map<String, Object> paramMap = (Map<String, Object>) reqParams;
+            for (BaseApiParam param : paramsConfig) {
+                if (param.getRequired() && !paramMap.containsKey(param.getParamName())) {
+                    // 必传参数没有传，则报错提示
+                    throw new CustomException(52005, "请求参数缺少！");
+                } else if (!param.getRequired() && !paramMap.containsKey(param.getParamName())) {
+                    // 非比传参数，去掉SQL中相应的条件
+                    sql = regexSql(sql, param.getParamName());
+                }
+            }
+        }
+        return sql;
+    }
+
+    /**
+     * 正则过滤请求参数
+     *
+     * @param sql
+     * @param paramName
+     * @return
+     */
+    public static String regexSql(String sql, String paramName) {
+        String group = "(?i)group.*?(?i)by.*?" + paramName + "}";
+        String and = "(?i)and.*?" + paramName + "}";
+        String where = "(?i)where.*?" + paramName + "}";
+        String orderDesc = "(?i)order.*?(?i)by.*?" + paramName + "}.*?(?i)sc";
+        String order = "(?i)order.*?(?i)by.*?" + paramName + "}";
+        if (Pattern.compile(orderDesc).matcher(sql).find()) {
+            sql = sql.replaceAll(orderDesc, "");
+        } else if (Pattern.compile(order).matcher(sql).find()) {
+            sql = sql.replaceAll(order, "");
+        } else if (Pattern.compile(group).matcher(sql).find()) {
+            sql = sql.replaceAll(group, "");
+        } else if (Pattern.compile(and).matcher(sql).find()) {
+            sql = sql.replaceAll(and, "");
+        } else if (Pattern.compile(where).matcher(sql).find()) {
+            sql = sql.replaceAll(where, "where 1=1");
+        }
+        return sql;
     }
 }

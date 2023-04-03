@@ -1,6 +1,7 @@
 package cn.crabc.core.admin.entity.dto;
 
 import cn.crabc.core.admin.entity.BaseApiInfo;
+import cn.crabc.core.admin.entity.BaseApiParam;
 import cn.crabc.core.admin.entity.BaseApp;
 
 import java.util.Date;
@@ -20,10 +21,17 @@ public class ApiInfoDTO extends BaseApiInfo {
 
     private Long requestTime;
 
+    private String userId;
+
     /**
      * 有权限的应用
      */
     private List<BaseApp> appList;
+
+    /**
+     * API参数
+     */
+    private List<BaseApiParam> requestParams;
 
     public Date getRequestDate() {
         return requestDate;
@@ -47,5 +55,21 @@ public class ApiInfoDTO extends BaseApiInfo {
 
     public void setAppList(List<BaseApp> appList) {
         this.appList = appList;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public List<BaseApiParam> getRequestParams() {
+        return requestParams;
+    }
+
+    public void setRequestParams(List<BaseApiParam> requestParams) {
+        this.requestParams = requestParams;
     }
 }

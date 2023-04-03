@@ -143,6 +143,9 @@ public class ApiInfoController {
         Set<ColumnParseVo> resColumns = new HashSet<>();
         Set<String> resNames = SQLUtil.analyzeSQL(sqlParse.getSqlScript(), sqlParse.getDatasourceType());
         for (String name : resNames) {
+            if (name.startsWith("*")){
+                continue;
+            }
             ColumnParseVo resColumn = new ColumnParseVo();
             resColumn.setColName(name);
             resColumn.setColType("STRING");

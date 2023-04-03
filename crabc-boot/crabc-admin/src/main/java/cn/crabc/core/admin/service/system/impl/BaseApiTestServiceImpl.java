@@ -40,14 +40,20 @@ public class BaseApiTestServiceImpl implements IBaseApiTestService {
     }
 
     @Override
-    public Object testApi(String datasourceId, String schema, String sql, Map<String, Object> params) {
+    public Object testApi(String datasourceId, String schema, String sql,String dbTpye, Map<String, Object> params) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
-        Object pageNum = params.get(BaseConstant.PAGE_NUM);
-        Object pageSize = params.get(BaseConstant.PAGE_SIZE);
-        if (pageNum != null && pageSize != null) {
-            return statementMapper.selectPage(datasourceId, schema, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
-        } else {
-            return statementMapper.selectList(datasourceId, schema, sql, params);
+        if ("select".equalsIgnoreCase(dbTpye)){
+            Object pageNum = params.get(BaseConstant.PAGE_NUM);
+            Object pageSize = params.get(BaseConstant.PAGE_SIZE);
+            if (pageNum != null && pageSize != null) {
+                return statementMapper.selectPage(datasourceId, schema, sql, params, Integer.parseInt(pageNum.toString()), Integer.parseInt(pageSize.toString()));
+            } else {
+                return statementMapper.selectList(datasourceId, schema, sql, params);
+            }
+        }else if ("insert".equalsIgnoreCase(dbTpye)) {
+            return statementMapper.insert(datasourceId, schema, sql, params);
+        }else {
+            return statementMapper.update(datasourceId, schema, sql,params);
         }
     }
 }

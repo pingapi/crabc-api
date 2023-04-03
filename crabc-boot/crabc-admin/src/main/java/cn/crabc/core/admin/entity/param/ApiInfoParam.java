@@ -1,7 +1,10 @@
 package cn.crabc.core.admin.entity.param;
 
 import cn.crabc.core.admin.entity.BaseApiInfo;
+import cn.crabc.core.admin.entity.BaseApiParam;
 import cn.crabc.core.admin.entity.BaseApiSql;
+
+import java.util.List;
 
 /**
  * API请求参数
@@ -19,6 +22,16 @@ public class ApiInfoParam {
      * sql
      */
     private BaseApiSql sqlInfo;
+
+    /**
+     * 请求参数
+     */
+    private List<BaseApiParam> requestParam;
+
+    /**
+     * 返回参数
+     */
+    private List<BaseApiParam> responseParam;
     /**
      * 查询引擎
      */
@@ -46,5 +59,21 @@ public class ApiInfoParam {
 
     public void setQueryEngine(String queryEngine) {
         this.queryEngine = queryEngine;
+    }
+
+    public List<BaseApiParam> getRequestParam() {
+        return requestParam;
+    }
+
+    public void setRequestParam(List<BaseApiParam> requestParam) {
+        this.requestParam = requestParam;
+    }
+
+    public List<BaseApiParam> getResponseParam() {
+        return responseParam;
+    }
+
+    public void setResponseParam(List<BaseApiParam> responseParam) {
+        this.responseParam = responseParam;
     }
 }

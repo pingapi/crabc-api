@@ -7,9 +7,11 @@ import cn.crabc.core.admin.enums.ApiAuthEnum;
 import cn.crabc.core.admin.service.system.IBaseApiLogService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
 import cn.crabc.core.admin.util.HmacSHAUtils;
+import cn.crabc.core.admin.util.JwtUtil;
 import cn.crabc.core.admin.util.RequestUtils;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.benmanes.caffeine.cache.Cache;
+import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +57,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         boolean auth = true;
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             auth = checkAppCode(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
-
         } else if (ApiAuthEnum.APP_SECRET.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             auth = checkHmacSHA256(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
         } else if (ApiAuthEnum.JWT.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
-            // TODO
+            String userId = this.checkJwt(request);
+            apiInfo.setUserId(userId);
         }
-        if (auth == false) {
+        if (!auth) {
             throw new CustomException(53001, "您没有访问该API的权限");
         }
         // 存入当前时间，当作是日志的请求时间
@@ -114,6 +116,22 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     }
 
+    /**
+     * 验证jwt
+     * @param request
+     * @return
+     */
+    private String checkJwt(HttpServletRequest request){
+        String token = JwtUtil.getToken(request);
+        if (token == null) {
+            throw new CustomException(53001, "Authorization token not found");
+        }
+        Claims claims = JwtUtil.parseToken(token);
+        if (claims == null) {
+            throw new CustomException(53001, "jwt token 认证失败");
+        }
+        return claims.get("userId").toString();
+    }
     /**
      * 验证接口访问权限
      *

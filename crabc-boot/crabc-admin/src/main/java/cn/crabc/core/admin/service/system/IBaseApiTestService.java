@@ -30,5 +30,5 @@ public interface IBaseApiTestService {
      * @param params
      * @return
      */
-    Object testApi(String datasourceId,String schema, String sql, Map<String, Object> params);
+    Object testApi(String datasourceId,String schema, String sql, String dbType, Map<String, Object> params);
 }

@@ -4,10 +4,12 @@ import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.service.core.IBaseDataService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
 import cn.crabc.core.admin.util.Result;
+import cn.crabc.core.admin.util.SQLUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,11 +80,12 @@ public class ApiServiceController {
     private Object execute(ApiInfoDTO api, List<Object> params) {
         Object result = null;
         if ("select".equalsIgnoreCase(api.getSqlType())) {
-            result = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+            String sql = SQLUtil.filterParams(api.getSqlScript(), params.size() > 0 ? params.get(0) : new HashMap<>(), api.getRequestParams());
+            result = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), sql, params.size() > 0 ? params.get(0) : new HashMap<>());
         } else if ("insert".equalsIgnoreCase(api.getSqlType())) {
             result = baseDataService.add(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
         } else {
-            result = baseDataService.update(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
+            result = baseDataService.update(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params.size() > 0 ? params.get(0) : new HashMap<>());
         }
         return result;
     }
