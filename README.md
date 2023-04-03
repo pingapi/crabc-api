@@ -42,8 +42,9 @@ cn.crabc
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
-## 使用文档
-文档地址：https://gitee.com/linebyte/crabc/wikis/home
+## 说明文档
+wiki地址：https://gitee.com/linebyte/crabc/wikis/home
+
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据
 ```
@@ -72,6 +73,6 @@ cn.crabc
 ## 交流群
 微信群：
 
-![img.png](doc/wechart.png)
+![img.png](doc/wechat.png)
 
 QQ群：748993036
