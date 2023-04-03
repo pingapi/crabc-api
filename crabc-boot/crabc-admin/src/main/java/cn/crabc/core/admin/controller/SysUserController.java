@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class SysUserController {
         if (userInfo == null) {
             return Result.error("账号或密码错误!");
         }
-        String pwd = new String(Base64Utils.decodeFromString(password), "UTF-8");
+        String pwd = new String(Base64Utils.decodeFromString(password), StandardCharsets.UTF_8);
         String md5 = Md5Utils.hash(pwd).toUpperCase();
         if (!userInfo.getPassword().equals(md5)) {
             return Result.error("账号或密码错误!");

@@ -51,7 +51,7 @@ public class JdbcStatement implements StatementMapper {
                 execType = paramsMap.get(BaseConstant.BASE_API_EXEC_TYPE).toString();
             }
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
-            Integer pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
+            int pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
             // 分页设置
             if (BaseConstant.PAGE_COUNT == pageCount) {
                 PageHelper.startPage(pageNum, pageSize, true);
@@ -143,7 +143,7 @@ public class JdbcStatement implements StatementMapper {
         JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
         Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put(BaseConstant.BASE_SQL, sql);
-        if (params != null && params instanceof Map) {
+        if (params instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) params;
             paramsMap.putAll(map);
         }
