@@ -1,17 +1,11 @@
 package cn.crabc.core.admin.filter;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.http.MediaType;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
-import org.springframework.web.util.WebUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class ApiFilter implements Filter {
     @Override
