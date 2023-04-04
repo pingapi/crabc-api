@@ -52,10 +52,10 @@ public class JdbcStatement implements StatementMapper {
             }
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
             int pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
-            // 分页设置
-            if (BaseConstant.PAGE_COUNT == pageCount) {
+            // 判断是否分页
+            if (BaseConstant.PAGE_COUNT == pageCount && !sql.toLowerCase().contains(" limit")) {
                 PageHelper.startPage(pageNum, pageSize, true);
-            } else {
+            } else if (BaseConstant.PAGE_ONLY == pageCount && !sql.toLowerCase().contains(" limit")){
                 PageHelper.startPage(pageNum, pageSize, false);
             }
             list = baseMapper.executeQuery(paramsMap);
@@ -142,7 +142,7 @@ public class JdbcStatement implements StatementMapper {
         }
         JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
         Map<String, Object> paramsMap = new HashMap<>();
-        paramsMap.put(BaseConstant.BASE_SQL, sql);
+        paramsMap.put(BaseConstant.BASE_SQL, sql.replaceAll(";",""));
         if (params instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) params;
             paramsMap.putAll(map);
