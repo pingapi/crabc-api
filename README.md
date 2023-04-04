@@ -45,6 +45,9 @@ cn.crabc
 ## 说明文档
 wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 
+## 演示环境
+地址：http://117.50.173.191:9377/user/login
+
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据
 ```
