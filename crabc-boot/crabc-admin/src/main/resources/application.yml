@@ -72,3 +72,9 @@ mybatis:
   config-location: classpath:mybatis-config.xml
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# es健康检查
+management:
+  health:
+    elasticsearch:
+      enabled: false

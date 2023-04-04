@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class UserThreadLocal {
 
-    private static ThreadLocal<Map> userInfo = new ThreadLocal<>();
+    private static final ThreadLocal<Map<String,Object>> userInfo = new ThreadLocal<>();
 
     /**
      * 用户信息存入 上下文中
@@ -35,7 +35,7 @@ public class UserThreadLocal {
      * @return
      */
     public static String getUserId() {
-        Map map = userInfo.get();
+        Map<String, Object> map = userInfo.get();
         return map == null ? null : map.get("userId").toString();
     }
 
@@ -44,8 +44,8 @@ public class UserThreadLocal {
      * @return
      */
     public static boolean isAdmin() {
-        Map map = userInfo.get();
-        if (map != null && "admin".equals(map.get("role").toString().toLowerCase())) {
+        Map<String, Object> map = userInfo.get();
+        if (map != null && "admin".equalsIgnoreCase(map.get("role").toString())) {
             return true;
         } else {
             return false;
@@ -57,8 +57,8 @@ public class UserThreadLocal {
      * @return
      */
     public static boolean isSuperAdmin() {
-        Map map = userInfo.get();
-        if (map != null && "1".equals(map.get("userId").toString()) && "admin".equals(map.get("role").toString().toLowerCase())) {
+        Map<String, Object> map = userInfo.get();
+        if (map != null && "1".equals(map.get("userId").toString()) && "admin".equalsIgnoreCase(map.get("role").toString())) {
             return true;
         } else {
             return false;
