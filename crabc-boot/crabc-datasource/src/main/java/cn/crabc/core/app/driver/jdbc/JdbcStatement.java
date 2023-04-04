@@ -14,11 +14,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class JdbcStatement implements StatementMapper {
     private static Logger log = LoggerFactory.getLogger(JdbcStatement.class);
     private BaseDataHandleMapper baseMapper;
-    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_SIZE = 50;
 
     private static final Integer PAGE_NUM = 1;
 
@@ -41,7 +42,6 @@ public class JdbcStatement implements StatementMapper {
 
     @Override
     public PageInfo selectPage(String dataSourceId, String schema, String sql, Object params, int pageNum, int pageSize) {
-        PageInfo pageInfo = null;
         // 判断是否是预览运行SQL
         String execType = null;
         List<Map<String, Object>> list = new ArrayList<>();
@@ -53,9 +53,9 @@ public class JdbcStatement implements StatementMapper {
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
             int pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
             // 判断是否分页
-            if (BaseConstant.PAGE_COUNT == pageCount && !sql.toLowerCase().contains(" limit")) {
+            if (BaseConstant.PAGE_COUNT == pageCount && !checkPage(sql)) {
                 PageHelper.startPage(pageNum, pageSize, true);
-            } else if (BaseConstant.PAGE_ONLY == pageCount && !sql.toLowerCase().contains(" limit")){
+            } else if (!checkPage(sql)){
                 PageHelper.startPage(pageNum, pageSize, false);
             }
             list = baseMapper.executeQuery(paramsMap);
@@ -74,8 +74,7 @@ public class JdbcStatement implements StatementMapper {
             PageHelper.clearPage();
             JdbcDataSourceRouter.remove();
         }
-        pageInfo = new PageInfo<>(list, pageNum, pageSize);
-        return pageInfo;
+        return new PageInfo<>(list, pageNum, pageSize);
     }
 
     @Override
@@ -148,5 +147,27 @@ public class JdbcStatement implements StatementMapper {
             paramsMap.putAll(map);
         }
         return paramsMap;
+    }
+
+    /**
+     * 校验SQL是否包含分页
+     * @param sql
+     * @return
+     */
+    private boolean checkPage(String sql){
+        // 匹配limit+ 数字的规则，mysql,tidb
+        String mysql = "(?i)limit.*?\\d";
+        // 匹配limit+ 数字的规则，postgres, sqlserver2012以上
+        String postgres = "(?i)offset.*?\\d";
+        // 匹配ROWNUM关键字分页，oracle
+        String oracle ="(?i)ROWNUM.*?\\d";
+        if (Pattern.compile(mysql).matcher(sql).find()){
+            return true;
+        }else if(Pattern.compile(postgres).matcher(sql).find()){
+            return true;
+        }else if(Pattern.compile(oracle).matcher(sql).find()){
+            return true;
+        }
+        return false;
     }
 }
