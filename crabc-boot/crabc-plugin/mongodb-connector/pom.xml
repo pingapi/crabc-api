@@ -23,10 +23,5 @@
             <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.vincentrussell</groupId>
-            <artifactId>sql-to-mongo-db-query-converter</artifactId>
-            <version>1.21</version>
-        </dependency>
     </dependencies>
 </project>

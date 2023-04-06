@@ -14,7 +14,7 @@ public class MongodbDataSourceDriver implements DataSourceDriver {
 
     @Override
     public String getName() {
-        return null;
+        return "mongodb";
     }
 
     @Override
