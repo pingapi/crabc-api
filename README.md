@@ -50,6 +50,9 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 
 账号密码：admin/admin123
 
+## 商用授权
+产品商用请加群联系
+
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据
 ```
