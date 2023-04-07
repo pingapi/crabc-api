@@ -85,9 +85,7 @@ public class ElasticsearchStatement implements StatementMapper {
     private String inSql(List<String> list) {
         String value = null;
         for (int i = 0; i < list.size(); i++) {
-            if (i == list.size() - 1) {
-                value = value + "";
-            } else {
+            if (i < list.size() - 1) {
                 value = value + "',";
             }
         }
@@ -95,80 +93,6 @@ public class ElasticsearchStatement implements StatementMapper {
     }
     @Override
     public Map<String, Object> selectPage(String dataSourceId, String index, String sql, Object params, int pageNum, int pageSize) {
-        if (checkGroupBy(sql)){
-            // 分组聚合SQL，使用SQL模式查询
-            return executeSql(dataSourceId, index, sql, params, pageNum, pageSize);
-        }else {
-            return executeDsl(dataSourceId, index, sql, params, pageNum, pageSize);
-        }
-    }
-
-    /**
-     * DSL模式
-     * @return
-     */
-    public Map<String, Object> executeDsl(String dataSourceId, String index, String sql, Object params, int pageNum, int pageSize) {
-        RestHighLevelClient client = ElasticsearchDataSourceDriver.getConnectionClient(dataSourceId);
-        if (client == null) {
-            throw new RuntimeException("es数据源为空");
-        }
-        Request post = new Request("POST", "/_sql/translate");
-        Map<String, Object> result = new HashMap<>();
-        if (params instanceof Map) {
-            Map<String, Object> paramsMap = (Map<String, Object>) params;
-            sql = makeSql(paramsMap, sql);
-        }
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("query", sql);
-        queryMap.put("fetch_size", pageSize);
-        List<Map<String, Object>> list = new ArrayList<>();
-        try {
-            post.setJsonEntity(objectMapper.writeValueAsString(queryMap));
-            Response response = client.getLowLevelClient().performRequest(post);
-            SearchTemplateRequest request = new SearchTemplateRequest();
-
-            Map<String, Object> jsonMap = objectMapper.readValue(EntityUtils.toString(response.getEntity()), Map.class);
-            jsonMap.put("from", (pageNum - 1) * pageSize);
-            request.setScript(objectMapper.writeValueAsString(jsonMap));
-            //指定索引
-            request.setRequest(new SearchRequest(index));
-            //设置为内联
-            request.setScriptType(ScriptType.INLINE);
-            //设置查询参数
-            request.setScriptParams(new HashMap<>());
-
-            SearchResponse searchResponse = client.searchTemplate(request, RequestOptions.DEFAULT).getResponse();
-            SearchHits searchHits = searchResponse.getHits();
-            SearchHit[] hits = searchHits.getHits();
-            TotalHits totalHits = searchHits.getTotalHits();
-            for (SearchHit hit : hits) {
-                Map<String, Object> row = new HashMap<>();
-                if (hit.getSourceAsMap() != null && hit.getSourceAsMap().size() > 0) {
-                    row.putAll(hit.getSourceAsMap());
-                }
-                Map<String, DocumentField> fields = hit.getDocumentFields();
-                for (String field : fields.keySet()) {
-                    row.put(fields.get(field).getName(), fields.get(field).getValue());
-                }
-                list.add(row);
-            }
-            result.put("list", list);
-            result.put("total", totalHits.value);
-            result.put("pageNum", pageNum);
-            result.put("pageSize", pageSize);
-            result.put("pageCursor", "0");
-        } catch (Exception e) {
-            log.error("--es数据查询失败,sql:" + sql, e);
-            throw new RuntimeException("es查询异常,请检查SQL是否正确");
-        }
-        return result;
-    }
-
-    /**
-     * SQL模式
-     * @return
-     */
-    public Map<String, Object> executeSql(String dataSourceId, String index, String sql, Object params, int pageNum, int pageSize) {
         Map<String, Object> result = new HashMap<>();
         List<Map<String, Object>> list = new ArrayList<>();
         try {
@@ -181,12 +105,6 @@ public class ElasticsearchStatement implements StatementMapper {
             Object rows = dataMap.get("rows");
             // 分页光标
             Object cursor = dataMap.get("cursor");
-            // 游标查询时，二次查询字段（游标查询不会返回字段名）
-            if (columns == null && rows != null) {
-                paramsMap.remove("pageCursor");
-                Map<String, Object> fieldMap = this.query(dataSourceId, sql, paramsMap, 1);
-                columns = fieldMap.get("columns");
-            }
             if (rows == null || columns == null) {
                 result.put("pageCursor", "0");
                 result.put("pageNum", pageNum);
@@ -220,6 +138,7 @@ public class ElasticsearchStatement implements StatementMapper {
         }
         return result;
     }
+
 
     /**
      * 查询es
@@ -283,15 +202,5 @@ public class ElasticsearchStatement implements StatementMapper {
     @Override
     public int update(String dataSourceId, String schema, String sql, Object params) {
         return 0;
-    }
-
-    /**
-     * 检查sql是否包含分组聚合操作
-     * @param sql
-     * @return
-     */
-    private boolean checkGroupBy(String sql){
-        String mysql = "(?i)group.*?(?i)by.*?";
-        return Pattern.compile(mysql).matcher(sql).find();
     }
 }
