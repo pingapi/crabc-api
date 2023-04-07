@@ -8,9 +8,7 @@ package cn.crabc.core.admin.enums;
 public enum ApiAuthEnum {
     NONE("none", "无认证"),
     CODE("app_code", "code认证"),
-    APP_SECRET("app_secret", "密钥认证"),
-    TOKEN("token", "token认证"),
-    JWT("jwt", "JWT认证");
+    APP_SECRET("app_secret", "密钥认证");
 
     private String name;
     private String value;

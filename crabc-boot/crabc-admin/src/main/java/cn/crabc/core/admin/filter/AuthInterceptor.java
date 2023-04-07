@@ -7,15 +7,14 @@ import cn.crabc.core.admin.enums.ApiAuthEnum;
 import cn.crabc.core.admin.service.system.IBaseApiLogService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
 import cn.crabc.core.admin.util.HmacSHAUtils;
-import cn.crabc.core.admin.util.JwtUtil;
 import cn.crabc.core.admin.util.RequestUtils;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.benmanes.caffeine.cache.Cache;
-import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -41,6 +40,8 @@ public class AuthInterceptor implements HandlerInterceptor {
     Cache<String, Object> apiCache;
     @Autowired
     private IBaseApiLogService iBaseApiLogService;
+    @Value("${crabc.auth.expiresTime:10}")
+    private Integer expiresTime;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -59,9 +60,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             auth = checkAppCode(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
         } else if (ApiAuthEnum.APP_SECRET.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             auth = checkHmacSHA256(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
-        } else if (ApiAuthEnum.JWT.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
-            String userId = this.checkJwt(request);
-            apiInfo.setUserId(userId);
         }
         if (!auth) {
             throw new CustomException(53001, "您没有访问该API的权限");
@@ -117,22 +115,6 @@ public class AuthInterceptor implements HandlerInterceptor {
     }
 
     /**
-     * 验证jwt
-     * @param request
-     * @return
-     */
-    private String checkJwt(HttpServletRequest request){
-        String token = JwtUtil.getToken(request);
-        if (token == null) {
-            throw new CustomException(53001, "Authorization token not found");
-        }
-        Claims claims = JwtUtil.parseToken(token);
-        if (claims == null) {
-            throw new CustomException(53001, "jwt token 认证失败");
-        }
-        return claims.get("userId").toString();
-    }
-    /**
      * 验证接口访问权限
      *
      * @param request
@@ -171,12 +153,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         // 校验时间戳,超过10分钟失效
         long authTime = Long.parseLong(timeStamp);
         long nowTime = System.currentTimeMillis() - authTime;
-        if (nowTime > 10 * 60 * 1000) {
+        if (nowTime > expiresTime * 60 * 1000) {
             throw new CustomException(53003, "timestamp已过期！");
         }
         String method = request.getMethod();
         StringBuilder bodyStr = new StringBuilder();
-        // 参数解析
+        // POST和PUT才进行Body参数解析
         Map<String, Object> paramsMap = new HashMap<>();
         if ("POST".equals(method) || "PUT".equals(method)) {
             if (request instanceof BaseRequestWrapper){
