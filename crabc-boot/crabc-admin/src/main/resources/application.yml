@@ -9,28 +9,9 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
-  redis:
-    host: localhost
-    port: 6379
-    database: 0
-    password:
-    #超时时间ms
-    timeout: 10000
-    lettuce:
-      #在关闭客户端连接之前等待任务处理完成的最长时间ms
-      shutdown-timeout: 100
-      pool:
-        # 连接池中的最小空闲连接
-        min-idle: 1
-        # 连接池中的最大空闲连接
-        max-idle: 8
-        # 连接池的最大数据库连接数
-        max-active: 8
-        # 最大阻塞等待时间（使用负值表示没有限制）
-        max-wait: -1
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
     druid:
@@ -78,3 +59,7 @@ management:
   health:
     elasticsearch:
       enabled: false
+# 签名认证过期时间
+crabc:
+  auth:
+    expiresTime: 10
