@@ -2,7 +2,7 @@
 ![img.png](doc/logo.png)
 ## 介绍
 Crabc是低代码开发平台，企业级API发布管理系统，采用SpringBoot、JWT、Mybatis等框架和SPI插件机制实现。
-支持接入（mysql、oracle、postgresql、sqlserver、elasticsearch、MongoDB）等SQL或/NOSQL数据源，
+支持接入（mysql、oracle、postgresql、sqlserver、elasticsearch、mongodb）等SQL或/NOSQL数据源，
 在编辑框内编写好SQL后即可快速生成Rest接口对外提供服务，还将提供了一键生成CRUD通用接口方法，
 减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。可通过插件的方式扩展支持其他的数据源。
 后续将集成微服务网关支持接口转发、黑白名单、权限认证、限流、缓存、监控等提供一站式API服务功能。
@@ -14,8 +14,8 @@ Crabc是低代码开发平台，企业级API发布管理系统，采用SpringBoo
 4.  我的应用：Code认证和签名认证的应用创建管理以及对API调用在线授权。
 5.  我的API：查看开发中和已发布的API接口，可进行上下线管理，编辑升级等
 6.  接口日志：查看发布的接口被调用日志列表和请求详情。
-7.  调用监控：可视化查看发布的API被调用统计和监控。（实现中）
-8.  策略管理：限流、缓存、熔断、告警、黑白名单等。（实现中）
+7.  调用监控：可视化查看发布的API被调用统计和监控。
+8.  策略管理：限流、缓存、熔断、告警、黑白名单等。
 
 ## 模块
 ~~~
@@ -81,6 +81,6 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 ## 交流群
 微信群：
 
-![img.png](doc/wechat.png)
+![img.png](doc/img_wecaht.png)
 
 QQ群：748993036
