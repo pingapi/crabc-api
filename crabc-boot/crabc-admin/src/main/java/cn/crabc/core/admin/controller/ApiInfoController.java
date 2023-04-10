@@ -101,7 +101,7 @@ public class ApiInfoController {
             return Result.error("不支持该SQL的操作类型!");
         }
         apiInfoService.apiPublish(api);
-        return Result.success();
+        return Result.success(api.getBaseInfo().getApiId());
     }
 
     /**
