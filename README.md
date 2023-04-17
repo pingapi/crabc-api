@@ -16,6 +16,7 @@ Crabc是低代码开发平台，企业级API发布管理系统，采用SpringBoo
 6.  接口日志：查看发布的接口被调用日志列表和请求详情。
 7.  调用监控：可视化查看发布的API被调用统计和监控。
 8.  策略管理：限流、缓存、熔断、告警、黑白名单等。
+9.  申请审批：可申请Hub中公开的API和审批别人申请调用自己发布的接口
 
 ## 模块
 ~~~
@@ -81,6 +82,6 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 ## 交流群
 微信群：
 
-![img.png](doc/img_wecaht.png)
+![img.png](doc/img_wechat.png)
 
 QQ群：748993036
