@@ -3,6 +3,7 @@ package cn.crabc.core.admin.mapper;
 import cn.crabc.core.admin.entity.BaseApiInfo;
 import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.entity.vo.ApiComboBoxVO;
+import cn.crabc.core.admin.entity.vo.BaseApiInfoVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -45,6 +46,14 @@ public interface BaseApiInfoMapper {
      * @return
      */
     BaseApiInfo selectApiById(Long apiId);
+
+    /**
+     * 根据Id查询api基本信息
+     *
+     * @param apiId
+     * @return
+     */
+    BaseApiInfoVO selectBaseApi(Long apiId);
 
     /**
      * 校验api地址是否已经存在

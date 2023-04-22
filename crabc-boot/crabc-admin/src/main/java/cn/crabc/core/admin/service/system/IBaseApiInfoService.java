@@ -6,6 +6,7 @@ import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.entity.param.ApiInfoParam;
 import cn.crabc.core.admin.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.admin.entity.vo.ApiInfoVO;
+import cn.crabc.core.admin.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.admin.util.PageInfo;
 
 import java.util.List;
@@ -75,7 +76,7 @@ public interface IBaseApiInfoService {
      * @param apiId
      * @return
      */
-    BaseApiInfo getApiInfo(Long apiId);
+    BaseApiInfoVO getApiDetail(Long apiId);
 
     /**
      * 根据apiId查询详情
@@ -83,7 +84,7 @@ public interface IBaseApiInfoService {
      * @param apiId
      * @return
      */
-    ApiInfoVO getApiDetail(Long apiId);
+    ApiInfoVO getApiInfo(Long apiId);
 
     /**
      * 新增API

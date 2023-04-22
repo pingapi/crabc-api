@@ -5,6 +5,7 @@ import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.entity.param.ApiInfoParam;
 import cn.crabc.core.admin.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.admin.entity.vo.ApiInfoVO;
+import cn.crabc.core.admin.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.admin.enums.ApiStateEnum;
 import cn.crabc.core.admin.mapper.BaseApiInfoMapper;
 import cn.crabc.core.admin.mapper.BaseApiParamMapper;
@@ -118,12 +119,12 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     @Override
-    public BaseApiInfo getApiInfo(Long apiId) {
-        return apiInfoMapper.selectApiById(apiId);
+    public BaseApiInfoVO getApiDetail(Long apiId) {
+        return apiInfoMapper.selectBaseApi(apiId);
     }
 
     @Override
-    public ApiInfoVO getApiDetail(Long apiId) {
+    public ApiInfoVO getApiInfo(Long apiId) {
         ApiInfoVO result = new ApiInfoVO();
         BaseApiInfo baseApiInfo = apiInfoMapper.selectApiById(apiId);
         BaseApiSql baseApiSql = new BaseApiSql();
@@ -162,7 +163,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         }
         apiInfoMapper.insertApiInfo(api);
         // 参数
-        this.insertApiParams(params.getRequestParam(),params.getResponseParam());
+        this.insertApiParams(params.getRequestParam(),params.getResponseParam(),api.getApiId());
         return api.getApiId();
     }
 
@@ -186,7 +187,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         apiInfoMapper.updateApiInfo(api);
         apiParamMapper.delete(apiId);
         // 参数
-        this.insertApiParams(params.getRequestParam(),params.getResponseParam());
+        this.insertApiParams(params.getRequestParam(),params.getResponseParam(), api.getApiId());
         return apiId;
     }
 
@@ -306,7 +307,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
      * @param requestParams
      * @param responseParams
      */
-    private void insertApiParams(List<BaseApiParam> requestParams, List<BaseApiParam> responseParams){
+    private void insertApiParams(List<BaseApiParam> requestParams, List<BaseApiParam> responseParams, Long apiId){
         List<BaseApiParam> params = new ArrayList<>();
         if (requestParams != null && requestParams.size() > 0) {
             params.addAll(requestParams);
@@ -315,7 +316,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             params.addAll(responseParams);
         }
         if (params.size() > 0) {
-            apiParamMapper.insertBatch(params);
+            apiParamMapper.insertBatch(params,apiId);
         }
     }
 }

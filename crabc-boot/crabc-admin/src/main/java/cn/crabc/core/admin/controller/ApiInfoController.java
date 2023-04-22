@@ -55,7 +55,7 @@ public class ApiInfoController {
      */
     @GetMapping
     public Result info(Long apiId) {
-        ApiInfoVO apiDetail = apiInfoService.getApiDetail(apiId);
+        ApiInfoVO apiDetail = apiInfoService.getApiInfo(apiId);
         return Result.success(apiDetail);
     }
 

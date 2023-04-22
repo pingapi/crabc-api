@@ -1,6 +1,8 @@
 package cn.crabc.core.admin.mapper;
 
 import cn.crabc.core.admin.entity.BaseApiParam;
+import cn.crabc.core.admin.entity.vo.RequestParamsVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -26,6 +28,13 @@ public interface BaseApiParamMapper {
     List<BaseApiParam> selectList(Long apiId);
 
     /**
+     * 查询api详情参数
+     * @param apiId
+     * @return
+     */
+    List<RequestParamsVO> selectApiParams(Long apiId);
+
+    /**
      * 新增参数
      * @param param
      * @return
@@ -37,7 +46,7 @@ public interface BaseApiParamMapper {
      * @param list
      * @return
      */
-    Long insertBatch(List<BaseApiParam> list);
+    Long insertBatch(@Param("list") List<BaseApiParam> list, @Param("apiId") Long apiId);
 
     /**
      * 删除API参数

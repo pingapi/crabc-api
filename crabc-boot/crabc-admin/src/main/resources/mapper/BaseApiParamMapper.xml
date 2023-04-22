@@ -40,6 +40,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+    <select id="selectApiParams" resultType="cn.crabc.core.admin.entity.vo.RequestParamsVO">
+        SELECT
+            param_name,
+            required,
+            operation,
+            param_type,
+            default_value,
+            param_desc,
+            example,
+            param_model
+        FROM
+            base_api_param where api_id =#{apiId}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="paramId" parameterType="cn.crabc.core.admin.entity.BaseApiParam">
         insert into base_api_param(
         api_id,param_name,
@@ -70,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ,datasource_id,schema_name,table_name,create_time
         ) values
         <foreach collection ="list" item="param" separator =",">
-            (#{param.apiId},#{param.paramName},#{param.columnName},#{param.required}
+            (#{apiId},#{param.paramName},#{param.columnName},#{param.required}
             ,#{param.operation},#{param.paramType},#{param.paramModel},#{param.defaultValue},#{param.paramDesc}
              ,#{param.datasourceId},#{param.schemaName},#{param.tableName},NOW()
             )
