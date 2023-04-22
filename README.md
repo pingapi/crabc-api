@@ -49,8 +49,6 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 ## 演示环境
 地址：http://117.50.173.191:9377/user/login
 
-账号密码：admin/admin123
-
 ## 商用授权
 产品商用请加群联系
 
