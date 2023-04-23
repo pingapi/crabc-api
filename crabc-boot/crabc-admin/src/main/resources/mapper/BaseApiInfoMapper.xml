@@ -133,28 +133,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectBaseApi" resultType="cn.crabc.core.admin.entity.vo.BaseApiInfoVO">
         SELECT
-            api_id,
-            api_name,
-            api_path,
-            api_type,
-            api_method,
-            auth_type,
-            api_status,
-            api_level,
-            sql_type,
-            enabled,
-            remarks,
-            create_by,
-            page_setup,
-            create_time,
-            api_level,
-            update_time,
-            release_time,
-            version
+            b.api_id,
+            b.api_name,
+            b.api_path,
+            b.api_type,
+            b.api_method,
+            b.auth_type,
+            b.api_status,
+            b.api_level,
+            b.sql_type,
+            b.enabled,
+            b.remarks,
+            u.nick_name create_by,
+            b.page_setup,
+            b.create_time,
+            b.api_level,
+            b.update_time,
+            b.release_time,
+            b.version
         FROM
-            base_api_info
+            base_api_info b
+            left join base_sys_user u on b.create_by = u.user_id
         WHERE
-            api_id =#{apiId}
+            b.api_id =#{apiId}
     </select>
     <select id="checkApiPath">
         SELECT

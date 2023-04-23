@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="password != null and password != ''">password = #{password},</if>
             <if test="status != null">status = #{status},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="remark != null">remark = #{remark},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
             update_time = #{updateTime}
         </set>
         where status = '1' and user_id = #{userId}

@@ -1,23 +1,14 @@
-package cn.crabc.core.admin.entity;
-
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+package cn.crabc.core.admin.entity.param;
 
 /**
- * 用户信息
+ * 用户请求对象
  *
  * @author yuqf
  */
-@JsonIgnoreProperties(value = {"password"})
-public class BaseUser extends BaseEntity {
+public class UserParam {
 
-    /** 用户ID */
     private Long userId;
 
-    /** 角色 */
-    private String role;
-
-    /** 用户账号 */
     private String username;
 
     /** 用户昵称 */
@@ -38,26 +29,7 @@ public class BaseUser extends BaseEntity {
     /** 密码 */
     private String password;
 
-    /** 帐号状态（0正常 1停用） */
-    private String status;
-
-    private String remark;
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
+    private String newPassword;
 
     public String getUsername() {
         return username;
@@ -115,19 +87,19 @@ public class BaseUser extends BaseEntity {
         this.password = password;
     }
 
-    public String getStatus() {
-        return status;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getNewPassword() {
+        return newPassword;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

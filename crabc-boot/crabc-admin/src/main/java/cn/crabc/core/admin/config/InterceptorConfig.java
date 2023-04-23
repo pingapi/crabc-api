@@ -32,7 +32,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         // 登录拦截器
         registry.addInterceptor(jwtInterceptor())
                 .addPathPatterns("/api/box/**") // 需要拦截的请求
-                .excludePathPatterns("/api/box/sys/user/login", "/api/box/sys/user/loginout"); // 不拦截的请求
+                .excludePathPatterns("/api/box/sys/user/login", "/api/box/sys/user/loginout", "/api/box/sys/user/register"); // 不拦截的请求
 
         // API开放接口拦截器
         registry.addInterceptor(apiInterceptor())

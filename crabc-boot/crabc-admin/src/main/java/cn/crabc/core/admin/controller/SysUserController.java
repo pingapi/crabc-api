@@ -1,16 +1,15 @@
 package cn.crabc.core.admin.controller;
 
 import cn.crabc.core.admin.entity.BaseUser;
+import cn.crabc.core.admin.entity.param.UserParam;
 import cn.crabc.core.admin.service.system.IBaseUserService;
 import cn.crabc.core.admin.util.*;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Base64Utils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -31,17 +30,15 @@ public class SysUserController {
     /**
      * 登录
      *
-     * @param username
-     * @param password
      * @return
      */
     @PostMapping("/login")
-    public Result login(String username, String password) throws Exception {
-        BaseUser userInfo = iBaseUserService.getUserByName(username);
+    public Result login(@RequestBody UserParam UserParam) {
+        BaseUser userInfo = iBaseUserService.getUserByName(UserParam.getUsername());
         if (userInfo == null) {
             return Result.error("账号或密码错误!");
         }
-        String pwd = new String(Base64Utils.decodeFromString(password), StandardCharsets.UTF_8);
+        String pwd = new String(Base64Utils.decodeFromString(UserParam.getPassword()), StandardCharsets.UTF_8);
         String md5 = Md5Utils.hash(pwd).toUpperCase();
         if (!userInfo.getPassword().equals(md5)) {
             return Result.error("账号或密码错误!");
@@ -76,6 +73,44 @@ public class SysUserController {
         return Result.success(userInfo);
     }
 
+    /**
+     * 修改密码
+     * @param user
+     * @return
+     */
+    @PostMapping("/reset/pwd")
+    public Result resetPassword(@RequestBody UserParam user){
+        BaseUser userInfo = iBaseUserService.getUserById(Long.valueOf(UserThreadLocal.getUserId()));
+        if (userInfo == null) {
+            return Result.error("账号不存在!");
+        }
+        String pwd = new String(Base64Utils.decodeFromString(user.getPassword()), StandardCharsets.UTF_8);
+        String md5Pwd = Md5Utils.hash(pwd).toUpperCase();
+        if (!userInfo.getPassword().equals(md5Pwd)) {
+            return Result.error("原密码错误!");
+        }
+        String newPwd = new String(Base64Utils.decodeFromString(user.getNewPassword()), StandardCharsets.UTF_8);
+        String newMd5Pwd = Md5Utils.hash(newPwd).toUpperCase();
+        userInfo.setPassword(newMd5Pwd);
+        iBaseUserService.updateUser(userInfo);
+        return Result.success();
+    }
+
+    /**
+     * 用户注册
+     * @param user
+     * @return
+     */
+    @PostMapping("/register")
+    public Result register(@RequestBody UserParam user){
+        String pwd = new String(Base64Utils.decodeFromString(user.getPassword()), StandardCharsets.UTF_8);
+        String md5 = Md5Utils.hash(pwd).toUpperCase();
+        user.setPassword(md5);
+        BaseUser baseUser = new BaseUser();
+        BeanUtils.copyProperties(user, baseUser);
+        iBaseUserService.addUser(baseUser);
+        return Result.success();
+    }
 
     /**
      * 获取公钥
