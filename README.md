@@ -50,7 +50,7 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 地址：http://117.50.173.191:9377/user/login
 
 ## 商用授权
-产品商用请加群联系
+仅个人学习使用，产品商用请加群联系
 
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据

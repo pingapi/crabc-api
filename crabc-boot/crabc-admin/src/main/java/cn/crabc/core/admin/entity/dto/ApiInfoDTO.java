@@ -4,6 +4,7 @@ import cn.crabc.core.admin.entity.BaseApiInfo;
 import cn.crabc.core.admin.entity.BaseApiParam;
 import cn.crabc.core.admin.entity.BaseApp;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class ApiInfoDTO extends BaseApiInfo {
     /**
      * 有权限的应用
      */
-    private List<BaseApp> appList;
+    private List<BaseApp> appList = new ArrayList<>();
 
     /**
      * API参数

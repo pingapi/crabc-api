@@ -7,6 +7,7 @@ import cn.crabc.core.admin.enums.ApiAuthEnum;
 import cn.crabc.core.admin.service.system.IBaseApiLogService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
 import cn.crabc.core.admin.util.HmacSHAUtils;
+import cn.crabc.core.admin.util.IPUtil;
 import cn.crabc.core.admin.util.RequestUtils;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -47,6 +48,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();
         String method = request.getMethod();
+
         Object apiData = apiCache.getIfPresent(method + "_" + path.replace(API_PRE, ""));
         if (apiData == null) {
             throw new CustomException(53005, "API不存在！");
@@ -55,11 +57,19 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (apiInfo.getEnabled() == 0) {
             throw new CustomException(53006, "该API已下线！");
         }
+        // IP校验
+        List<BaseApp> appList = apiInfo.getAppList();
+        if (appList.size() > 0) {
+            boolean check = ipCheck(request, appList);
+            if (!check) {
+                throw new CustomException(53010, "您的IP地址不在可许范围内");
+            }
+        }
         boolean auth = true;
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
-            auth = checkAppCode(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
+            auth = checkAppCode(request, appList);
         } else if (ApiAuthEnum.APP_SECRET.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
-            auth = checkHmacSHA256(request, apiInfo.getAppList() == null ? new ArrayList<>() : apiInfo.getAppList());
+            auth = checkHmacSHA256(request, appList);
         }
         if (!auth) {
             throw new CustomException(53001, "您没有访问该API的权限");
@@ -103,7 +113,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         apiLog.setRequestStatus(response.getStatus() == 200 ? "success" : "fail");
         // 响应结果
         try {
-            if (request instanceof  BaseRequestWrapper){
+            if (request instanceof BaseRequestWrapper) {
                 String requestBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
                 apiLog.setRequestBody(requestBody);
             }
@@ -112,6 +122,23 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
         iBaseApiLogService.addLog(apiLog);
 
+    }
+
+    /**
+     * 校验IP
+     *
+     * @param request
+     * @param appList
+     * @return
+     */
+    private boolean ipCheck(HttpServletRequest request, List<BaseApp> appList) {
+        String ip = RequestUtils.getIp(request);
+        for (BaseApp app : appList) {
+            if (app.getIps() != null && !"".equals(app.getIps())){
+                return IPUtil.ipCheck(ip, app.getIps());
+            }
+        }
+        return true;
     }
 
     /**
@@ -161,7 +188,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         // POST和PUT才进行Body参数解析
         Map<String, Object> paramsMap = new HashMap<>();
         if ("POST".equals(method) || "PUT".equals(method)) {
-            if (request instanceof BaseRequestWrapper){
+            if (request instanceof BaseRequestWrapper) {
                 Map<String, Object> bodyMap = RequestUtils.getBodyMap(request);
                 paramsMap.putAll(bodyMap);
             }

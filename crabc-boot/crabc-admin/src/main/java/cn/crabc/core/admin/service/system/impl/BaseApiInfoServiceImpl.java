@@ -250,7 +250,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     @Override
     public PageInfo getNotChooseApi(Long appId, Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
+        //PageHelper.startPage(pageNum, pageSize);
         List<ApiComboBoxVO> allApi = apiInfoMapper.selectApiApp(null);
         List<ApiComboBoxVO> appApis = apiInfoMapper.selectApiApp(appId);
         allApi.removeAll(appApis);
@@ -259,7 +259,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     @Override
     public PageInfo getChooseApi(Long appId, Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
+        //PageHelper.startPage(pageNum, pageSize);
         List<ApiComboBoxVO> list = apiInfoMapper.selectApiApp(appId);
         return new PageInfo<>(list, pageNum, pageSize);
     }
