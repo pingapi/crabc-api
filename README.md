@@ -62,20 +62,28 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 账号密码：admin/admin123
 ![img.png](doc/login.png)
 ## 效果截图
-#### SQL编写
-![img.png](doc/img_run.png)
+#### 首页
+![img.png](doc/home.png)
+### 接口开发
+![img_1.png](doc/sql.png)
 #### 接口属性
-![img.png](doc/img_params.png)
+![img_2.png](doc/detail.png)
 #### 请求参数
-![img.png](doc/img_req.png)
+![img_5.png](doc/param.png)
 #### 在线预览
 ![img_2.png](doc/img_test.png)
 #### 应用创建
-![img_1.png](doc/img_app.png)
-#### 发布列表
-![img_4.png](doc/img_api.png)
+![img_6.png](doc/app.png)
+#### 接口列表
+![img_10.png](doc/api.png)
 #### 数据库类型
-![img.png](doc/img_db.png)
+![img_9.png](doc/db.png)
+### 限流控制
+![img_11.png](doc/flow.png)
+### 接口申请
+![img_12.png](doc/apply.png)
+### 申请审批
+![img_13.png](doc/audit.png)
 
 ## 交流群
 微信群：
