@@ -24,7 +24,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             base_group
         where group_id =#{groupId}
     </select>
-
+    <select id="selectGroupApi" resultType="cn.crabc.core.admin.entity.vo.GroupApiVO">
+        SELECT
+            a.api_id,
+            a.api_name,
+            a.group_id,
+            g.group_name,
+            g.parent_id
+        FROM
+            base_api_info a
+                JOIN base_group g on a.group_id = g.group_id
+        WHERE a.api_status ='release'
+    </select>
     <update id="update" parameterType="cn.crabc.core.admin.entity.BaseGroup">
         UPDATE base_group
         <set>

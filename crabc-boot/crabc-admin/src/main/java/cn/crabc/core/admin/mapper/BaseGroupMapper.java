@@ -2,6 +2,8 @@ package cn.crabc.core.admin.mapper;
 
 import cn.crabc.core.admin.entity.BaseGroup;
 import cn.crabc.core.admin.entity.vo.BaseGroupVO;
+import cn.crabc.core.admin.entity.vo.GroupApiVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -46,4 +48,11 @@ public interface BaseGroupMapper {
      */
 
     BaseGroup selectOne(Integer groupId);
+
+    /**
+     * 获取分组下API
+     *
+     * @return
+     */
+    List<GroupApiVO> selectGroupApi();
 }
