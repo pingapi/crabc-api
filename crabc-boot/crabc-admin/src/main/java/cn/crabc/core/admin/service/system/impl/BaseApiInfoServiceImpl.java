@@ -60,7 +60,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     private void updateCache(Long apiId){
-        List<ApiInfoDTO> apis = this.getApiCache(apiId);
+             List<ApiInfoDTO> apis = this.getApiCache(apiId);
         for (ApiInfoDTO api : apis) {
             apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
         }

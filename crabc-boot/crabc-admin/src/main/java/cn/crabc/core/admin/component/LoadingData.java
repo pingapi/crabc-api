@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author yuqf
  */
-@Component
+//@Component
 public class LoadingData implements InitializingBean {
 
     @Autowired

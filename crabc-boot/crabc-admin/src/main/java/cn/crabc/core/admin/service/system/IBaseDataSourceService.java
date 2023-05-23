@@ -13,6 +13,7 @@ import java.util.List;
  */
 public interface IBaseDataSourceService {
 
+    void init();
     /**
      * 数据源列表
      * @return

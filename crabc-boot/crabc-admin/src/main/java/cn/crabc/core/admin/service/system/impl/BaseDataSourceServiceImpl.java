@@ -14,6 +14,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -36,6 +37,27 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     @Autowired
     @Qualifier("dataCache")
     Cache<String, Object> caffeineCache;
+
+    @Scheduled(cron = "*/40 * * * * ?")
+    public void task(){
+        init();
+    }
+    @Override
+    public void init() {
+        List<BaseDataSource> baseDataSources = this.getList();
+        for (BaseDataSource dataSource : baseDataSources) {
+            String priKey = dataSource.getSecretKey();
+            try {
+                if (dataSource.getPassword() != null) {
+                    String pwd = RSAUtils.decryptByPriKey(priKey, dataSource.getPassword());
+                    dataSource.setPassword(pwd);
+                }
+                dataSourceManager.createDataSource(dataSource);
+            } catch (Exception e) {
+
+            }
+        }
+    }
 
     @Override
     public List<BaseDataSource> getList() {
