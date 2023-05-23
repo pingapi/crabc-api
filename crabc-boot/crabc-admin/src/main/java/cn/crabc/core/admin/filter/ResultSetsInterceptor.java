@@ -49,21 +49,21 @@ public class ResultSetsInterceptor implements Interceptor {
                 for (int i = 1; i <= metaData.getColumnCount(); i++) {
                     columns.add(metaData.getColumnName(i));
                 }
-                // 没有数据时只返回列名
-                if (!resultSet.next()) {
-                    LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-                    for (String colName : columns) {
-                        map.put(colName, null);
-                    }
-                    list.add(map);
-                    return list;
-                }
                 while (resultSet.next()) {
                     LinkedHashMap<String, Object> map = new LinkedHashMap<>();
                     for (String colName : columns) {
                         map.put(colName, resultSet.getObject(colName));
                     }
                     list.add(map);
+                }
+                // 没有数据时只返回列名
+                if (list.size() == 0) {
+                    LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                    for (String colName : columns) {
+                        map.put(colName, null);
+                    }
+                    list.add(map);
+                    return list;
                 }
                 return list;
             }
