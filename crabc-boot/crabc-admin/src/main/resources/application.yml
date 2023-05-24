@@ -11,7 +11,7 @@ spring:
     time-zone: GMT+8
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
     password: root
     druid:
@@ -53,6 +53,9 @@ mybatis:
   config-location: classpath:mybatis-config.xml
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+pagehelper:
+  autoRuntimeDialect: true   # 开启多数据源分页识别
 
 # es健康检查
 management:
