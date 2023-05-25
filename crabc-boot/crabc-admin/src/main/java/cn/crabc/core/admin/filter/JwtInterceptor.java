@@ -2,6 +2,7 @@ package cn.crabc.core.admin.filter;
 
 import cn.crabc.core.admin.util.JwtUtil;
 import cn.crabc.core.admin.util.UserThreadLocal;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,17 +29,17 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         String token = JwtUtil.getToken(request);
         if (token == null) {
-            throw new CustomException(401, "用户未登录");
+            throw new CustomException(ErrorStatusEnum.JWT_UN_AUTH.getCode(), ErrorStatusEnum.JWT_UN_AUTH.getMassage());
         }
         Claims claims = JwtUtil.parseToken(token);
         if (claims == null) {
-            throw new CustomException(401, "用户未登录");
+            throw new CustomException(ErrorStatusEnum.JWT_UN_AUTH.getCode(), ErrorStatusEnum.JWT_UN_AUTH.getMassage());
         }
         long nowTime = System.currentTimeMillis();
         Long expire = Long.parseLong(claims.get("expireTime").toString());
         long time = nowTime - expire;
         if (time/1000 > expireTime) {
-            throw new CustomException(401, "登录失效，请重新登录");
+            throw new CustomException(ErrorStatusEnum.JWT_LOGIN_EXPIRE.getCode(), ErrorStatusEnum.JWT_LOGIN_EXPIRE.getMassage());
         }else{
 
         }

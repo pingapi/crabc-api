@@ -14,6 +14,7 @@ import cn.crabc.core.admin.mapper.BaseAppMapper;
 import cn.crabc.core.admin.service.system.IBaseApiInfoService;
 import cn.crabc.core.admin.util.PageInfo;
 import cn.crabc.core.admin.util.UserThreadLocal;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
@@ -173,7 +174,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         Long apiId = params.getBaseInfo().getApiId();
         Integer count = apiInfoMapper.countApi(apiId);
         if (count == 0) {
-            throw new CustomException(52002, "API不存在");
+            throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
         BaseApiInfo api = params.getBaseInfo();
         BaseApiSql sql = params.getSqlInfo();
@@ -195,7 +196,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     public Integer updateApiState(Long apiId, String status, Integer enabled) {
         Integer count = apiInfoMapper.countApi(apiId);
         if (count == 0) {
-            throw new CustomException(52002, "API不存在");
+            throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
         BaseApiInfo baseApiInfo = new BaseApiInfo();
         baseApiInfo.setApiId(apiId);
@@ -225,7 +226,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         Long apiId = apiInfoParam.getBaseInfo().getApiId();
         BaseApiInfo oldApiInfo = apiInfoMapper.selectApiById(apiId);
         if (oldApiInfo == null) {
-            throw new CustomException(52002, "API不存在");
+            throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
 //        if (apiInfoParam.getBaseInfo().getVersion().equals(oldApiInfo.getVersion())) {
 //            throw new CustomException(52003, "API版本号[" + oldApiInfo.getVersion() + "]已存在，请变更版本号");

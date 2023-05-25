@@ -4,6 +4,7 @@ import cn.crabc.core.admin.entity.BaseUser;
 import cn.crabc.core.admin.mapper.BaseUserMapper;
 import cn.crabc.core.admin.service.system.IBaseUserService;
 import cn.crabc.core.admin.util.PageInfo;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class BaseUserServiceImpl implements IBaseUserService {
     public Integer addUser(BaseUser baseUser) {
         BaseUser user = baseUserMapper.selectOne(null, baseUser.getUsername());
         if (user != null) {
-            throw new CustomException(52017, "用户名已存在");
+            throw new CustomException(ErrorStatusEnum.USER_REPEAT.getCode(), ErrorStatusEnum.USER_REPEAT.getMassage());
         }
         baseUser.setCreateBy("1");
         baseUser.setCreateTime(new Date());

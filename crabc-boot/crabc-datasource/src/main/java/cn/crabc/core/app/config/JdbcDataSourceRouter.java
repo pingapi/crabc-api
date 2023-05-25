@@ -1,11 +1,10 @@
 package cn.crabc.core.app.config;
 
 import cn.crabc.core.app.driver.DataSourceManager;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -19,7 +18,6 @@ import java.sql.SQLException;
  */
 public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
 
-    Logger log = LoggerFactory.getLogger(JdbcDataSourceRouter.class);
     /**
      * 当前线程数据源KEY
      */
@@ -97,7 +95,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     public static DataSource getDataSource(String dataSourceId) {
         DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(getDataSourceId(dataSourceId));
         if (dataSource == null) {
-            throw new CustomException(51001, "数据源不存在！");
+            throw new CustomException(ErrorStatusEnum.DATASOURCE_NOT_FOUNT.getCode(), ErrorStatusEnum.DATASOURCE_NOT_FOUNT.getMassage());
 
         }
         return dataSource;
@@ -112,7 +110,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         String dataSourceKey = getDataSourceKey();
         DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(getDataSourceId(dataSourceKey));
         if (dataSource == null) {
-            throw new CustomException(51001, "数据源不存在！");
+            throw new CustomException(ErrorStatusEnum.DATASOURCE_NOT_FOUNT.getCode(), ErrorStatusEnum.DATASOURCE_NOT_FOUNT.getMassage());
         }
 
         return dataSource;
@@ -135,7 +133,6 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     @Override
     protected DataSource determineTargetDataSource() {
         Object dataSourceKey = this.determineCurrentLookupKey();
-        log.debug("-当前数据源id：{}", dataSourceKey);
         // 默认系统数据源
         if (dataSourceKey == null) {
             return super.getResolvedDefaultDataSource();
@@ -144,7 +141,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         DataSource dataSource = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSourceId);
 
         if (dataSource == null) {
-            throw new CustomException(51001, "数据源不存在！");
+            throw new CustomException(ErrorStatusEnum.DATASOURCE_NOT_FOUNT.getCode(), ErrorStatusEnum.DATASOURCE_NOT_FOUNT.getMassage());
         }
         return dataSource;
     }
@@ -163,13 +160,11 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
             if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
                 String[] dataSourceStr = dataSourceKey.toString().split(":");
                 String schema = dataSourceStr[1];
-                log.debug("-当前数据源-schema：{}", schema);
                 connection.setSchema(schema);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
-        log.info("--dataSourceId:{},Connection:{}", dataSourceKey, connection);
         return connection;
     }
 

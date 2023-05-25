@@ -2,6 +2,7 @@ package cn.crabc.core.app.driver.jdbc;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
 import cn.crabc.core.app.constant.BaseConstant;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.app.mapper.BaseDataHandleMapper;
 import cn.crabc.core.app.util.PageInfo;
@@ -56,7 +57,7 @@ public class JdbcStatement implements StatementMapper {
             if (BaseConstant.PAGE_COUNT == pageCount && !checkPage(sql)) {
                 PageHelper.startPage(pageNum, pageSize, true);
             } else if (!checkPage(sql)){
-                PageHelper.startPage(pageNum, pageSize, false);
+                PageHelper.startPage(pageNum, pageSize, true);
             }
             list = baseMapper.executeQuery(paramsMap);
 
@@ -85,7 +86,7 @@ public class JdbcStatement implements StatementMapper {
             result = baseMapper.executeInsert(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
-            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
+            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), ErrorStatusEnum.API_SQL_ERROR.getMassage());
         } finally {
             // 移除线程
             JdbcDataSourceRouter.remove();
@@ -100,7 +101,7 @@ public class JdbcStatement implements StatementMapper {
             Integer result = baseMapper.executeDelete(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
-            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
+            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), ErrorStatusEnum.API_SQL_ERROR.getMassage());
         } finally {
             // 移除线程
             JdbcDataSourceRouter.remove();
@@ -115,7 +116,7 @@ public class JdbcStatement implements StatementMapper {
             Integer result = baseMapper.executeUpdate(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
-            throw new CustomException(51000, "SQL执行失败，请检查SQL是否正常");
+            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), ErrorStatusEnum.API_SQL_ERROR.getMassage());
         } finally {
             // 移除线程
             JdbcDataSourceRouter.remove();

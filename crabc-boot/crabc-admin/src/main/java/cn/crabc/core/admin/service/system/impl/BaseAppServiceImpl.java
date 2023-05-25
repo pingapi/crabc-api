@@ -5,6 +5,7 @@ import cn.crabc.core.admin.mapper.BaseAppMapper;
 import cn.crabc.core.admin.service.system.IBaseAppService;
 import cn.crabc.core.admin.util.PageInfo;
 import cn.crabc.core.admin.util.UserThreadLocal;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class BaseAppServiceImpl implements IBaseAppService {
     public Integer updateApp(BaseApp app) {
         BaseApp baseApp = baseAppMapper.selectOne(app.getAppId());
         if (baseApp == null) {
-            throw new CustomException(52012, "应用不存在");
+            throw new CustomException(ErrorStatusEnum.APP_NOT_FOUNT.getCode(), ErrorStatusEnum.APP_NOT_FOUNT.getMassage());
         }
         app.setUpdateTime(new Date());
         app.setUpdateBy(UserThreadLocal.getUserId());
