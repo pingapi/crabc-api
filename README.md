@@ -47,7 +47,7 @@ cn.crabc
 wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 
 ## 演示环境
-地址：http://117.50.173.191:9377/user/login
+地址：http://crabc.pingapi.cn
 
 ## 商用授权
 仅个人学习使用，商用请加群联系
