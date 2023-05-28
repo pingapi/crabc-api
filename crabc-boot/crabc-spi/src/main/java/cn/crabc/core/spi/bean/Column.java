@@ -30,6 +30,7 @@ public class Column implements Serializable {
     private String decimalDigits;
     private String columnDefault;
 
+    private String typeIcon;
     public String getDatasourceId() {
         return datasourceId;
     }
@@ -108,5 +109,13 @@ public class Column implements Serializable {
 
     public void setDecimalDigits(String decimalDigits) {
         this.decimalDigits = decimalDigits;
+    }
+
+    public String getTypeIcon() {
+        return typeIcon;
+    }
+
+    public void setTypeIcon(String typeIcon) {
+        this.typeIcon = typeIcon;
     }
 }
