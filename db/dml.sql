@@ -1,5 +1,5 @@
 -- 创建库
-CREATE DATABASE IF NOT EXISTS crabc default charset utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS crabc default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- 建表
 use crabc;
 -- 1.0
@@ -30,7 +30,7 @@ CREATE TABLE `base_api_info` (
                                  `update_time` datetime DEFAULT NULL,
                                  PRIMARY KEY (`api_id`),
                                  KEY `api_path_method_inx` (`api_path`,`api_method`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API信息表';
 
 
 CREATE TABLE `base_api_log` (
@@ -52,7 +52,7 @@ CREATE TABLE `base_api_log` (
                                 `cost_time` int DEFAULT '0' COMMENT '消耗时间',
                                 `visitor_name` varchar(50) DEFAULT NULL COMMENT '访问人员',
                                 PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='接口访问日志';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='接口访问日志';
 
 CREATE TABLE `base_api_sql` (
                                 `sql_id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
@@ -67,7 +67,7 @@ CREATE TABLE `base_api_sql` (
                                 `update_by` varchar(128) DEFAULT NULL,
                                 `update_time` datetime DEFAULT NULL,
                                 PRIMARY KEY (`sql_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API_SQL配置';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API_SQL配置';
 
 CREATE TABLE `base_app` (
                             `app_id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
@@ -84,7 +84,7 @@ CREATE TABLE `base_app` (
                             `update_by` varchar(128) DEFAULT NULL,
                             `update_time` datetime DEFAULT NULL,
                             PRIMARY KEY (`app_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='应用';
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='应用';
 
 CREATE TABLE `base_app_api` (
                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
@@ -93,7 +93,7 @@ CREATE TABLE `base_app_api` (
                                 `create_by` varchar(128) DEFAULT NULL,
                                 `create_time` datetime DEFAULT NULL,
                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='应用与API授权关系';
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='应用与API授权关系';
 
 CREATE TABLE `base_datasource` (
                                    `datasource_id` int NOT NULL AUTO_INCREMENT,
@@ -113,7 +113,7 @@ CREATE TABLE `base_datasource` (
                                    `update_time` datetime DEFAULT NULL,
                                    `update_by` varchar(128) DEFAULT NULL,
                                    PRIMARY KEY (`datasource_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据源配置';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据源配置';
 
 
 -- crabc.base_group definition
@@ -128,7 +128,7 @@ CREATE TABLE `base_group` (
                               `update_by` varchar(128) DEFAULT NULL,
                               `update_time` datetime DEFAULT NULL,
                               PRIMARY KEY (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='分组表';
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='分组表';
 
 
 -- crabc.base_sys_user definition
@@ -151,7 +151,7 @@ CREATE TABLE `base_sys_user` (
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
                                  PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户信息表';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
 
 -- 2.0新增表
 DROP TABLE IF EXISTS `base_api_param`;
@@ -172,7 +172,7 @@ CREATE TABLE `base_api_param` (
                                   `param_desc` varchar(512)  DEFAULT NULL COMMENT '描述',
                                   `create_time` datetime DEFAULT NULL,
                                   PRIMARY KEY (`param_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API接口参数';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API接口参数';
 
 -- 2.5新增表
 DROP TABLE IF EXISTS `base_flow_api`;
@@ -183,7 +183,7 @@ CREATE TABLE `base_flow_api` (
                                  `create_time` datetime DEFAULT NULL,
                                  `create_by` varchar(128) DEFAULT NULL,
                                  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API限流关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API限流关系表';
 
 DROP TABLE IF EXISTS `base_flow_rule`;
 CREATE TABLE `base_flow_rule` (
@@ -200,12 +200,12 @@ CREATE TABLE `base_flow_rule` (
                                   `create_by` varchar(128) DEFAULT NULL,
                                   `update_by` varchar(128) DEFAULT NULL,
                                   PRIMARY KEY (`flow_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='限流规则表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='限流规则表';
 -- 初始化数据
 INSERT INTO base_sys_user
 (user_id, user_name, nick_name, user_type, password, `role`, email, phone, sex, picture, status, create_by, create_time, update_by, update_time, remark)
-VALUES(1, 'admin', '管理员', '0', '0192023A7BBD73250516F069DF18B500', 'admin', '', '', '1', '', '1', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00', '密码：admin123');
+VALUES(1, 'admin', 'admin', '0', '0192023A7BBD73250516F069DF18B500', 'admin', '', '', '1', '', '1', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00', '密码：admin123');
 
 INSERT INTO base_group
 (group_id, parent_id, group_name, group_desc, create_by, create_time, update_by, update_time)
-VALUES(1, 0, '根目录', '根目录', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00');
+VALUES(1, 0, 'root', 'root', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00');

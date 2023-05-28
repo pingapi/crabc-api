@@ -17,7 +17,7 @@ CREATE TABLE `base_api_param` (
                                   `param_desc` varchar(512)  DEFAULT NULL COMMENT '描述',
                                   `create_time` datetime DEFAULT NULL,
                                   PRIMARY KEY (`param_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API接口参数';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API接口参数';
 
 DROP TABLE IF EXISTS `base_flow_api`;
 CREATE TABLE `base_flow_api` (
@@ -27,7 +27,7 @@ CREATE TABLE `base_flow_api` (
                                  `create_time` datetime DEFAULT NULL,
                                  `create_by` varchar(128) DEFAULT NULL,
                                  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='API限流关系表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API限流关系表';
 
 DROP TABLE IF EXISTS `base_flow_rule`;
 CREATE TABLE `base_flow_rule` (
@@ -44,4 +44,4 @@ CREATE TABLE `base_flow_rule` (
                                   `create_by` varchar(128) DEFAULT NULL,
                                   `update_by` varchar(128) DEFAULT NULL,
                                   PRIMARY KEY (`flow_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='限流规则表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='限流规则表';
