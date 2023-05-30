@@ -38,19 +38,20 @@ public class DataSourceConfig {
         dataSource.setUrl(jdbcUrl);
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-        dataSource.setInitialSize(2);
-        dataSource.setMinIdle(2);
-        dataSource.setMaxActive(10);
+        dataSource.setInitialSize(1);
+        dataSource.setMinIdle(1);
+        dataSource.setMaxActive(5);
         // 配置获取连接等待超时的时间
         dataSource.setMaxWait(6000);
         dataSource.setKeepAlive(true);
         //  配置一个连接在池中最小生存的时间，单位是毫秒
-        dataSource.setMinEvictableIdleTimeMillis(600000);
+        dataSource.setMinEvictableIdleTimeMillis(300000);
         dataSource.setMaxEvictableIdleTimeMillis(900000);
         // 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-        dataSource.setTimeBetweenEvictionRunsMillis(10000);
+        dataSource.setTimeBetweenEvictionRunsMillis(60000);
         dataSource.setTestWhileIdle(true);
         dataSource.setTestOnBorrow(false);
+        dataSource.setTestOnReturn(false);
         dataSource.setTestOnReturn(false);
         JdbcDataSourceRouter dynamic = new JdbcDataSourceRouter();
         dynamic.setTargetDataSources(new HashMap<>());

@@ -74,9 +74,10 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         dataSource.setUsername(username);
         dataSource.setPassword(password);
         dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setMinimumIdle(5);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setIdleTimeout(600000);
+        dataSource.setMinimumIdle(1);
+        dataSource.setMaximumPoolSize(10);
+        dataSource.setMaxLifetime(900000);
+        dataSource.setIdleTimeout(300000);
         dataSource.setConnectionTimeout(10000);
         dataSource.setKeepaliveTime(300000);
 
