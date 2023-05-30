@@ -121,7 +121,7 @@ public class DataSourceManager {
             dataSourceDriver = DATA_SOURCE_POOL_PLUGIN.get(datasourceId);
         }
         if (dataSourceDriver == null) {
-            throw new CustomException(51001, "不支持的数据源类型！");
+            throw new CustomException(51001, "数据源不存在！");
         }
         return dataSourceDriver;
     }

@@ -24,12 +24,14 @@ public class CacheConfig {
     }
 
     /**
-     * 缓存对象(不过期手动删除)
+     * 缓存API对象 10小时
      * @return
      */
     @Bean("apiCache")
     public Cache<String, Object> apiCaffeine() {
-       return Caffeine.newBuilder().build();
+        return Caffeine.newBuilder()
+                .expireAfterAccess(10, TimeUnit.HOURS)
+                .build();
     }
 
 

@@ -14,9 +14,9 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 
@@ -38,10 +38,20 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     @Qualifier("dataCache")
     Cache<String, Object> caffeineCache;
 
-    @Scheduled(cron = "*/40 * * * * ?")
-    public void task(){
-        init();
+    /**
+     * 启动加载
+     */
+    @PostConstruct
+    public void load() {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                init();
+            }
+        });
+        t.start();
     }
+
     @Override
     public void init() {
         List<BaseDataSource> baseDataSources = this.getList();

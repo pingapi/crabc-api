@@ -21,6 +21,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,44 +52,35 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Qualifier("apiCache")
     Cache<String, Object> apiInfoCache;
 
-    @Scheduled(cron = "*/30 * * * * ?")
-    public void task(){
-        initApi();
-    }
     @Override
-    public void initApi() {
-        updateCache(null);
-    }
-
-    private void updateCache(Long apiId){
-             List<ApiInfoDTO> apis = this.getApiCache(apiId);
-        for (ApiInfoDTO api : apis) {
-            apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
+    public ApiInfoDTO getApiCache(String method, String apiPath, boolean update) {
+        String key = method + "_" + apiPath;
+        if (!update){
+            Object data = apiInfoCache.getIfPresent(key);
+            if (data != null) {
+                return (ApiInfoDTO) data;
+            }
         }
-    }
-
-    @Override
-    public List<ApiInfoDTO> getApiCache(Long apiId) {
-        List<ApiInfoDTO> apiInfos = apiInfoMapper.selectApiDetail(apiId);
-        if (apiInfos.size() == 0) {
-            return apiInfos;
+        ApiInfoDTO apiInfo = apiInfoMapper.selectApiDetail(null, method, apiPath);
+        if (apiInfo == null) {
+            throw new CustomException(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
         }
+        Long apiId = apiInfo.getApiId();
         // 应用
         List<BaseApp> appApis = baseAppMapper.selectApiApp(apiId);
         Map<Long, List<BaseApp>> appMap = appApis.stream().collect(Collectors.groupingBy(BaseApp::getApiId));
         // 请求参数
         List<BaseApiParam> baseApiParams = apiParamMapper.selectReqParams(apiId);
         Map<Long, List<BaseApiParam>> paramMap = baseApiParams.stream().collect(Collectors.groupingBy(BaseApiParam::getApiId));
-        for (ApiInfoDTO api : apiInfos) {
-            Long apiIdKey = api.getApiId();
-            if (appMap.containsKey(apiIdKey)) {
-                api.setAppList(appMap.get(apiIdKey));
-            }
-            if (paramMap.containsKey(apiIdKey)){
-                api.setRequestParams(paramMap.get(apiIdKey));
-            }
+
+        if (appMap.containsKey(apiId)) {
+            apiInfo.setAppList(appMap.get(apiId));
         }
-        return apiInfos;
+        if (paramMap.containsKey(apiId)){
+            apiInfo.setRequestParams(paramMap.get(apiId));
+        }
+        apiInfoCache.put(key, apiInfo);
+        return apiInfo;
     }
 
     @Override
@@ -209,7 +201,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             baseApiInfo.setEnabled(enabled);
         }
         // 更新缓存
-        this.updateCache(apiId);
+        getApiCache(baseApiInfo.getApiMethod(),baseApiInfo.getApiPath(), true);
         apiInfoMapper.updateApiState(baseApiInfo);
         return 1;
     }
@@ -245,7 +237,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
         apiInfoMapper.updateApiInfo(baseApiInfo);
         // 更新缓存
-        this.updateCache(baseApiInfo.getApiId());
+        this.getApiCache(baseApiInfo.getApiMethod(),baseApiInfo.getApiPath(), true);
         return apiId;
     }
 

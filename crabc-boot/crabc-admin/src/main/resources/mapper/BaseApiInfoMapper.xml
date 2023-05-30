@@ -100,6 +100,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="apiId != null">
             and api_id =#{apiId}
         </if>
+        <if test="method != null and apiPath !=null">
+            and api_method =#{method} and api_path=#{apiPath}
+        </if>
     </select>
 
     <select id="selectApiById" resultType="cn.crabc.core.admin.entity.BaseApiInfo">

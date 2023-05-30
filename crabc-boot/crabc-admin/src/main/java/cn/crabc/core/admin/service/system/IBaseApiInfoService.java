@@ -18,14 +18,13 @@ import java.util.List;
  */
 public interface IBaseApiInfoService {
 
-    void initApi();
     /**
      * 获取API关联数据
      *
-     * @param apiId
+     * @param method
      * @return
      */
-    List<ApiInfoDTO> getApiCache(Long apiId);
+    ApiInfoDTO getApiCache(String method, String apiPath, boolean update);
 
     /**
      * API 分页列表
