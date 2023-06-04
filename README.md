@@ -31,7 +31,6 @@ cn.crabc
 │     └── crabc-spi          // 插件定义模块
 │     └── crabc-plugin       // 插件中心
 ├── crabc-common             // 公共模块
-├── web                      // 前端页面（nginx部署）
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
