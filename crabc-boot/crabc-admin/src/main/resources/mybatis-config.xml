@@ -12,8 +12,8 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<setting name="callSettersOnNulls" value="true" />
 		<setting name="mapUnderscoreToCamelCase" value="true" /><!-- 驼峰下划线映射 -->
 	</settings>
-	<plugins>
-		<plugin interceptor="cn.crabc.core.admin.filter.ResultSetsInterceptor">
-		</plugin>
-	</plugins>
+<!--	<plugins>-->
+<!--		<plugin interceptor="cn.crabc.core.admin.filter.ResultSetsInterceptor">-->
+<!--		</plugin>-->
+<!--	</plugins>-->
 </configuration>
