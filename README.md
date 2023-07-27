@@ -64,21 +64,23 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 #### 首页
 ![img.png](doc/home.png)
 ### 接口开发
-![img_1.png](doc/sql.png)
+![img.png](doc/sql.png)
+![img.png](doc/multiple_sql.png)
 #### 接口属性
-![img_2.png](doc/detail.png)
+![img.png](doc/detail.png)
 #### 请求参数
-![img_5.png](doc/param.png)
+![img.png](doc/param.png)
 #### 在线预览
 ![img_2.png](doc/img_test.png)
 #### 应用创建
 ![img_6.png](doc/app.png)
 #### 接口列表
-![img_10.png](doc/api.png)
+![img.png](doc/api.png)
 #### 数据库类型
-![img_9.png](doc/db.png)
-### 限流控制
-![img_11.png](doc/flow.png)
+![img.png](doc/db.png)
+### 限流熔断
+![img.png](doc/flow.png)
+![img.png](doc/degrade.png)
 ### 接口申请
 ![img_12.png](doc/apply.png)
 ### 申请审批
