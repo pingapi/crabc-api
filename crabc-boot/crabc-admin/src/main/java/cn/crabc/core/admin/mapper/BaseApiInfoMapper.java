@@ -3,6 +3,7 @@ package cn.crabc.core.admin.mapper;
 import cn.crabc.core.admin.entity.BaseApiInfo;
 import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.entity.vo.ApiComboBoxVO;
+import cn.crabc.core.admin.entity.vo.BaseApiExcelVO;
 import cn.crabc.core.admin.entity.vo.BaseApiInfoVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -105,4 +106,12 @@ public interface BaseApiInfoMapper {
      * @return
      */
     Integer countApi(Long apiId);
+
+    /**
+     * API详情列表
+     * @param apiName
+     * @return
+     */
+    List<BaseApiExcelVO> selectApiInfoList(@Param("apiName") String apiName, @Param("devType") String devType);
+
 }

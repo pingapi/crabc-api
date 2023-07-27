@@ -1,6 +1,7 @@
 package cn.crabc.core.admin.service.system.impl;
 
 import cn.crabc.core.admin.entity.BaseApp;
+import cn.crabc.core.admin.entity.vo.BaseAppExcelVO;
 import cn.crabc.core.admin.mapper.BaseAppMapper;
 import cn.crabc.core.admin.service.system.IBaseAppService;
 import cn.crabc.core.admin.util.PageInfo;
@@ -8,9 +9,11 @@ import cn.crabc.core.admin.util.UserThreadLocal;
 import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
 import com.github.pagehelper.PageHelper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,5 +63,31 @@ public class BaseAppServiceImpl implements IBaseAppService {
     @Override
     public Integer deleteApp(Long appId) {
         return baseAppMapper.delete(appId);
+    }
+
+    @Override
+    public List<BaseAppExcelVO> getAppExcelList(String appName) {
+        List<BaseApp> baseApps = baseAppMapper.selectList(appName);
+        List<BaseAppExcelVO> list = new ArrayList<>();
+        for (BaseApp app : baseApps) {
+            BaseAppExcelVO excelVO = new BaseAppExcelVO();
+            BeanUtils.copyProperties(app, excelVO);
+            list.add(excelVO);
+        }
+        return list;
+    }
+
+    @Override
+    public Integer addAppList(List<BaseAppExcelVO> data) {
+        for (BaseAppExcelVO excelVO : data) {
+            BaseApp app = new BaseApp();
+            BeanUtils.copyProperties(excelVO, app);
+            app.setEnabled(1);
+            app.setCreateBy(UserThreadLocal.getUserId());
+            app.setCreateTime(new Date());
+            app.setUpdateTime(new Date());
+            baseAppMapper.insert(app);
+        }
+        return 1;
     }
 }

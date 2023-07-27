@@ -1,6 +1,7 @@
 package cn.crabc.core.admin.service.system;
 
 import cn.crabc.core.admin.entity.BaseApp;
+import cn.crabc.core.admin.entity.vo.BaseAppExcelVO;
 import cn.crabc.core.admin.util.PageInfo;
 
 import java.util.List;
@@ -49,4 +50,18 @@ public interface IBaseAppService {
      * @return
      */
     Integer deleteApp(Long appId);
+
+    /**
+     * 导出列表
+     * @param appName
+     * @return
+     */
+    List<BaseAppExcelVO> getAppExcelList(String appName);
+
+    /**
+     * 导入应用列表
+     * @param data
+     * @return
+     */
+    Integer addAppList(List<BaseAppExcelVO> data);
 }
