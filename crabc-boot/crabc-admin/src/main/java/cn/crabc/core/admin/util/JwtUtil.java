@@ -3,7 +3,6 @@ package cn.crabc.core.admin.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.micrometer.core.instrument.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -79,7 +78,7 @@ public class JwtUtil {
      */
     public static String getToken(HttpServletRequest request) {
         String token = request.getHeader(header);
-        if (StringUtils.isNotEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
+        if (token != null && token.startsWith(TOKEN_PREFIX)) {
             token = token.replace(TOKEN_PREFIX, "");
         }
         return token;
