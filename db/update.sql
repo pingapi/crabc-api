@@ -45,3 +45,6 @@ CREATE TABLE `base_flow_rule` (
                                   `update_by` varchar(128) DEFAULT NULL,
                                   PRIMARY KEY (`flow_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='限流规则表';
+
+-- 新增级别字段
+ALTER TABLE `base_api_info` ADD api_level varchar(32) NULL COMMENT 'API权限级别，public、default、private';
