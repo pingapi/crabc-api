@@ -48,7 +48,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        ApiInfoDTO apiInfo = iBaseApiInfoService.getApiCache(method, path.replace(API_PRE, ""), false);
+        ApiInfoDTO apiInfo = iBaseApiInfoService.getApiCache(method, path.replace(API_PRE, ""), true);
         if (apiInfo.getEnabled() == 0) {
             throw new CustomException(ErrorStatusEnum.API_OFFLINE.getCode(), ErrorStatusEnum.API_OFFLINE.getMassage());
         }
