@@ -12,9 +12,11 @@ import cn.crabc.core.admin.util.IPUtil;
 import cn.crabc.core.admin.util.RequestUtils;
 import cn.crabc.core.app.enums.ErrorStatusEnum;
 import cn.crabc.core.app.exception.CustomException;
+import com.github.benmanes.caffeine.cache.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
@@ -43,15 +45,24 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Value("${crabc.auth.expiresTime:10}")
     private Integer expiresTime;
 
+    @Autowired
+    @Qualifier("apiCache")
+    Cache<String, Object> apiCache;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();
         String method = request.getMethod();
 
-        ApiInfoDTO apiInfo = iBaseApiInfoService.getApiCache(method, path.replace(API_PRE, ""), true);
+        Object apiData = apiCache.getIfPresent(method + "_" + path.replace(API_PRE, ""));
+        if (apiData == null) {
+            throw new CustomException(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
+        }
+        ApiInfoDTO apiInfo = (ApiInfoDTO) apiData;
         if (apiInfo.getEnabled() == 0) {
             throw new CustomException(ErrorStatusEnum.API_OFFLINE.getCode(), ErrorStatusEnum.API_OFFLINE.getMassage());
         }
+
         // IP校验
         List<BaseApp> appList = apiInfo.getAppList();
         if (appList.size() > 0) {
