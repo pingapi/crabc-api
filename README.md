@@ -56,7 +56,7 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
 > docker pull crabc/crabc-admin:latest
-> docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:3306) --env db_user=数据库用户 --env db_pwd=数据库密码 -d --name crabc-admin crabc/crabc-admin:latest
+> docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:3306/crabc) --env db_user=数据库用户 --env db_pwd=数据库密码 -d --name crabc-admin crabc/crabc-admin:latest
 ```
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
