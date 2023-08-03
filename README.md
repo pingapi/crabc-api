@@ -74,21 +74,21 @@ wiki地址：https://gitee.com/linebyte/crabc/wikis/home
 #### 在线预览
 ![img_2.png](doc/img_test.png)
 #### 应用创建
-![img_6.png](doc/app.png)
-#### 接口列表
-![img.png](doc/api.png)
-#### 数据库类型
-![img.png](doc/db.png)
-### 限流熔断
-![img.png](doc/flow.png)
-![img.png](doc/degrade.png)
-### 接口申请
-![img_12.png](doc/apply.png)
-### 申请审批
-![img_13.png](doc/audit.png)
+![img_6.png](doc/app.png) 
+#### 接口列表 
+![img.png](doc/api.png) 
+#### 数据库类型 
+![img.png](doc/db.png) 
+### 限流熔断 
+![img.png](doc/flow.png) 
+![img.png](doc/degrade.png) 
+### 接口申请 
+![img_12.png](doc/apply.png) 
+### 申请审批 
+![img_13.png](doc/audit.png) 
 
 ## 交流群
 微信群：
-![img.png](doc/img_wechat.png)
+![img.png](doc/img_wechat.png) 
 
 QQ群：748993036
