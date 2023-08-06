@@ -79,7 +79,6 @@ public class DataSourceConfig {
      */
     @Bean
     public DataSourceManager dataSourceDriverManager(DataSourceDriver jdbcDataSourceDriver) {
-        DataSourceManager driverManager = new DataSourceManager(jdbcDataSourceDriver);
-        return driverManager;
+        return new DataSourceManager(jdbcDataSourceDriver);
     }
 }

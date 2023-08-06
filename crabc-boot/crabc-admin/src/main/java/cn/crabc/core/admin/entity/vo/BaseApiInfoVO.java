@@ -65,6 +65,10 @@ public class BaseApiInfoVO extends BaseEntity {
      * 分页设置，不分页：0、只分页：page、分页并统计：pageCount
      */
     private Integer pageSetup;
+
+    private String sqlScript;
+
+    private String showSqlScript;
     /**
      * 发布时间
      */
@@ -184,5 +188,21 @@ public class BaseApiInfoVO extends BaseEntity {
 
     public void setApplyed(Integer applyed) {
         this.applyed = applyed;
+    }
+
+    public String getSqlScript() {
+        return sqlScript;
+    }
+
+    public void setSqlScript(String sqlScript) {
+        this.sqlScript = sqlScript;
+    }
+
+    public String getShowSqlScript() {
+        return showSqlScript;
+    }
+
+    public void setShowSqlScript(String showSqlScript) {
+        this.showSqlScript = showSqlScript;
     }
 }

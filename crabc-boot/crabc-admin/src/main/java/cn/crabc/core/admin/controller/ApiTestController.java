@@ -2,9 +2,10 @@ package cn.crabc.core.admin.controller;
 
 import cn.crabc.core.admin.entity.param.ApiTestParam;
 import cn.crabc.core.admin.entity.vo.PreviewVO;
-import cn.crabc.core.admin.service.system.IBaseApiTestService;
+import cn.crabc.core.admin.service.core.IBaseDataService;
 import cn.crabc.core.admin.util.Result;
 import cn.crabc.core.admin.util.SQLUtil;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class ApiTestController {
 
     @Autowired
-    private IBaseApiTestService baseapitestService;
+    private IBaseDataService baseDataService;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -34,11 +35,14 @@ public class ApiTestController {
      */
     @PostMapping("/running")
     public Result runApiSql(@RequestBody ApiTestParam api) {
+        if (api.getDatasourceId() == null) {
+            return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
+        }
         boolean check = SQLUtil.previewCheckSql(api.getSqlScript(), api.getDatasourceType());
         if (!check) {
             return Result.error("运行只支持查询，其他操作请使用预览功能");
         }
-        PreviewVO previewVO = baseapitestService.sqlPreview(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript());
+        PreviewVO previewVO = baseDataService.sqlPreview(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript());
         return Result.success(previewVO);
     }
 
@@ -50,30 +54,16 @@ public class ApiTestController {
      */
     @PostMapping("/verify/{apiId}")
     public Result testApiSql(@PathVariable Long apiId, @RequestBody ApiTestParam params) throws Exception {
-        String dbTpye = SQLUtil.getSqlType(params.getSqlScript(), params.getDatasourceType());
-        if (dbTpye == null) {
-            return Result.error("不支持该操作类型");
+        if (params.getDatasourceId() == null) {
+            return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
         }
         if (params.getDatasourceType() == null) {
             params.setDatasourceType("mysql");
         }
         Map<String, Object> map = new HashMap<>();
-        long start = System.currentTimeMillis();
         String sql = params.getSqlScript();
-        if ("select".equalsIgnoreCase(dbTpye)){
-            // 查询sql支持动态条件参数
-            Map<String, Object> paramMap = params.getRequestParams();
-            for (String key : paramMap.keySet()) {
-                 if (paramMap.get(key) == null || "".equals(paramMap.get(key).toString().trim())) {
-                    // 非比传参数，去掉SQL中相应的条件
-                    sql =SQLUtil.regexSql(sql, key);
-                }
-            }
-        }
-        Object list = baseapitestService.testApi(params.getDatasourceId(), params.getSchemaName(),sql, dbTpye, params.getRequestParams());
-        long end = System.currentTimeMillis();
+        Object list = baseDataService.execute(params.getDatasourceId(), params.getSchemaName(),sql, params.getRequestParams());
         map.put("data", objectMapper.writeValueAsString(Result.success(list)));
-        map.put("runTime", end - start);
         map.put("code", 0);
         return Result.success(map);
     }

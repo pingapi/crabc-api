@@ -4,13 +4,11 @@ import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.service.core.IBaseDataService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
 import cn.crabc.core.admin.util.Result;
-import cn.crabc.core.admin.util.SQLUtil;
+import cn.crabc.core.app.enums.ErrorStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,13 +32,10 @@ public class ApiServiceController {
     public Result getService(@RequestParam Map<String, Object> paramMap) {
         ApiInfoDTO api = ApiThreadLocal.get();
         if (api == null) {
-            return Result.error(5001, "请求地址不存在！");
+            return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
         }
-        List<Object> params = new ArrayList<>();
-        if (paramMap != null && paramMap.size() > 0) {
-            params.add(paramMap);
-        }
-        return Result.success(this.execute(api,params));
+        Object data = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), paramMap);
+        return Result.success(data);
     }
 
     /**
@@ -54,39 +49,16 @@ public class ApiServiceController {
     public Result postService(@RequestParam Map<String, Object> paramMap, @RequestBody Object body) {
         ApiInfoDTO api = ApiThreadLocal.get();
         if (api == null) {
-            return Result.error(5001, "请求地址不存在！");
+            return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
         }
-        List<Object> params = new ArrayList<>();
-        if (paramMap != null && paramMap.size() > 0) {
-            params.add(paramMap);
+        if (paramMap == null) {
+            paramMap = new HashMap<>();
         }
         if (body instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) body;
-            params.add(map);
-        } else if (body instanceof List) {
-            List<Object> list = (List<Object>) body;
-            params.addAll(list);
+            paramMap.putAll(map);
         }
-        return Result.success(this.execute(api,params));
-    }
-
-    /**
-     * 执行方法
-     *
-     * @param api
-     * @param params
-     * @return
-     */
-    private Object execute(ApiInfoDTO api, List<Object> params) {
-        Object result = null;
-        if ("select".equalsIgnoreCase(api.getSqlType())) {
-            String sql = SQLUtil.filterParams(api.getSqlScript(), params.size() > 0 ? params.get(0) : new HashMap<>(), api.getRequestParams());
-            result = baseDataService.query(api.getDatasourceId(), api.getSchemaName(), sql, params.size() > 0 ? params.get(0) : new HashMap<>());
-        } else if ("insert".equalsIgnoreCase(api.getSqlType())) {
-            result = baseDataService.add(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params);
-        } else {
-            result = baseDataService.update(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), params.size() > 0 ? params.get(0) : new HashMap<>());
-        }
-        return result;
+        Object data = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), paramMap);
+        return Result.success(data);
     }
 }

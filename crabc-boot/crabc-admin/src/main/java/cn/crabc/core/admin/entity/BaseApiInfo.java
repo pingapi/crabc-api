@@ -71,6 +71,11 @@ public class BaseApiInfo extends BaseEntity {
     private String sqlScript;
 
     /**
+     * 是否显示脚本1/0
+     */
+    private String showSqlScript;
+
+    /**
      * 分页设置，不分页：0、只分页：page、分页并统计：pageCount
      */
     private Integer pageSetup;
@@ -271,5 +276,13 @@ public class BaseApiInfo extends BaseEntity {
 
     public void setDatasourceName(String datasourceName) {
         this.datasourceName = datasourceName;
+    }
+
+    public String getShowSqlScript() {
+        return showSqlScript;
+    }
+
+    public void setShowSqlScript(String showSqlScript) {
+        this.showSqlScript = showSqlScript;
     }
 }

@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -137,19 +139,40 @@ public class ApiInfoController {
     @PostMapping("/sqlParse")
     public Result sqlParse(@RequestBody SqlParseVO sqlParse) {
         SqlParseVO sqlParseVO = new SqlParseVO();
+        String sql = sqlParse.getSqlScript();
+        if (sql.endsWith(";")) {
+            sql = sql.substring(0, sql.lastIndexOf(";"));
+        }
+        // 对</foreach>标签取值特殊处理
+        Set<String> fields = new HashSet<>();
+        if (sql.contains("</foreach>")) {
+            String regex = "collection='(.*?)'";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(sql);
+            while (matcher.find()) {
+                String field = matcher.group(1);
+                fields.add(field);
+            }
+        }
+        String forRegex = "<foreach[\\s\\S]*?</foreach>";
+        sql = sql.replaceAll(forRegex,"()");
         // 条件字段
-        Set<String> paramNames = SQLUtil.parseParams(sqlParse.getSqlScript());
+        Set<String> paramNames = SQLUtil.parseParams(sql);
+        if (!fields.isEmpty()) {
+            paramNames.addAll(fields);
+        }
         sqlParseVO.setReqColumns(paramNames);
         // 返回字段
+        sql = SQLUtil.sqlFilter(sql);
         Set<ColumnParseVo> resColumns = new HashSet<>();
-        Set<String> resNames = SQLUtil.analyzeSQL(sqlParse.getSqlScript(), sqlParse.getDatasourceType());
+        Set<String> resNames = SQLUtil.analyzeSQL(sql, sqlParse.getDatasourceType());
         for (String name : resNames) {
             if (name.startsWith("*")){
                 continue;
             }
             ColumnParseVo resColumn = new ColumnParseVo();
             resColumn.setColName(name);
-            resColumn.setColType("STRING");
+            resColumn.setColType("String");
             resColumn.setItemIndex(0);
             resColumns.add(resColumn);
         }

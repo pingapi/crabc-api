@@ -43,13 +43,12 @@ public class InterceptorConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 添加过滤器
+     * 日志过滤器
      * @return
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Bean
     public FilterRegistrationBean builderRegistrationBean(){
-
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(new ApiFilter());
         registration.addUrlPatterns("/api/web/*");
@@ -57,6 +56,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registration.setOrder(-1);
         return registration;
     }
+
+    /**
+     * 限流过滤器
+     * @return
+     */
     @Bean
     public FilterRegistrationBean sentinelFilterRegistration() {
         FilterRegistrationBean<Filter> registration = new FilterRegistrationBean<>();
@@ -64,7 +68,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registration.addUrlPatterns("/api/web/*");
         registration.setName("sentinelFilter");
         registration.setOrder(1);
-
         return registration;
     }
 }

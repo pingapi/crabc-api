@@ -1,3 +1,18 @@
+/*
+ * Copyright 2023, crabc.cn (creabc@qq.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.crabc.core.app.driver.jdbc;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
@@ -68,7 +83,7 @@ public class JdbcStatement implements StatementMapper {
                 throw new CustomException(51000, cause == null ? e.getMessage() : cause.getMessage());
             } else {
                 Map<String, Object> errorMap = new HashMap<>();
-                errorMap.put("errorMsg", "SQL执行失败：" + cause == null ? e.getMessage() : cause.getMessage());
+                errorMap.put("执行异常", "SQL执行失败：" + cause == null ? e.getMessage() : cause.getMessage());
                 list.add(errorMap);
             }
         } finally {
@@ -98,7 +113,7 @@ public class JdbcStatement implements StatementMapper {
     public int delete(String dataSourceId, String schema, String sql, Object params) {
         try {
             Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
-            Integer result = baseMapper.executeDelete(paramsMap);
+            return baseMapper.executeDelete(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
             throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), ErrorStatusEnum.API_SQL_ERROR.getMassage());
@@ -106,14 +121,13 @@ public class JdbcStatement implements StatementMapper {
             // 移除线程
             JdbcDataSourceRouter.remove();
         }
-        return 1;
     }
 
     @Override
     public int update(String dataSourceId, String schema, String sql, Object params) {
         try {
             Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
-            Integer result = baseMapper.executeUpdate(paramsMap);
+            baseMapper.executeUpdate(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
             throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), ErrorStatusEnum.API_SQL_ERROR.getMassage());

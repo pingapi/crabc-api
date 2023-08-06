@@ -17,7 +17,7 @@ public enum ErrorStatusEnum {
     API_COUNT_OUT(40007, "接口调用次数已达上线"),
     IP_INVALID( 40010, "IP地址不在有效范围内"),
     API_SQL_ERROR( 40011, "SQL执行失败，请检查SQL是否正常"),
-    PARAM_NOT_FOUNT( 41000, "必要参数不能为空"),
+    PARAM_NOT_FOUNT( 41000, "必传参数不能为空"),
     JWT_UN_AUTH( 41001, "用户未登录"),
     JWT_LOGIN_EXPIRE( 41002, "登录失效，请重新登录"),
     SHA_PARAM_NOT_FOUNT( 41006, "认证参数(appkey/timestamp/sign)不能为空"),

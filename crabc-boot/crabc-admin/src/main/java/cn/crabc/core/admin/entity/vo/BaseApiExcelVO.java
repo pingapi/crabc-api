@@ -45,12 +45,6 @@ public class BaseApiExcelVO {
      */
     @ExcelProperty("接口状态")
     private String apiStatus;
-
-    /**
-     * 权限级别：public、default、private
-     */
-    @ExcelProperty("访问级别")
-    private String apiLevel;
     /**
      * API描述
      */
@@ -161,14 +155,6 @@ public class BaseApiExcelVO {
 
     public void setApiStatus(String apiStatus) {
         this.apiStatus = apiStatus;
-    }
-
-    public String getApiLevel() {
-        return apiLevel;
-    }
-
-    public void setApiLevel(String apiLevel) {
-        this.apiLevel = apiLevel;
     }
 
     public String getRemarks() {

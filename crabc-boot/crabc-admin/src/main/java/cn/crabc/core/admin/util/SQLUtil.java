@@ -55,6 +55,20 @@ public class SQLUtil {
     }
 
     /**
+     * 检查SQL正确性时替换标签
+     * @param sql
+     * @return
+     */
+    public static String sqlFilter(String sql){
+        String forRegex = "<foreach[\\s\\S]*?</foreach>";
+        sql = sql.replaceAll(forRegex,"()");
+
+        String regex = "<where>[\\s\\S]*?</where>|<if[\\s\\S]*?</if>|<set>[\\s\\S]*?</set>|<choose>[\\s\\S]*?</choose>|<when[\\s\\S]*?</when>";
+        // 替换标签
+        return sql.replaceAll(regex,"");
+    }
+
+    /**
      * 解析查询字段
      *
      * @param sql
@@ -330,5 +344,14 @@ public class SQLUtil {
             sql = sql.replaceAll(where, "where 1=1");
         }
         return sql;
+    }
+    /**
+     * 获取sql操作类型
+     * @param sql
+     * @return
+     */
+    public static String getOperateType(String sql){
+        String[] sqls = sql.trim().split(" ");
+        return sqls.length > 1 ? sqls[0].toLowerCase().trim() : "select";
     }
 }
