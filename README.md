@@ -75,6 +75,6 @@ cn.crabc
 
 ## 交流群
 微信群：
-![img.png](doc/img_wechat.png) 
+![img.png](doc/img_wechat.png)
 
 QQ群：748993036
