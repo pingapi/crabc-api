@@ -18,6 +18,7 @@ CREATE TABLE `base_api_info` (
                                  `page_setup` int DEFAULT NULL COMMENT '分页设置，不分页：0、只分页：1、分页并统计：2',
                                  `sql_type` varchar(20) DEFAULT NULL COMMENT 'SQL执行类型（select、insert、update、delete）',
                                  `sql_script` text COMMENT 'SQL脚本',
+                                 `show_sql_script` int DEFAULT NULL COMMENT '是否显示sql脚本 1/0',
                                  `datasource_id` varchar(128) DEFAULT NULL COMMENT '数据源ID',
                                  `datasource_type` varchar(50)  DEFAULT NULL COMMENT '数据源类型',
                                  `schema_name` varchar(100)  DEFAULT NULL,
@@ -53,21 +54,6 @@ CREATE TABLE `base_api_log` (
                                 `visitor_name` varchar(50) DEFAULT NULL COMMENT '访问人员',
                                 PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='接口访问日志';
-
-CREATE TABLE `base_api_sql` (
-                                `sql_id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-                                `api_id` bigint NOT NULL COMMENT 'API自增主键',
-                                `sql_script` text COMMENT 'sql语句脚本',
-                                `page_setup` int DEFAULT NULL COMMENT '分页设置，不分页：0、只分页：1、分页并统计：2',
-                                `datasource_id` varchar(128)  DEFAULT NULL COMMENT '数据源ID',
-                                `datasource_type` varchar(50) DEFAULT NULL COMMENT '数据源类型',
-                                `schema_name` varchar(100)  DEFAULT NULL COMMENT 'schema多个逗号分割',
-                                `create_by` varchar(128) DEFAULT NULL,
-                                `create_time` datetime DEFAULT NULL,
-                                `update_by` varchar(128) DEFAULT NULL,
-                                `update_time` datetime DEFAULT NULL,
-                                PRIMARY KEY (`sql_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API_SQL配置';
 
 CREATE TABLE `base_app` (
                             `app_id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
