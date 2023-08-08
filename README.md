@@ -36,8 +36,8 @@ cn.crabc
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
-## 说明文档
-地址：http://doc.pingapi.cn
+## wiki文档
+地址：https://gitee.com/linebyte/crabc/wikis/home
 
 ## 演示环境
 地址：http://crabc.pingapi.cn
