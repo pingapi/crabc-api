@@ -11,9 +11,9 @@ spring:
     time-zone: GMT+8
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://175.178.4.80:33060/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: Admin123.?#
+    password: root
 
 # mybatis配置
 mybatis:
