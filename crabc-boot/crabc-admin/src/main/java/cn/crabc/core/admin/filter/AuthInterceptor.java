@@ -4,7 +4,6 @@ import cn.crabc.core.admin.entity.BaseApiLog;
 import cn.crabc.core.admin.entity.BaseApp;
 import cn.crabc.core.admin.entity.dto.ApiInfoDTO;
 import cn.crabc.core.admin.enums.ApiAuthEnum;
-import cn.crabc.core.admin.service.system.IBaseApiInfoService;
 import cn.crabc.core.admin.service.system.IBaseApiLogService;
 import cn.crabc.core.admin.util.ApiThreadLocal;
 import cn.crabc.core.admin.util.HmacSHAUtils;
@@ -38,8 +37,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     // API开放接口前缀
     private final static String API_PRE = "/api/web/";
-    @Autowired
-    private IBaseApiInfoService iBaseApiInfoService;
     @Autowired
     private IBaseApiLogService iBaseApiLogService;
     @Value("${crabc.auth.expiresTime:10}")
@@ -105,6 +102,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         BaseApiLog apiLog = new BaseApiLog();
         long endTime = System.currentTimeMillis();
         ApiInfoDTO apiInfo = ApiThreadLocal.get();
+        if (apiInfo == null) {
+            return;
+        }
         apiLog.setApiId(apiInfo.getApiId());
         apiLog.setApiName(apiInfo.getApiName());
         apiLog.setApiPath(request.getRequestURI());
