@@ -46,7 +46,7 @@ public class MetaDataController {
         return Result.success(listMap);
     }
 
-    @Cacheable(cacheNames = "schemaCache", cacheManager = "metaDataManager", key = "#datasourceId")
+    //@Cacheable(cacheNames = "schemaCache", cacheManager = "metaDataManager", key = "#datasourceId")
     @GetMapping("/schemas")
     public Result getSchemas(@RequestParam("datasourceId") String datasourceId, String catalog) {
         MetaDataMapper metaData = dataSourceManager.getMetaData(datasourceId);
@@ -54,7 +54,7 @@ public class MetaDataController {
         return Result.success(schemas);
     }
 
-    @Cacheable(cacheNames = "tableCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema")
+    //@Cacheable(cacheNames = "tableCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema")
     @GetMapping("/tables")
     public Result getTables(@RequestParam("datasourceId") String datasourceId, @RequestParam("schema") String schema) {
         MetaDataMapper metaData = dataSourceManager.getMetaData(datasourceId);
@@ -62,7 +62,7 @@ public class MetaDataController {
         return Result.success(tables);
     }
 
-    @Cacheable(cacheNames = "columnsCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema+'_'+#table")
+    //@Cacheable(cacheNames = "columnsCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema+'_'+#table")
     @GetMapping("/columns")
     public Result getColumns(@RequestParam("datasourceId") String datasourceId, @RequestParam("schema") String schema, @RequestParam("table") String table) {
         MetaDataMapper metaData = dataSourceManager.getMetaData(datasourceId);
