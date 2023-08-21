@@ -33,7 +33,11 @@ public class BaseUserServiceImpl implements IBaseUserService {
 
     @Override
     public BaseUser getUserByName(String userName) {
-        return baseUserMapper.selectOne(null,userName);
+        try {
+            return baseUserMapper.selectOne(null,userName);
+        }catch (Exception e) {
+            throw new CustomException(50010,"登录失败,请检查数据库链接是否正常！");
+        }
     }
 
     @Override

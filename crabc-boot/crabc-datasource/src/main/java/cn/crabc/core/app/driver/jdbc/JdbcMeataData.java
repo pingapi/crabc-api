@@ -1,6 +1,7 @@
 package cn.crabc.core.app.driver.jdbc;
 
 import cn.crabc.core.app.config.JdbcDataSourceRouter;
+import cn.crabc.core.app.exception.CustomException;
 import cn.crabc.core.spi.MetaDataMapper;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
@@ -69,7 +70,7 @@ public class JdbcMeataData implements MetaDataMapper {
                 schemas.add(schema);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("query schemas is error", e);
+            throw new CustomException(51002, "查询schema失败，请检查数据源是否正确");
         } finally {
             try {
                 if (resultSet != null) {
@@ -106,7 +107,7 @@ public class JdbcMeataData implements MetaDataMapper {
                 tables.add(table);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("query tables is error", e);
+            throw new CustomException(51003, "查询table失败，请检查数据源是否正确");
         } finally {
             try {
                 if (resultSet != null) {
@@ -155,7 +156,7 @@ public class JdbcMeataData implements MetaDataMapper {
                 columns.add(column);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("query columns is error", e);
+            throw new CustomException(51004, "查询字段失败，请检查数据源是否正确");
         } finally {
             try {
                 if (resultSet != null) {

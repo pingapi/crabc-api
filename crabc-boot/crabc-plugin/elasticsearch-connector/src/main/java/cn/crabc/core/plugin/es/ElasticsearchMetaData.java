@@ -1,6 +1,7 @@
 package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.MetaDataMapper;
+import cn.crabc.core.spi.PluginException;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
@@ -25,9 +26,6 @@ import java.util.Set;
  * @author yuqf
  */
 public class ElasticsearchMetaData implements MetaDataMapper {
-    private static Logger log = LoggerFactory.getLogger(ElasticsearchMetaData.class);
-
-    private RestHighLevelClient client;
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
@@ -53,8 +51,7 @@ public class ElasticsearchMetaData implements MetaDataMapper {
                 }
             });
         } catch (Exception e) {
-            log.error("查询ES Schema清单失败!", e);
-            throw new RuntimeException("查询ES Schema清单失败!", e);
+            throw new PluginException(51002, "查询ES索引列表失败，请检查数据源是否正确");
         }
         return schemas;
     }
@@ -62,17 +59,12 @@ public class ElasticsearchMetaData implements MetaDataMapper {
     @Override
     public List<Table> getTables(String dataSourceId, String catalog, String schema) {
         List<Table> tables = new ArrayList<>();
-        try {
-            Table table = new Table();
-            table.setTableName("_doc");
-            table.setSchema(schema);
-            table.setCatalog(dataSourceId);
-            tables.add(table);
-            return tables;
-        } catch (Exception e) {
-            log.error("-查询ES的索引异常", e);
-            throw new RuntimeException("ES数据源索引列表查询异常!" + e.getMessage());
-        }
+        Table table = new Table();
+        table.setTableName("_doc");
+        table.setSchema(schema);
+        table.setCatalog(dataSourceId);
+        tables.add(table);
+        return tables;
     }
 
     @Override
@@ -104,8 +96,7 @@ public class ElasticsearchMetaData implements MetaDataMapper {
             });
             return columns;
         } catch (Exception e) {
-            log.error("-查询ES索引字段异常!", e);
-            throw new RuntimeException("ES数据源查询索引字段异常!" + e.getMessage());
+            throw new PluginException(51004, "查询ES字段列表失败，请检查数据源是否正确");
         }
     }
 }

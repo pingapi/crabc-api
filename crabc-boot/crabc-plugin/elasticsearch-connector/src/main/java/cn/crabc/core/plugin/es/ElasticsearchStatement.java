@@ -1,5 +1,6 @@
 package cn.crabc.core.plugin.es;
 
+import cn.crabc.core.spi.PluginException;
 import cn.crabc.core.spi.StatementMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.util.EntityUtils;
@@ -125,7 +126,7 @@ public class ElasticsearchStatement implements StatementMapper {
 
         } catch (Exception e) {
             log.error("--es数据查询失败,sql:" + sql, e);
-            throw new RuntimeException("es查询异常,请检查SQL是否正确");
+            throw new PluginException("es查询异常,请检查SQL是否正确");
         }
         return result;
     }
@@ -143,7 +144,7 @@ public class ElasticsearchStatement implements StatementMapper {
     public Map<String, Object> query(String dataSourceId, String sql, Map<String, Object> paramsMap, int pageSize) {
         RestHighLevelClient client = ElasticsearchDataSourceDriver.getConnectionClient(dataSourceId);
         if (client == null) {
-            throw new RuntimeException("es数据源不存在");
+            throw new PluginException("es数据源不存在");
         }
         // 参数
         sql = makeSql(paramsMap, sql);
@@ -165,7 +166,7 @@ public class ElasticsearchStatement implements StatementMapper {
             return dataMap;
         } catch (Exception e) {
             log.error("--es数据查询失败,sql:" + sql, e);
-            throw new RuntimeException("es查询异常,请检查SQL是否正确,(索引名请使用双引号括起来)");
+            throw new PluginException("es查询异常,请检查SQL是否正确,(索引名请使用双引号括起来)");
         }
     }
 
@@ -179,7 +180,7 @@ public class ElasticsearchStatement implements StatementMapper {
             try {
                 client.index(indexRequest, RequestOptions.DEFAULT);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new PluginException("es数据源新增数据失败");
             }
         }
         return 1;

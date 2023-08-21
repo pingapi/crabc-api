@@ -18,6 +18,7 @@ package cn.crabc.core.plugin.es;
 
 import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.MetaDataMapper;
+import cn.crabc.core.spi.PluginException;
 import cn.crabc.core.spi.StatementMapper;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import org.apache.http.HttpHost;
@@ -85,7 +86,7 @@ public class ElasticsearchDataSourceDriver implements DataSourceDriver {
         try {
             client = this.buildClient(dataSource);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new PluginException("初始化es时失败");
         }
         DATA_SOURCE_POOL.put(datasourceId, client);
     }
@@ -140,7 +141,7 @@ public class ElasticsearchDataSourceDriver implements DataSourceDriver {
             try {
                 client.close();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new PluginException("es数据源销毁失败");
             }
             DATA_SOURCE_POOL.remove(dataSourceId);
         }
