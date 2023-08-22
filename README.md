@@ -36,15 +36,29 @@ cn.crabc
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
-## wiki文档
-地址：https://gitee.com/linebyte/crabc/wikis/home
+## 使用文档
+地址：https://www.crabc.cn/guide/
 
 ## 演示环境
-地址：http://crabc.pingapi.cn
+地址：https://app.crabc.cn
 
 ## 商用授权
 仅个人学习使用，商用请加群联系
 
+## Maven集成
+
+```
+<dependency>
+    <groupId>cn.crabc</groupId>
+    <artifactId>crabc-spring-boot-starter</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+在程序启动类中添加注解
+```
+@MapperScan({"cn.crabc.core.app.mapper","cn.crabc.core.datasource.mapper"})
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+```
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
