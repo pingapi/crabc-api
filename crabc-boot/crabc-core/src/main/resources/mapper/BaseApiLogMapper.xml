@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.app.mapper.BaseApiLogMapper">
+
+    <select id="selectList" resultType="cn.crabc.core.app.entity.BaseApiLog">
+        SELECT
+            log_id,
+            api_id,
+            api_name,
+            api_path,
+            api_method,
+            auth_type,
+            app_name,
+            request_ip,
+            query_param,
+            request_body,
+            response_body,
+            body_size,
+            request_status,
+            request_time,
+            response_time,
+            cost_time
+        FROM
+            base_api_log
+        <where>
+            <if test="keyword !=null and keyword !=''">
+                api_name like concat('%',#{apiName},'%')
+            </if>
+            <if test="result !=null and result !=''">
+                and request_status =#{result}
+            </if>
+            <if test="startTime !='' and endTime !=''">
+                and request_time &gt;=#{startTime}
+                and request_time &lt;=#{endTime}
+            </if>
+        </where>
+        order by log_id desc
+    </select>
+
+    <select id="selectOne" resultType="cn.crabc.core.app.entity.BaseApiLog">
+        SELECT
+            log_id,
+            api_id,
+            api_name,
+            api_path,
+            api_method,
+            auth_type,
+            app_name,
+            request_ip,
+            query_param,
+            request_body,
+            response_body,
+            body_size,
+            request_status,
+            request_time,
+            response_time,
+            cost_time
+        FROM
+            base_api_log
+        where log_id =#{logId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="logId" parameterType="cn.crabc.core.app.entity.BaseApiLog">
+        insert into base_api_log(
+        <if test="apiId != null">api_id,</if>
+        <if test="apiName != null and apiName != ''">api_name,</if>
+        <if test="apiPath != null and apiPath != ''">api_path,</if>
+        <if test="apiMethod != null and apiMethod != ''">api_method,</if>
+        <if test="appName != null and appName != ''">app_name,</if>
+        <if test="authType != null and authType != ''">auth_type,</if>
+        <if test="requestIp != null and requestIp != ''">request_ip,</if>
+        <if test="queryParam != null and queryParam !=''">query_param,</if>
+        <if test="requestBody != null and requestBody != ''">request_body,</if>
+        <if test="responseBody != null and responseBody != ''">response_body,</if>
+        <if test="bodySize != null and bodySize != ''">body_size,</if>
+        <if test="requestStatus != null and requestStatus != ''">request_status,</if>
+        cost_time,request_time,response_time
+        )values(
+        <if test="apiId != null">#{apiId},</if>
+        <if test="apiName != null and apiName != ''">#{apiName},</if>
+        <if test="apiPath != null and apiPath != ''">#{apiPath},</if>
+        <if test="apiMethod != null and apiMethod != ''">#{apiMethod},</if>
+        <if test="appName != null and appName != ''">#{appName},</if>
+        <if test="authType != null and authType != ''">#{authType},</if>
+        <if test="requestIp != null and requestIp != ''">#{requestIp},</if>
+        <if test="queryParam != null and queryParam !=''">#{queryParam},</if>
+        <if test="requestBody != null and requestBody != ''">#{requestBody},</if>
+        <if test="responseBody != null and responseBody != ''">#{responseBody},</if>
+        <if test="bodySize != null and bodySize != ''">#{bodySize},</if>
+        <if test="requestStatus != null and requestStatus != ''">#{requestStatus},</if>
+        #{costTime},#{requestTime},#{responseTime}
+        )
+    </insert>
+</mapper>

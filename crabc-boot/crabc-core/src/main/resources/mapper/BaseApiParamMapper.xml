@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.app.mapper.BaseApiParamMapper">
+
+    <select id="selectReqParams" resultType="cn.crabc.core.app.entity.BaseApiParam">
+        SELECT
+            api_id,
+            param_name,
+            column_name,
+            required,
+            operation,
+            param_type,
+            default_value
+        FROM
+            base_api_param where param_model = 'request'
+        <if test="apiId != null">
+            and api_id =#{apiId}
+        </if>
+    </select>
+
+    <select id="selectList" resultType="cn.crabc.core.app.entity.BaseApiParam">
+        SELECT
+            api_id,
+            param_name,
+            column_name,
+            required,
+            operation,
+            param_type,
+            default_value,
+            param_desc,
+            param_model
+        FROM
+            base_api_param
+        <where>
+            <if test="apiId != null">
+                api_id =#{apiId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectApiParams" resultType="cn.crabc.core.app.entity.vo.RequestParamsVO">
+        SELECT
+            param_name,
+            required,
+            operation,
+            param_type,
+            default_value,
+            param_desc,
+            example,
+            param_model
+        FROM
+            base_api_param where api_id =#{apiId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="paramId" parameterType="cn.crabc.core.app.entity.BaseApiParam">
+        insert into base_api_param(
+        api_id,param_name,
+        <if test="columnName != null and columnName != ''">column_name,</if>
+        <if test="required != null">required,</if>
+        <if test="operation != null and operation != ''">operation,</if>
+        <if test="paramType != null and paramType != ''">param_type,</if>
+        <if test="defaultValue != null and defaultValue != ''">default_value,</if>
+        <if test="paramDesc != null and paramDesc != ''">param_desc,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        #{apiId},#{paramName},
+        <if test="columnName != null and columnName != ''">#{columnName},</if>
+        <if test="required != null">#{required},</if>
+        <if test="operation != null and operation != ''">#{operation},</if>
+        <if test="paramType != null and paramType != ''">#{paramType},</if>
+        <if test="defaultValue != null and defaultValue != ''">#{defaultValue},</if>
+        <if test="paramDesc != null and paramDesc != ''">#{paramDesc},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        #{createTime}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="cn.crabc.core.app.entity.BaseApiParam">
+        insert into base_api_param(
+        api_id,param_name,column_name,required,operation,param_type,param_model,default_value,param_desc
+        ,datasource_id,schema_name,table_name,create_time
+        ) values
+        <foreach collection ="list" item="param" separator =",">
+            (#{apiId},#{param.paramName},#{param.columnName},#{param.required}
+            ,#{param.operation},#{param.paramType},#{param.paramModel},#{param.defaultValue},#{param.paramDesc}
+             ,#{param.datasourceId},#{param.schemaName},#{param.tableName},NOW()
+            )
+        </foreach>
+    </insert>
+    <delete id="delete">
+        delete from base_api_param where api_id =#{apiId}
+    </delete>
+
+</mapper>

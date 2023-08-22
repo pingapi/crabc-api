@@ -6,16 +6,18 @@
     <parent>
         <artifactId>crabc</artifactId>
         <groupId>cn.crabc</groupId>
-        <version>1.0.0</version>
+        <version>2.7.5</version>
     </parent>
     <packaging>pom</packaging>
     <artifactId>crabc-boot</artifactId>
+    <version>2.7.5</version>
 
     <modules>
         <module>crabc-plugin</module>
-        <module>crabc-admin</module>
+        <module>crabc-core</module>
         <module>crabc-spi</module>
         <module>crabc-datasource</module>
+        <module>crabc-admin</module>
     </modules>
 
 </project>

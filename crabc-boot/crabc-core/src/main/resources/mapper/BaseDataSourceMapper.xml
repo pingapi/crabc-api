@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.crabc.core.app.mapper.BaseDataSourceMapper">
+    <select id="list" resultType="cn.crabc.core.spi.bean.BaseDataSource">
+        SELECT
+            datasource_id,
+            datasource_name,
+            datasource_type,
+            classify,
+            jdbc_url,
+            host,
+            port,
+            username,
+            password,
+            remarks,
+            extend,
+            secret_key
+        FROM
+            base_datasource ORDER BY datasource_id DESC
+    </select>
+    <select id="selectList" resultType="cn.crabc.core.app.entity.BaseDatasource">
+        SELECT
+            datasource_id,
+            datasource_name,
+            datasource_type,
+            classify,
+            jdbc_url,
+            host,
+            port,
+            username,
+            '******' as password,
+            remarks,
+            extend,
+            update_time
+        FROM
+            base_datasource
+            <where>
+                <if test="datasourceName !=null and datasourceName !=''">
+                    datasource_name like concat('%',#{datasourceName},'%')
+                </if>
+            </where>
+        ORDER BY datasource_id DESC
+    </select>
+
+    <select id="selectOne" resultType="cn.crabc.core.app.entity.BaseDatasource">
+        SELECT
+            datasource_id,
+            datasource_name,
+            datasource_type,
+            jdbc_url,
+            classify,
+            host,
+            port,
+            username,
+            password,
+            extend,
+            secret_key
+        FROM
+            base_datasource WHERE datasource_id=#{datasourceId}
+    </select>
+
+    <delete id="deleteDataSource">
+        DELETE FROM base_datasource WHERE datasource_id =#{datasourceId}
+    </delete>
+
+    <insert id="insertDataSource" useGeneratedKeys="true" keyProperty="datasourceId" parameterType="cn.crabc.core.app.entity.BaseDatasource">
+        insert into base_datasource(
+        <if test="datasourceName != null and datasourceName != ''">datasource_name,</if>
+        <if test="datasourceType != null and datasourceType != ''">datasource_type,</if>
+        <if test="jdbcUrl != null and jdbcUrl != ''">jdbc_url,</if>
+        <if test="host != null and host != ''">host,</if>
+        <if test="port != null and port != ''">port,</if>
+        <if test="username != null and username != ''">username,</if>
+        <if test="password != null and password != ''">password,</if>
+        <if test="classify != null and classify != ''">classify,</if>
+        <if test="remarks != null and remarks != ''">remarks,</if>
+        <if test="secretKey != null and secretKey != ''">secret_key,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time
+        )values(
+        <if test="datasourceName != null and datasourceName != ''">#{datasourceName},</if>
+        <if test="datasourceType != null and datasourceType != ''">#{datasourceType},</if>
+        <if test="jdbcUrl != null and jdbcUrl != ''">#{jdbcUrl},</if>
+        <if test="host != null and host != ''">#{host},</if>
+        <if test="port != null and port != ''">#{port},</if>
+        <if test="username != null and username != ''">#{username},</if>
+        <if test="password != null and password != ''">#{password},</if>
+        <if test="classify != null and classify != ''">#{classify},</if>
+        <if test="remarks != null and remarks != ''">#{remarks},</if>
+        <if test="secretKey != null and secretKey != ''">#{secretKey},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        #{createTime}
+        )
+    </insert>
+
+    <update id="updateDataSource" parameterType="cn.crabc.core.app.entity.BaseDatasource">
+        UPDATE base_datasource
+        <set>
+            <if test="datasourceName != null and datasourceName != ''">datasource_name = #{datasourceName},</if>
+            <if test="datasourceType != null and datasourceType != ''">datasource_type = #{datasourceType},</if>
+            <if test="jdbcUrl != null and jdbcUrl != ''">jdbc_url = #{jdbcUrl},</if>
+            <if test="host != null and host != ''">host = #{host},</if>
+            <if test="port != null and port != ''">port = #{port},</if>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="classify != null and classify != ''">classify = #{classify},</if>
+            <if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
+            <if test="secretKey != null and secretKey != ''">secret_key = #{secretKey},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time =#{updateTime}
+        </set>
+        WHERE datasource_id = #{datasourceId}
+    </update>
+</mapper>
