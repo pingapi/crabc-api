@@ -51,10 +51,10 @@ cn.crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>最新版本</version>
 </dependency>
 ```
-在程序启动类中添加注解
+在程序启动类中添加下面两行注解
 ```
 @MapperScan({"cn.crabc.core.app.mapper","cn.crabc.core.datasource.mapper"})
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
