@@ -15,20 +15,15 @@
  */
 package cn.crabc.core.starter;
 
-import cn.crabc.core.app.config.CacheConfig;
-import cn.crabc.core.app.config.DataSourceConfig;
-import cn.crabc.core.app.config.InterceptorConfig;
-import cn.crabc.core.app.config.WebConfiguration;
+
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableCaching
 @EnableScheduling
 @Configuration
-@Import({DataSourceConfig.class, InterceptorConfig.class, WebConfiguration.class, CacheConfig.class})
 @ComponentScan("cn.crabc.core")
 public class CrabcConfiguration {
 }
