@@ -1,7 +1,7 @@
 
 ## 介绍
-**Crabc** 是低代码开发平台，企业级API发布管理系统，采用SpringBoot、JWT、Mybatis等框架和SPI插件机制实现。
-支持接入（mysql、oracle、postgresql、sqlserver、elasticsearch、mongodb）等SQL或/NOSQL数据源，
+**Crabc** 是低代码开发平台，企业级API发布管理系统，深度整合SpringBoot和Mybatis实现动态数据源和动态SQL。
+支持接入（mysql、oracle、postgresql、sqlserver、elasticsearch、mongodb）等SQL或/NoSQL数据源，
 在编辑框内编写好SQL后即可快速生成Rest接口对外提供服务。支持Mybatis中if等标签语法、数据转换、参数取值、
 以及复杂的多SQL执行并支持事务， 减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。可通过插件的
 方式扩展支持其他的数据源， 提供多种权限认证、限流熔断、缓存、监控等提供一站式API服务功能。
@@ -25,6 +25,7 @@ cn.crabc
 │     └── crabc-datasource   // 数据源加载模块
 │     └── crabc-api          // API调用执行模块
 │     └── crabc-spi          // 插件定义模块
+├── crabc-spring-boot-starter // spring集成包
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
