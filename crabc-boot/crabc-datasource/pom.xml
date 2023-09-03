@@ -39,7 +39,7 @@
         <dependency>
             <groupId>cn.crabc</groupId>
             <artifactId>crabc-spi</artifactId>
-            <version>1.0.0</version>
+            <version>${crabc.versin}</version>
         </dependency>
         <!-- 数据源驱动包 -->
         <dependency>
