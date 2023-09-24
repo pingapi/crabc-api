@@ -25,14 +25,20 @@ import java.util.Map;
  */
 public class BaseSelectProvider {
 
+    // 标签
+    private static String[] tags = {"</if>","</foreach>","</where>","</set>","</choose>","</when>","</trim>","</otherwise"};
+
     /**
      * 添加脚本标签前缀
      * @param sql
      * @return
      */
     private String addScript(String sql){
-        if (sql.contains("</if>") || sql.contains("</foreach>") || sql.contains("<where>") || sql.contains("<set>") || sql.contains("<choose>") || sql.contains("<when>") || sql.contains("</trim>")) {
-            sql = "<script> " + sql + " </script>";
+        for(String tag : tags) {
+            if (sql.contains(tag)) {
+                sql = "<script> " + sql + " </script>";
+                break;
+            }
         }
         return sql;
     }
