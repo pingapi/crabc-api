@@ -39,7 +39,7 @@ public class SQLUtil {
 
     private final static Logger log = LoggerFactory.getLogger(SQLUtil.class);
 
-    public final static String PARAM_PATTERN = "(?<=\\#\\{)(.+?)(?=\\})";
+    public final static String PARAM_PATTERN = "(?<=[#|$]\\{)(.+?)(?=\\})";
 
 
     /**
