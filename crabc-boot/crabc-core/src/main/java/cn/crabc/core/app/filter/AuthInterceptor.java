@@ -60,14 +60,9 @@ public class AuthInterceptor implements HandlerInterceptor {
             throw new CustomException(ErrorStatusEnum.API_OFFLINE.getCode(), ErrorStatusEnum.API_OFFLINE.getMassage());
         }
 
-        // IP校验
+        // 应用列表
         List<BaseApp> appList = apiInfo.getAppList();
-        if (appList.size() > 0) {
-            boolean check = ipCheck(request, appList);
-            if (!check) {
-                throw new CustomException(ErrorStatusEnum.IP_INVALID.getCode(), ErrorStatusEnum.IP_INVALID.getMassage());
-            }
-        }
+
         boolean auth = true;
         if (ApiAuthEnum.CODE.getName().equalsIgnoreCase(apiInfo.getAuthType())) {
             auth = checkAppCode(request, appList);
@@ -128,23 +123,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
         iBaseApiLogService.addLog(apiLog);
 
-    }
-
-    /**
-     * 校验IP
-     *
-     * @param request
-     * @param appList
-     * @return
-     */
-    private boolean ipCheck(HttpServletRequest request, List<BaseApp> appList) {
-        String ip = RequestUtils.getIp(request);
-        for (BaseApp app : appList) {
-            if (app.getIps() != null && !"".equals(app.getIps())){
-                return IPUtil.ipCheck(ip, app.getIps());
-            }
-        }
-        return true;
     }
 
     /**
