@@ -34,7 +34,7 @@ public class ApiServiceController {
         if (api == null) {
             return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
         }
-        Object data = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), paramMap);
+        Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
         return Result.success(data);
     }
 
@@ -58,7 +58,7 @@ public class ApiServiceController {
             Map<String, Object> map = (Map<String, Object>) body;
             paramMap.putAll(map);
         }
-        Object data = baseDataService.execute(api.getDatasourceId(), api.getSchemaName(), api.getSqlScript(), paramMap);
+        Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
         return Result.success(data);
     }
 }

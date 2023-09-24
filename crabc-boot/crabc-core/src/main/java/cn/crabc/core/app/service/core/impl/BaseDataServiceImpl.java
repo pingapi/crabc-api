@@ -32,9 +32,13 @@ public class BaseDataServiceImpl implements IBaseDataService {
     }
 
     @Override
-    public PreviewVO sqlPreview(String datasourceId, String schema, String sql) {
+    public PreviewVO sqlPreview(String datasourceId,String datasourceType, String schema, String sql) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
         Map<String, Object> params = new HashMap<>();
+        // 数据源类型
+        if (datasourceType != null) {
+            params.put(BaseConstant.DATA_SOURCE_TYPE, datasourceType);
+        }
         params.put(BaseConstant.BASE_API_EXEC_TYPE, "preview");
         List<Map<String, Object>> list = statementMapper.selectList(datasourceId, schema, sql, params);
         PreviewVO preview = new PreviewVO();
@@ -47,8 +51,12 @@ public class BaseDataServiceImpl implements IBaseDataService {
     }
 
     @Override
-    public Object execute(String datasourceId, String schema, String sql, Map<String, Object> params) {
+    public Object execute(String datasourceId, String datasourceType, String schema, String sql, Map<String, Object> params) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
+        // 数据源类型
+        if (datasourceType != null && !params.containsKey(BaseConstant.DATA_SOURCE_TYPE)) {
+            params.put(BaseConstant.DATA_SOURCE_TYPE, datasourceType);
+        }
         String sqlType = SQLUtil.getOperateType(sql);
         if ("insert".equalsIgnoreCase(sqlType)) {
             return statementMapper.insert(datasourceId, schema, sql, params);

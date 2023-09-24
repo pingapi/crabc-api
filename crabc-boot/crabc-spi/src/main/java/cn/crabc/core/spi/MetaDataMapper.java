@@ -34,7 +34,7 @@ public interface MetaDataMapper<T> extends Mapper<T> {
      * @param dataSourceId
      * @return
      */
-    List<String> getCatalogs(String dataSourceId);
+    List<Object> getCatalogs(String dataSourceId);
 
     /**
      * 获取数据源Schema

@@ -6,8 +6,6 @@ import cn.crabc.core.spi.MetaDataMapper;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Schema;
 import cn.crabc.core.spi.bean.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,11 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcMeataData implements MetaDataMapper {
-    private static Logger log = LoggerFactory.getLogger(JdbcMeataData.class);
 
     @Override
-    public List<String> getCatalogs(String dataSourceId) {
-        List<String> catalogs = new ArrayList<>();
+    public List<Schema> getCatalogs(String dataSourceId) {
+        List<Schema> catalogs = new ArrayList<>();
         Connection connection = null;
         ResultSet resultSet = null;
         DataSource dataSource = JdbcDataSourceRouter.getDataSource(dataSourceId);
@@ -29,8 +26,14 @@ public class JdbcMeataData implements MetaDataMapper {
             connection = dataSource.getConnection();
             resultSet = connection.getMetaData().getCatalogs();
             while (resultSet.next()) {
-                String catalogName = resultSet.getString(1);
-                catalogs.add(catalogName);
+                String schemaName = resultSet.getString(1);
+                if ("information_schema".equalsIgnoreCase(schemaName) || "performance_schema".equalsIgnoreCase(schemaName) || "pg_catalog".equals(schemaName)) {
+                    continue;
+                }
+                Schema schema = new Schema();
+                schema.setSchema(schemaName);
+                schema.setCatalog(schemaName);
+                catalogs.add(schema);
             }
         } catch (Exception e) {
             throw new IllegalStateException("query catalogs is error", e);

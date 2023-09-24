@@ -39,7 +39,7 @@ public class DataSourceManager {
     /**
      * 支持的关系型数据源类型
      */
-    private static final List<String> JDBC_DATA_SOURCE_TYPE = Arrays.asList("mysql", "mariadb", "oracle", "sqlserver", "postgresql", "db2", "sqlite", "tidb", "opengauss", "oceanbase", "polardb", "tdsql", "dm", "gbase", "hive2");
+    private static final List<String> JDBC_DATA_SOURCE_TYPE = Arrays.asList("mysql", "mariadb", "oracle", "sqlserver", "postgresql","sybase", "db2","doris", "sqlite", "tidb", "opengauss", "oceanbase", "polardb", "tdsql", "dm", "gbase", "hive2");
     /**
      * 默认数据源驱动实现
      */
@@ -59,7 +59,7 @@ public class DataSourceManager {
         ServiceLoader<DataSourceDriver> loader = ServiceLoader.load(DataSourceDriver.class);
         for (DataSourceDriver driver : loader) {
             String driverName = driver.getName();
-            if (driverName == null || "".equals(driverName)) {
+            if (driverName == null || driverName.isEmpty()) {
                 throw new CustomException(51003, "插件名称不能为空");
             }
             if (PLUGIN_TYPE.containsKey(driverName)) {
@@ -158,7 +158,7 @@ public class DataSourceManager {
             DATA_SOURCE_POOL_PLUGIN.remove(datasourceId);
         }
         DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
-        if (dataSource != null && dataSource instanceof HikariDataSource) {
+        if (dataSource instanceof HikariDataSource) {
             HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
             hikariDataSource.close();
         }

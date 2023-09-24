@@ -69,10 +69,10 @@ public class JdbcStatement implements StatementMapper {
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
             int pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
             // 判断是否分页
-            if (BaseConstant.PAGE_COUNT == pageCount && !checkPage(sql)) {
+            if (2 == pageCount && !checkPage(sql)) {
                 PageHelper.startPage(pageNum, pageSize, true);
-            } else if (!checkPage(sql)){
-                PageHelper.startPage(pageNum, pageSize, true);
+            } else if (1 == pageCount && !checkPage(sql)){
+                PageHelper.startPage(pageNum, pageSize, false);
             }
             list = baseMapper.executeQuery(paramsMap);
 
@@ -149,18 +149,19 @@ public class JdbcStatement implements StatementMapper {
      * @return
      */
     public Map<String, Object> setParams(String dataSourceId, String schema, String sql, Object params) {
-        // 设置线程数据源
-        if (schema != null && !"".equals(schema)) {
-            // 拼接数据源ID和schema
-            dataSourceId = dataSourceId + ":" + schema;
-        }
-        JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
         Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put(BaseConstant.BASE_SQL, sql.replaceAll(";",""));
         if (params instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) params;
             paramsMap.putAll(map);
         }
+        String dataSourceType = paramsMap.containsKey(BaseConstant.DATA_SOURCE_TYPE) ? paramsMap.get(BaseConstant.DATA_SOURCE_TYPE).toString() : "";
+        // 设置线程数据源
+        if (schema != null && !"".equals(schema)) {
+            // dataSourceId:dataSourceType:schema
+            dataSourceId = dataSourceId + ":"+ dataSourceType + ":" + schema;
+        }
+        JdbcDataSourceRouter.setDataSourceKey(dataSourceId);
         return paramsMap;
     }
 

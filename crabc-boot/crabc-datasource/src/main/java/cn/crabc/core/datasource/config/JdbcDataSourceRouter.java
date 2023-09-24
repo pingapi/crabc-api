@@ -1,5 +1,6 @@
 package cn.crabc.core.datasource.config;
 
+import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.driver.DataSourceManager;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
@@ -157,10 +158,16 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         Connection connection = this.determineTargetDataSource().getConnection();
         Object dataSourceKey = this.determineCurrentLookupKey();
         try {
+            // dataSouceId:dataSourceType:schemaName
             if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
                 String[] dataSourceStr = dataSourceKey.toString().split(":");
-                String schema = dataSourceStr[1];
-                connection.setSchema(schema);
+                String dataSourceType = dataSourceStr[1];
+                String schema = dataSourceStr[2];
+                if (BaseConstant.CATALOG_DATA_SOURCE.contains(dataSourceType)) {
+                    connection.setCatalog(schema);
+                }else {
+                    connection.setSchema(schema);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

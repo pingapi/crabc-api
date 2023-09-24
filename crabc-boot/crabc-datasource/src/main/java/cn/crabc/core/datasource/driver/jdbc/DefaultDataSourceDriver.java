@@ -31,13 +31,18 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
             HikariDataSource dataSource = new HikariDataSource();
             dataSource.setUsername(baseDataSource.getUsername());
             dataSource.setPassword(baseDataSource.getPassword());
-            dataSource.setJdbcUrl(baseDataSource.getJdbcUrl());
+            String jdbcUrl = baseDataSource.getJdbcUrl();
+            dataSource.setJdbcUrl(jdbcUrl);
+            if (jdbcUrl != null && jdbcUrl.toLowerCase().startsWith("jdbc:jtds")) {
+                dataSource.setConnectionTestQuery("SELECT 1");
+                dataSource.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
+            }
             dataSource.setInitializationFailTimeout(1);
             dataSource.setConnectionTimeout(2000);
             connection = dataSource.getConnection();
         } catch (Exception e) {
             Throwable cause = e.getCause();
-            log.error("--{}", e.getMessage());
+            log.error("--数据库测试异常：{}", e.getMessage());
             return cause == null ? e.getMessage() : cause.getLocalizedMessage();
         } finally {
             try {
@@ -60,20 +65,12 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         String username = ds.getUsername();
         String password = ds.getPassword();
         String jdbcUrl = ds.getJdbcUrl();
-        // mysql数据库链接加上指定SCHEMA
-        if (jdbcUrl != null && jdbcUrl.contains(":")) {
-            boolean mysql = JdbcUtils.isMysqlDbType(jdbcUrl.trim().split(":")[1]);
-            if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && jdbcUrl.contains("?")) {
-                jdbcUrl = jdbcUrl + "&databaseTerm=SCHEMA";
-            } else if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && !jdbcUrl.contains("?")) {
-                jdbcUrl = jdbcUrl + "?databaseTerm=SCHEMA";
-            }
-        }
 
         HikariDataSource dataSource = new HikariDataSource();
+        this.analysisJdbcUrl(jdbcUrl, dataSource);
+
         dataSource.setUsername(username);
         dataSource.setPassword(password);
-        dataSource.setJdbcUrl(jdbcUrl);
         dataSource.setMinimumIdle(1);
         dataSource.setMaximumPoolSize(10);
         dataSource.setMaxLifetime(900000);
@@ -84,6 +81,32 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
     }
 
+    /**
+     * 指定mysql的schema
+     * @param jdbcUrl
+     * @return
+     */
+    private void analysisJdbcUrl(String jdbcUrl, HikariDataSource dataSource){
+        // mysql数据库链接加上指定SCHEMA
+        try {
+            if (jdbcUrl != null && jdbcUrl.toLowerCase().startsWith("jdbc:jtds:")){
+                dataSource.setConnectionTestQuery("SELECT 1");
+                dataSource.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
+            }
+//            else if (jdbcUrl != null && jdbcUrl.toLowerCase().startsWith("jdbc:")) {
+//                boolean mysql = JdbcUtils.isMysqlDbType(jdbcUrl.trim().split(":")[1]);
+//                if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && jdbcUrl.contains("?")) {
+//                    jdbcUrl = jdbcUrl + "&databaseTerm=SCHEMA";
+//                } else if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && !jdbcUrl.contains("?")) {
+//                    jdbcUrl = jdbcUrl + "?databaseTerm=SCHEMA";
+//                }
+//            }
+        }catch (Exception e){
+            log.error("测试数据源解析jdbcUrl异常{}",e.getMessage());
+        }finally {
+            dataSource.setJdbcUrl(jdbcUrl);
+        }
+    }
     @Override
     public void destroy(String dataSourceId) {
         JdbcDataSourceRouter.destroy(dataSourceId);

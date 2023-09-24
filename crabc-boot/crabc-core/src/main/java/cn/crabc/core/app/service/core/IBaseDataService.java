@@ -26,7 +26,7 @@ public interface IBaseDataService {
      * @param sql
      * @return
      */
-    PreviewVO sqlPreview(String datasourceId, String schema, String sql);
+    PreviewVO sqlPreview(String datasourceId, String datasourceType,String schema, String sql);
 
     /**
      * 测试API
@@ -37,5 +37,5 @@ public interface IBaseDataService {
      * @param params
      * @return
      */
-    Object execute(String datasourceId,String schema, String sql, Map<String, Object> params);
+    Object execute(String datasourceId,String schema, String datasourceType, String sql, Map<String, Object> params);
 }
