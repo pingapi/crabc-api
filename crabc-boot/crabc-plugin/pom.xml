@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>elasticsearch-connector</module>
-        <module>mongodb-connector</module>
     </modules>
 
     <properties>
