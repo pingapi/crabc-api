@@ -194,4 +194,4 @@ VALUES(1, 'admin', 'admin', '0', '0192023A7BBD73250516F069DF18B500', 'admin', ''
 
 INSERT INTO base_group
 (group_id, parent_id, group_name, group_desc, create_by, create_time, update_by, update_time)
-VALUES(1, 0, 'root', 'root', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00');
+VALUES(1, 0, '分组', 'root', '1', '2023-03-01 00:00:00', '1', '2023-03-01 00:00:00');
