@@ -13,7 +13,6 @@
     <version>2.8.1</version>
 
     <modules>
-        <module>crabc-plugin</module>
         <module>crabc-core</module>
         <module>crabc-spi</module>
         <module>crabc-datasource</module>

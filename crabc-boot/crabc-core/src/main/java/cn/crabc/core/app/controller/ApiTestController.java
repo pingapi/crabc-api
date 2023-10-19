@@ -38,10 +38,6 @@ public class ApiTestController {
         if (api.getDatasourceId() == null) {
             return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
         }
-//        boolean check = SQLUtil.previewCheckSql(api.getSqlScript(), api.getDatasourceType());
-//        if (!check) {
-//            return Result.error("运行只支持查询，其他操作请使用预览功能");
-//        }
         PreviewVO previewVO = baseDataService.sqlPreview(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript());
         return Result.success(previewVO);
     }

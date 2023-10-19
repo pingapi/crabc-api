@@ -3,7 +3,6 @@ package cn.crabc.core.datasource.driver.jdbc;
 import cn.crabc.core.datasource.config.JdbcDataSourceRouter;
 import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.bean.BaseDataSource;
-import com.alibaba.druid.util.JdbcUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,14 +92,6 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
                 dataSource.setConnectionTestQuery("SELECT 1");
                 dataSource.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
             }
-//            else if (jdbcUrl != null && jdbcUrl.toLowerCase().startsWith("jdbc:")) {
-//                boolean mysql = JdbcUtils.isMysqlDbType(jdbcUrl.trim().split(":")[1]);
-//                if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && jdbcUrl.contains("?")) {
-//                    jdbcUrl = jdbcUrl + "&databaseTerm=SCHEMA";
-//                } else if (mysql && !jdbcUrl.contains("databaseTerm=SCHEMA") && !jdbcUrl.contains("?")) {
-//                    jdbcUrl = jdbcUrl + "?databaseTerm=SCHEMA";
-//                }
-//            }
         }catch (Exception e){
             log.error("测试数据源解析jdbcUrl异常{}",e.getMessage());
         }finally {
