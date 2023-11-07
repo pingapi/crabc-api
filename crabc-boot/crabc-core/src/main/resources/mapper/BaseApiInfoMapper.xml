@@ -128,6 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             tenant_id,
             remarks,
             version,
+            page_setup,
             show_sql_script,
             datasource_id,
             datasource_type,
