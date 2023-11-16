@@ -160,7 +160,7 @@ CREATE TABLE `base_api_param` (
                                   PRIMARY KEY (`param_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API接口参数';
 
--- 2.5新增表
+
 DROP TABLE IF EXISTS `base_flow_api`;
 CREATE TABLE `base_flow_api` (
                                  `id` int NOT NULL AUTO_INCREMENT,
