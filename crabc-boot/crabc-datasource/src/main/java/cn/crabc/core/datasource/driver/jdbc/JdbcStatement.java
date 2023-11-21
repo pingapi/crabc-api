@@ -69,10 +69,8 @@ public class JdbcStatement implements StatementMapper {
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
             int pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
             // 判断是否分页
-            if (2 == pageCount && !checkPage(sql)) {
-                PageHelper.startPage(pageNum, pageSize, true);
-            } else if (1 == pageCount && !checkPage(sql)){
-                PageHelper.startPage(pageNum, pageSize, false);
+            if (0 != pageCount && !checkPage(sql)) {
+                PageHelper.startPage(pageNum, pageSize);
             }
             list = baseMapper.executeQuery(paramsMap);
 

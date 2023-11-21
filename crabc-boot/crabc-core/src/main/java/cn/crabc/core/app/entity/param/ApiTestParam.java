@@ -20,6 +20,8 @@ public class ApiTestParam {
 
     private String sqlParams;
 
+    private String resultType;
+
     private Map<String,Object> requestParams;
 
     public String getSqlScript() {
@@ -68,5 +70,13 @@ public class ApiTestParam {
 
     public void setRequestParams(Map<String, Object> requestParams) {
         this.requestParams = requestParams;
+    }
+
+    public String getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
     }
 }
