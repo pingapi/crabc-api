@@ -2,15 +2,16 @@ package cn.crabc.core.app.controller;
 
 import cn.crabc.core.app.entity.param.ApiTestParam;
 import cn.crabc.core.app.entity.vo.PreviewVO;
+import cn.crabc.core.app.enums.ResultTypeEnum;
 import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.util.Result;
-import cn.crabc.core.app.util.SQLUtil;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,8 +59,13 @@ public class ApiTestController {
         }
         Map<String, Object> map = new HashMap<>();
         String sql = params.getSqlScript();
-        Object list = baseDataService.execute(params.getDatasourceId(),params.getDatasourceType(), params.getSchemaName(),sql, params.getRequestParams());
-        map.put("data", objectMapper.writeValueAsString(Result.success(list)));
+        Object data = baseDataService.execute(params.getDatasourceId(),params.getDatasourceType(), params.getSchemaName(),sql, params.getRequestParams());
+        if (ResultTypeEnum.ONE.getName().equals(params.getResultType()) && data instanceof List) {
+            List<Object> list  = (List<Object>) data;
+            map.put("data", objectMapper.writeValueAsString(Result.success(list.isEmpty() ? null: list.get(0))));
+        }else{
+            map.put("data", objectMapper.writeValueAsString(Result.success(data)));
+        }
         map.put("code", 0);
         return Result.success(map);
     }

@@ -39,9 +39,6 @@ cn.crabc
 ## 使用文档
 地址：https://www.crabc.cn/guide/
 
-## 演示环境
-地址：https://app.crabc.cn
-
 ## 商用授权
 仅个人学习使用，商用请加群联系
 
