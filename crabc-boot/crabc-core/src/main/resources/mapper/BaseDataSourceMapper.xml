@@ -67,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <insert id="insertDataSource" useGeneratedKeys="true" keyProperty="datasourceId" parameterType="cn.crabc.core.app.entity.BaseDatasource">
         insert into base_datasource(
+        <if test="datasourceId != null and datasourceId != ''">datasource_id,</if>
         <if test="datasourceName != null and datasourceName != ''">datasource_name,</if>
         <if test="datasourceType != null and datasourceType != ''">datasource_type,</if>
         <if test="jdbcUrl != null and jdbcUrl != ''">jdbc_url,</if>
@@ -80,6 +81,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="createBy != null and createBy != ''">create_by,</if>
         create_time
         )values(
+        <if test="datasourceId != null and datasourceId != ''">#{datasourceId},</if>
         <if test="datasourceName != null and datasourceName != ''">#{datasourceName},</if>
         <if test="datasourceType != null and datasourceType != ''">#{datasourceType},</if>
         <if test="jdbcUrl != null and jdbcUrl != ''">#{jdbcUrl},</if>
