@@ -5,18 +5,18 @@ import cn.crabc.core.app.mapper.BaseDataSourceMapper;
 import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.service.system.IBaseDataSourceService;
 import cn.crabc.core.datasource.util.PageInfo;
-import cn.crabc.core.app.util.RSAUtils;
 import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.driver.DataSourceManager;
 import cn.crabc.core.spi.bean.BaseDataSource;
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -34,15 +34,20 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     private DataSourceManager dataSourceManager;
     @Autowired
     private IBaseDataService iBaseDataService;
-    @Autowired
-    @Qualifier("dataCache")
-    Cache<String, Object> caffeineCache;
+
+    @Value("${spring.datasource.url}")
+    private String jdbcUrl;
+    @Value("${spring.datasource.username}")
+    private String username;
+    @Value("${spring.datasource.password}")
+    private String password;
 
     /**
      * 启动加载
      */
     @PostConstruct
     public void load() {
+        initLocal();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -52,20 +57,34 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         t.start();
     }
 
+    /**
+     * 把本机的数据库加载到缓存
+     */
+    private void initLocal() {
+        BaseDatasource baseDatasource = dataSourceMapper.selectOne(1);
+        if (baseDatasource != null) {
+            return;
+        }
+        BaseDatasource local = new BaseDatasource();
+        local.setDatasourceId("1");
+        local.setEnabled(1);
+        local.setDatasourceType("mysql");
+        local.setDatasourceName("local");
+        local.setJdbcUrl(jdbcUrl);
+        local.setPassword(Base64.getEncoder().encodeToString(password.getBytes()));
+        local.setUsername(username);
+        local.setRemarks("本机数据库");
+        this.addDataSource(local);
+    }
+
     @Override
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void init() {
         List<BaseDataSource> baseDataSources = this.getList();
         for (BaseDataSource dataSource : baseDataSources) {
-            String priKey = dataSource.getSecretKey();
-            try {
-                if (dataSource.getPassword() != null) {
-                    String pwd = RSAUtils.decryptByPriKey(priKey, dataSource.getPassword());
-                    dataSource.setPassword(pwd);
-                }
-                dataSourceManager.createDataSource(dataSource);
-            } catch (Exception e) {
-
-            }
+            byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
+            dataSource.setPassword(new String(decode));
+            dataSourceManager.createDataSource(dataSource);
         }
     }
 
@@ -93,24 +112,13 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
 
     @Override
     public Integer addDataSource(BaseDatasource dataSource) {
-        String password = dataSource.getPassword();
         dataSource.setClassify("jdbc");
         dataSource.setCreateBy(UserThreadLocal.getUserId());
         dataSource.setCreateTime(new Date());
-        String pwd = null;
-        if (password != null && !"".equals(password)) {
-            // 解密后的密码
-            pwd = this.decryptPwd(password);
-            dataSource.setPassword(pwd);
-            // 再次加密
-            this.encryptPwd(dataSource);
-        }
-        dataSourceMapper.insertDataSource(dataSource);
-        if (pwd != null) {
-            dataSource.setPassword(pwd);
-        }
+
+        Integer result = dataSourceMapper.insertDataSource(dataSource);
         this.addCache(dataSource);
-        return 1;
+        return result;
     }
 
     @Override
@@ -118,9 +126,8 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         this.parsePassword(dataSource);
         dataSource.setUpdateBy(UserThreadLocal.getUserId());
         dataSource.setUpdateTime(new Date());
+        dataSource.setPassword(Base64.getEncoder().encodeToString(dataSource.getPassword().getBytes()));
         this.addCache(dataSource);
-        // 加密
-        this.encryptPwd(dataSource);
         return dataSourceMapper.updateDataSource(dataSource);
     }
 
@@ -130,48 +137,12 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
      * @param dataSource
      */
     private void addCache(BaseDatasource dataSource) {
-        try {
-            // 新增或更新数据源
-            BaseDataSource ds = new BaseDataSource();
-            BeanUtils.copyProperties(dataSource, ds);
-            dataSourceManager.createDataSource(ds);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 加密密码
-     *
-     * @param dataSource
-     */
-    private void encryptPwd(BaseDatasource dataSource) {
-        try {
-            // 加密数据库密码
-            RSAUtils.RSAKeyPair rsaKeyPair = RSAUtils.getKey();
-            String pubKey = rsaKeyPair.getPublicKey();
-            String encryptPwd = RSAUtils.encryptByPubKey(pubKey, dataSource.getPassword());
-            dataSource.setPassword(encryptPwd);
-            dataSource.setSecretKey(rsaKeyPair.getPrivateKey());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * 解析密码
-     *
-     * @param password
-     * @return
-     */
-    private String decryptPwd(String password) {
-        try {
-            Object priKey = caffeineCache.getIfPresent("priKey_" + UserThreadLocal.getUserId());
-            String pwd = RSAUtils.decryptByPriKey(priKey.toString(), password);
-            return pwd;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        // 新增或更新数据源
+        BaseDataSource ds = new BaseDataSource();
+        BeanUtils.copyProperties(dataSource, ds);
+        byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
+        ds.setPassword(new String(decode));
+        dataSourceManager.createDataSource(ds);
     }
 
     @Override
@@ -196,15 +167,12 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         String password = dataSource.getPassword();
         String pwd = null;
         if (password != null && !"".equals(password.trim())) {
-            pwd = this.decryptPwd(password);
-        }
-        if (pwd == null && dataSource.getDatasourceId() !=null && !"".equals(dataSource.getDatasourceId())) {
+            byte[] decode = Base64.getDecoder().decode(password);
+            pwd = new String(decode);
+        }else if (dataSource.getDatasourceId() != null){
             BaseDatasource baseDatasource = dataSourceMapper.selectOne(Integer.parseInt(dataSource.getDatasourceId()));
-            try {
-                pwd = RSAUtils.decryptByPriKey(baseDatasource.getSecretKey(), baseDatasource.getPassword());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            byte[] decode = Base64.getDecoder().decode(baseDatasource.getPassword());
+            pwd = new String(decode);
         }
         dataSource.setPassword(pwd);
     }

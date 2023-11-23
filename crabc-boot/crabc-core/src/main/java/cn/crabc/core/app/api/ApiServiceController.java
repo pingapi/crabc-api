@@ -1,14 +1,17 @@
 package cn.crabc.core.app.api;
 
 import cn.crabc.core.app.entity.dto.ApiInfoDTO;
+import cn.crabc.core.app.enums.ResultTypeEnum;
 import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.util.ApiThreadLocal;
 import cn.crabc.core.app.util.Result;
+import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,8 +37,16 @@ public class ApiServiceController {
         if (api == null) {
             return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
         }
+        if (paramMap != null && api.getPageSetup() != null) {
+            paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup());
+        }
         Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
-        return Result.success(data);
+        if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {
+            List<Object> list  = (List<Object>) data;
+            return Result.success(list.isEmpty() ? null : list.get(0));
+        }else{
+            return Result.success(data);
+        }
     }
 
     /**
@@ -58,7 +69,13 @@ public class ApiServiceController {
             Map<String, Object> map = (Map<String, Object>) body;
             paramMap.putAll(map);
         }
+        paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup());
         Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
-        return Result.success(data);
+        if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {
+            List<Object> list  = (List<Object>) data;
+            return Result.success(list.isEmpty() ? null : list.get(0));
+        }else{
+            return Result.success(data);
+        }
     }
 }

@@ -99,10 +99,6 @@ public class ApiInfoController {
      */
     @PostMapping("/publish")
     public Result publish(@RequestBody ApiInfoParam api) {
-//        boolean check = SQLUtil.checkSql(api.getSqlInfo().getSqlScript(), api.getSqlInfo().getDatasourceType());
-//        if (check == false) {
-//            return Result.error("不支持该SQL的操作类型!");
-//        }
         apiInfoService.apiPublish(api);
         return Result.success(api.getBaseInfo().getApiId());
     }
@@ -147,6 +143,16 @@ public class ApiInfoController {
         Set<String> fields = new HashSet<>();
         if (sql.contains("</foreach>")) {
             String regex = "collection='(.*?)'";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(sql);
+            while (matcher.find()) {
+                String field = matcher.group(1);
+                fields.add(field);
+            }
+        }
+        // 提取if标签里面的请求参数
+        if (sql.contains("<if ") || sql.contains("<when ")) {
+            String regex = " test=\"(\\w+)\\s*(?:!=|>=|<=|==|<|>|&lt;|&lt;=|&gt;|&gt;=)";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(sql);
             while (matcher.find()) {

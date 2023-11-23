@@ -181,6 +181,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         BaseApiInfo api = params.getBaseInfo();
         BaseApiSql sql = params.getSqlInfo();
         Date updateTime = new Date();
+        api.setApiStatus(ApiStateEnum.EDIT.getName());
+        api.setEnabled(0);
         api.setDatasourceId(sql.getDatasourceId());
         api.setSchemaName(sql.getSchemaName());
         api.setDatasourceType(sql.getDatasourceType());
@@ -211,8 +213,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             baseApiInfo.setEnabled(enabled);
         }
         // 更新缓存
-        this.updateCache(apiId);
         apiInfoMapper.updateApiState(baseApiInfo);
+        this.updateCache(apiId);
         return 1;
     }
 
@@ -230,24 +232,15 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (oldApiInfo == null) {
             throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
-//        if (apiInfoParam.getBaseInfo().getVersion().equals(oldApiInfo.getVersion())) {
-//            throw new CustomException(52003, "API版本号[" + oldApiInfo.getVersion() + "]已存在，请变更版本号");
-//        }
-        // 已存在发布的版本则保存一条历史数据
-        if (ApiStateEnum.RELEASE.getName().equals(oldApiInfo.getApiStatus())) {
-            this.insertHistory(oldApiInfo);
-        }
         Date updateTime = new Date();
-        BaseApiInfo baseApiInfo = apiInfoParam.getBaseInfo();
-        baseApiInfo.setEnabled(1);
-        baseApiInfo.setParentId(0L);
-        baseApiInfo.setApiType("SQL");
-        baseApiInfo.setReleaseTime(updateTime);
-        baseApiInfo.setUpdateBy(UserThreadLocal.getUserId());
-        baseApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
-        apiInfoMapper.updateApiInfo(baseApiInfo);
+        oldApiInfo.setEnabled(1);
+        oldApiInfo.setParentId(0L);
+        oldApiInfo.setReleaseTime(updateTime);
+        oldApiInfo.setUpdateBy(UserThreadLocal.getUserId());
+        oldApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
+        apiInfoMapper.updateApiInfo(oldApiInfo);
         // 更新缓存
-        this.getApiCache(baseApiInfo.getApiId());
+        this.updateCache(oldApiInfo.getApiId());
         return apiId;
     }
 

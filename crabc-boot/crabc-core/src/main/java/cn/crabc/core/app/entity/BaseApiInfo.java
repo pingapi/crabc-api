@@ -66,6 +66,11 @@ public class BaseApiInfo extends BaseEntity {
      */
     private String sqlType;
     /**
+     * 返回结果类型：one、array、excel
+     *
+     */
+    private String resultType;
+    /**
      * sql语句脚本
      */
     private String sqlScript;
@@ -284,5 +289,13 @@ public class BaseApiInfo extends BaseEntity {
 
     public void setShowSqlScript(String showSqlScript) {
         this.showSqlScript = showSqlScript;
+    }
+
+    public String getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
     }
 }
