@@ -1,6 +1,6 @@
 
 ## 介绍
-**Crabc** 是低代码开发平台，企业级API发布管理系统，深度整合SpringBoot和Mybatis实现动态数据源和动态SQL。
+**Crabc** 是低代码开发平台，企业级API管理系统，深度整合SpringBoot和Mybatis实现动态数据源和动态SQL。
 支持接入（mysql、oracle、postgresql、sqlserver、elasticsearch）等SQL或/NoSQL数据源，
 在编辑框内编写好SQL后即可快速生成Rest接口对外提供服务。支持Mybatis中if等标签语法、数据脱敏、
 以及复杂的多SQL执行并支持事务， 减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。可通过插件的
@@ -40,7 +40,7 @@ cn.crabc
 地址：https://www.crabc.cn/guide/
 
 ## 商用授权
-仅个人学习使用，商用请加群联系
+仅个人学习使用，商用请加群联系作者
 
 ## Maven集成
 
@@ -83,5 +83,4 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ## 交流群
 微信群：
 ![img.png](doc/img.png)
-
 QQ群：748993036
