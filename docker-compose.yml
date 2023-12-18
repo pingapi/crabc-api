@@ -9,26 +9,26 @@ services:
       --collation-server=utf8mb4_unicode_ci
       --default-authentication-plugin=mysql_native_password
     volumes:
-      - "/opt/crabc/mysql:/var/lib/mysql"
+      - /opt/crabc/mysql:/var/lib/mysql
       # 加载库表数据
-      - "/opt/crabc/mysql/init:/docker-entrypoint-initdb.d"
+      - /opt/crabc/mysql/init:/docker-entrypoint-initdb.d
     environment:
-      - "MYSQL_ROOT_PASSWORD:=admin123"
-      - "MYSQL_USER=admin"
-      - "MYSQL_PASSWORD=admin123"
-  crabc:
+      - MYSQL_ROOT_PASSWORD:=admin123
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin123
+  crabc-admin:
     image: crabc/crabc-admin:latest
-    container_name: crabc-admin2
+    container_name: crabc-admin
     depends_on:
       - crabcdb
     networks:
       - crabc_network
     ports:
-      "9377:9377"
+      - "9377:9377"
     environment:
-      - "db_url=jdbc:mysql://192.168.100.134:3306/crabc"
-      - "db_user=admindb"
-      - "db_pwd=admin123"
+      - db_url=jdbc:mysql://crabcdb:3306/crabc
+      - db_user=admindb
+      - db_pwd=admin123
 
 networks:
   crabc_network:
