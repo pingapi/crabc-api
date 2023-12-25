@@ -3,10 +3,12 @@ package cn.crabc.core.datasource.driver.jdbc;
 import cn.crabc.core.datasource.config.JdbcDataSourceRouter;
 import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.bean.BaseDataSource;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -58,8 +60,9 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
     @Override
     public void init(BaseDataSource ds) {
         String datasourceId = ds.getDatasourceId();
+        DataSource oldDataSource = null;
         if (JdbcDataSourceRouter.exist(datasourceId)) {
-            this.destroy(datasourceId);
+            oldDataSource = JdbcDataSourceRouter.getDataSource(datasourceId);
         }
         String username = ds.getUsername();
         String password = ds.getPassword();
@@ -78,6 +81,16 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         dataSource.setKeepaliveTime(300000);
 
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
+        // 销毁旧的数据源链接
+        if (oldDataSource != null) {
+            if (oldDataSource instanceof DruidDataSource) {
+                DruidDataSource druidDataSource = (DruidDataSource) oldDataSource;
+                druidDataSource.close();
+            } else if (oldDataSource instanceof HikariDataSource) {
+                HikariDataSource hikariDataSource = (HikariDataSource) oldDataSource;
+                hikariDataSource.close();
+            }
+        }
     }
 
     /**
