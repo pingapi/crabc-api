@@ -1,6 +1,6 @@
 
 ## 介绍
-**Crabc** 是低代码开发平台，企业级API管理系统，深度整合SpringBoot和Mybatis实现动态数据源和动态SQL。
+**Crabc** 是低代码接口开发平台，企业级API管理系统，深度整合SpringBoot和Mybatis实现动态数据源和动态SQL。
 支持接入（mysql、oracle、postgresql、sqlserver、elasticsearch）等SQL或/NoSQL数据源，
 在编辑框内编写好SQL后即可快速生成Rest接口对外提供服务。支持Mybatis中if等标签语法、数据脱敏、
 以及复杂的多SQL执行并支持事务， 减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。可通过插件的
