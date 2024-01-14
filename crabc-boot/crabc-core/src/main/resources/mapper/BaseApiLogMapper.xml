@@ -21,7 +21,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             request_status,
             request_time,
             response_time,
-            cost_time
+            cost_time,
+            response_code
         FROM
             base_api_log
         <where>
@@ -56,7 +57,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             request_status,
             request_time,
             response_time,
-            cost_time
+            cost_time,
+            response_code
         FROM
             base_api_log
         where log_id =#{logId}
@@ -76,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="responseBody != null and responseBody != ''">response_body,</if>
         <if test="bodySize != null and bodySize != ''">body_size,</if>
         <if test="requestStatus != null and requestStatus != ''">request_status,</if>
+        <if test="responseCode != null">response_code,</if>
         cost_time,request_time,response_time
         )values(
         <if test="apiId != null">#{apiId},</if>
@@ -90,6 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="responseBody != null and responseBody != ''">#{responseBody},</if>
         <if test="bodySize != null and bodySize != ''">#{bodySize},</if>
         <if test="requestStatus != null and requestStatus != ''">#{requestStatus},</if>
+        <if test="responseCode != null">#{responseCode},</if>
         #{costTime},#{requestTime},#{responseTime}
         )
     </insert>

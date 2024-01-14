@@ -41,6 +41,7 @@ public class BaseApiLog implements Serializable {
     private Date requestTime;
     private Date responseTime;
     private Long costTime;
+    private Integer responseCode;
 
     public Long getLogId() {
         return logId;
@@ -170,4 +171,11 @@ public class BaseApiLog implements Serializable {
         this.costTime = costTime;
     }
 
+    public Integer getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(Integer responseCode) {
+        this.responseCode = responseCode;
+    }
 }

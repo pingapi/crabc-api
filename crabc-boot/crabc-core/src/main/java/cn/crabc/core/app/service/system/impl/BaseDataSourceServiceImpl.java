@@ -4,6 +4,7 @@ import cn.crabc.core.app.entity.BaseDatasource;
 import cn.crabc.core.app.mapper.BaseDataSourceMapper;
 import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.service.system.IBaseDataSourceService;
+import cn.crabc.core.app.util.SQLUtil;
 import cn.crabc.core.datasource.util.PageInfo;
 import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.driver.DataSourceManager;
@@ -115,7 +116,11 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         dataSource.setClassify("jdbc");
         dataSource.setCreateBy(UserThreadLocal.getUserId());
         dataSource.setCreateTime(new Date());
-
+        // 判断是否是自定义
+        if ("custom".equals(dataSource.getDatasourceType())){
+            String dataSourceType = SQLUtil.getDataSourceType(dataSource.getJdbcUrl());
+            dataSource.setDatasourceType(dataSourceType);
+        }
         Integer result = dataSourceMapper.insertDataSource(dataSource);
         this.addCache(dataSource);
         return result;
@@ -155,6 +160,10 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     @Override
     public String test(BaseDatasource dataSource) {
         this.parsePassword(dataSource);
+        if ("custom".equals(dataSource.getDatasourceType())){
+            String dataSourceType = SQLUtil.getDataSourceType(dataSource.getJdbcUrl());
+            dataSource.setDatasourceType(dataSourceType);
+        }
         return iBaseDataService.testConnection(dataSource);
     }
 

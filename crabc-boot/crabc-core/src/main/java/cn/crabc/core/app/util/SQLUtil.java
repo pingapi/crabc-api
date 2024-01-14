@@ -26,6 +26,7 @@ import com.alibaba.druid.stat.TableStat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -353,5 +354,20 @@ public class SQLUtil {
     public static String getOperateType(String sql){
         String[] sqls = sql.trim().split(" ");
         return sqls.length > 1 ? sqls[0].toLowerCase().trim() : "select";
+    }
+
+    /**
+     * 解析jdbc url里面的类型
+     * @param jdbcUrl
+     * @return
+     */
+    public static String getDataSourceType(String jdbcUrl) {
+        try {
+            URI uri = new URI(jdbcUrl.replace("jdbc:", ""));
+            // 获取数据库类型
+            return uri.getScheme();
+        }catch (Exception e) {
+        }
+        return "custom";
     }
 }

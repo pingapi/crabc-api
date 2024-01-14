@@ -36,7 +36,7 @@ public class UserThreadLocal {
      */
     public static String getUserId() {
         Map<String, Object> map = userInfo.get();
-        return map == null ? null : map.get("userId").toString();
+        return map == null ? "0" : map.get("userId").toString();
     }
 
     /**

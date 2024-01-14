@@ -98,6 +98,7 @@ public class JdbcMeataData implements MetaDataMapper {
         ResultSet resultSet = null;
         try {
             connection = dataSource.getConnection();
+            // 获取表和视图
             resultSet = connection.getMetaData().getTables(catalog, schema, null, tableType);
             while (resultSet.next()) {
                 Table table = new Table();
@@ -105,9 +106,22 @@ public class JdbcMeataData implements MetaDataMapper {
                 table.setRemarks(resultSet.getString("REMARKS"));
                 table.setTableType(resultSet.getString("TABLE_TYPE"));
                 table.setCatalog(resultSet.getString("TABLE_CAT"));
-                // table.setDatasourceId(dataSourceId);
                 table.setSchema(schema);
                 tables.add(table);
+            }
+            // 获取存储过程
+            try {
+                ResultSet procedures = connection.getMetaData().getProcedures(catalog, schema, null);
+                while (procedures.next()) {
+                    Table table = new Table();
+                    table.setTableName(procedures.getString("PROCEDURE_NAME"));
+                    table.setRemarks(procedures.getString("REMARKS"));
+                    table.setTableType("PROCEDURE");
+                    table.setCatalog(procedures.getString("PROCEDURE_CAT"));
+                    table.setSchema(schema);
+                    tables.add(table);
+                }
+            }catch (Exception e1) {
             }
         } catch (Exception e) {
             throw new CustomException(51003, "查询table失败，请检查数据源是否正确");

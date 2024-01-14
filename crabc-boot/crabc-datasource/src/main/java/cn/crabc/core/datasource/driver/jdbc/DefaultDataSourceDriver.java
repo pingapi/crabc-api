@@ -3,10 +3,13 @@ package cn.crabc.core.datasource.driver.jdbc;
 import cn.crabc.core.datasource.config.JdbcDataSourceRouter;
 import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.bean.BaseDataSource;
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.util.JdbcConstants;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -32,12 +35,9 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
             dataSource.setPassword(baseDataSource.getPassword());
             String jdbcUrl = baseDataSource.getJdbcUrl();
             dataSource.setJdbcUrl(jdbcUrl);
-            if (jdbcUrl != null && jdbcUrl.toLowerCase().startsWith("jdbc:jtds")) {
-                dataSource.setConnectionTestQuery("SELECT 1");
-                dataSource.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
-            }
             dataSource.setInitializationFailTimeout(1);
             dataSource.setConnectionTimeout(2000);
+            this.setDriverClass(dataSource, baseDataSource.getDatasourceType());
             connection = dataSource.getConnection();
         } catch (Exception e) {
             Throwable cause = e.getCause();
@@ -58,48 +58,64 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
     @Override
     public void init(BaseDataSource ds) {
         String datasourceId = ds.getDatasourceId();
+        DataSource oldDataSource = null;
         if (JdbcDataSourceRouter.exist(datasourceId)) {
-            this.destroy(datasourceId);
+            oldDataSource = JdbcDataSourceRouter.getDataSource(datasourceId);
         }
         String username = ds.getUsername();
         String password = ds.getPassword();
         String jdbcUrl = ds.getJdbcUrl();
 
         HikariDataSource dataSource = new HikariDataSource();
-        this.analysisJdbcUrl(jdbcUrl, dataSource);
-
         dataSource.setUsername(username);
         dataSource.setPassword(password);
+        dataSource.setJdbcUrl(jdbcUrl);
         dataSource.setMinimumIdle(1);
         dataSource.setMaximumPoolSize(10);
         dataSource.setMaxLifetime(900000);
         dataSource.setIdleTimeout(300000);
         dataSource.setConnectionTimeout(10000);
         dataSource.setKeepaliveTime(300000);
+        this.setDriverClass(dataSource, ds.getDatasourceType());
 
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
-    }
-
-    /**
-     * 指定mysql的schema
-     * @param jdbcUrl
-     * @return
-     */
-    private void analysisJdbcUrl(String jdbcUrl, HikariDataSource dataSource){
-        // mysql数据库链接加上指定SCHEMA
-        try {
-            if (jdbcUrl != null && jdbcUrl.toLowerCase().startsWith("jdbc:jtds:")){
-                dataSource.setConnectionTestQuery("SELECT 1");
-                dataSource.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
+        // 销毁旧的数据源链接
+        if (oldDataSource != null) {
+            if (oldDataSource instanceof DruidDataSource) {
+                DruidDataSource druidDataSource = (DruidDataSource) oldDataSource;
+                druidDataSource.close();
+            } else if (oldDataSource instanceof HikariDataSource) {
+                HikariDataSource hikariDataSource = (HikariDataSource) oldDataSource;
+                hikariDataSource.close();
             }
-        }catch (Exception e){
-            log.error("测试数据源解析jdbcUrl异常{}",e.getMessage());
-        }finally {
-            dataSource.setJdbcUrl(jdbcUrl);
         }
     }
+
     @Override
     public void destroy(String dataSourceId) {
         JdbcDataSourceRouter.destroy(dataSourceId);
+    }
+
+    /**
+     * 加载特殊驱动
+     * @param dataSource
+     * @param datasourceType
+     */
+    private void setDriverClass(HikariDataSource dataSource, String datasourceType){
+        if("dm".equals(datasourceType)){
+            dataSource.setDriverClassName(JdbcConstants.DM_DRIVER);
+        } else if (datasourceType.startsWith("gbase8")) {
+            dataSource.setDriverClassName(JdbcConstants.GBASE_DRIVER);
+        } else if (datasourceType.startsWith("kingbase8")) {
+            dataSource.setDriverClassName(JdbcConstants.KINGBASE8_DRIVER);
+        } else if ("xugu".equals(datasourceType)) {
+            dataSource.setDriverClassName(JdbcConstants.XUGU_DRIVER);
+        } else if ("oceanbase".equals(datasourceType)) {
+            dataSource.setDriverClassName(JdbcConstants.OCEANBASE_DRIVER2);
+            // SyBase
+        } else if (dataSource.getJdbcUrl().toLowerCase().startsWith("jdbc:jtds:")) {
+            dataSource.setConnectionTestQuery("SELECT 1");
+            dataSource.setDriverClassName("net.sourceforge.jtds.jdbc.Driver");
+        }
     }
 }

@@ -47,6 +47,7 @@ CREATE TABLE `base_api_log` (
                                 `query_param` varchar(2000) DEFAULT NULL COMMENT '请求参数',
                                 `request_body` text COMMENT '请求Body参数',
                                 `response_body` text COMMENT '返回参数',
+                                `response_code` int DEFAULT NULL COMMENT 'HTTP请求响应码',
                                 `body_size` int DEFAULT NULL COMMENT '响应body大小',
                                 `request_status` varchar(50) DEFAULT NULL COMMENT '操作状态',
                                 `request_time` datetime DEFAULT NULL COMMENT '请求时间',
