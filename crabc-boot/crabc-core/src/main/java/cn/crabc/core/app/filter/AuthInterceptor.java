@@ -111,8 +111,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         Long startTime = apiInfo.getRequestTime();
         apiLog.setCostTime(endTime - startTime);
         apiLog.setQueryParam(request.getQueryString());
+        apiLog.setResponseCode(response.getStatus());
         apiLog.setRequestStatus(response.getStatus() == 200 ? "success" : "fail");
-        // 响应结果
         try {
             if (request instanceof BaseRequestWrapper) {
                 String requestBody = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
