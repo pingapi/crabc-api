@@ -1,19 +1,11 @@
 package cn.crabc.core.app.entity.param;
 
-import java.util.Map;
-
 public class ApiTestParam {
 
     private String sqlScript;
 
-    /**
-     * 数据源Id
-     */
     private String datasourceId;
 
-    /**
-     * 数据源类型
-     */
     private String datasourceType;
 
     private String schemaName;
@@ -22,7 +14,9 @@ public class ApiTestParam {
 
     private String resultType;
 
-    private Map<String,Object> requestParams;
+    private Object requestParams;
+
+    private String bodyData;
 
     public String getSqlScript() {
         return sqlScript;
@@ -64,11 +58,11 @@ public class ApiTestParam {
         this.schemaName = schemaName;
     }
 
-    public Map<String, Object> getRequestParams() {
+    public Object getRequestParams() {
         return requestParams;
     }
 
-    public void setRequestParams(Map<String, Object> requestParams) {
+    public void setRequestParams(Object requestParams) {
         this.requestParams = requestParams;
     }
 
@@ -78,5 +72,13 @@ public class ApiTestParam {
 
     public void setResultType(String resultType) {
         this.resultType = resultType;
+    }
+
+    public String getBodyData() {
+        return bodyData;
+    }
+
+    public void setBodyData(String bodyData) {
+        this.bodyData = bodyData;
     }
 }

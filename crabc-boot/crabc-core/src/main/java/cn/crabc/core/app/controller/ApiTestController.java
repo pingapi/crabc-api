@@ -57,16 +57,37 @@ public class ApiTestController {
         if (params.getDatasourceType() == null) {
             params.setDatasourceType("mysql");
         }
-        Map<String, Object> map = new HashMap<>();
-        String sql = params.getSqlScript();
-        Object data = baseDataService.execute(params.getDatasourceId(),params.getDatasourceType(), params.getSchemaName(),sql, params.getRequestParams());
-        if (ResultTypeEnum.ONE.getName().equals(params.getResultType()) && data instanceof List) {
-            List<Object> list  = (List<Object>) data;
-            map.put("data", objectMapper.writeValueAsString(Result.success(list.isEmpty() ? null: list.get(0))));
-        }else{
-            map.put("data", objectMapper.writeValueAsString(Result.success(data)));
+        Map<String, Object> paramsMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            // body, 不支持数组对象
+            if (params.getBodyData() != null && params.getBodyData().startsWith("{")) {
+                paramsMap = objectMapper.readValue(params.getBodyData(), HashMap.class);
+            }
+            // querya参数
+            Object requestParams = params.getRequestParams();
+            if (requestParams instanceof Map) {
+                Map<String, Object> queryParam = (Map<String, Object>) requestParams;
+                paramsMap.putAll(queryParam);
+            }else if (requestParams instanceof List) {
+                List<Map<String,Object>> paramsList = (List<Map<String, Object>>) requestParams;
+                for (Map<String, Object> entry : paramsList) {
+                    paramsMap.put(entry.get("name").toString(), entry.get("value"));
+                }
+            }
+
+            String sql = params.getSqlScript();
+            Object data = baseDataService.execute(params.getDatasourceId(),params.getDatasourceType(), params.getSchemaName(),sql, paramsMap);
+            if (ResultTypeEnum.ONE.getName().equals(params.getResultType()) && data instanceof List) {
+                List<Object> list  = (List<Object>) data;
+                resultMap.put("data", objectMapper.writeValueAsString(Result.success(list.isEmpty() ? null: list.get(0))));
+            }else{
+                resultMap.put("data", objectMapper.writeValueAsString(Result.success(data)));
+            }
+            resultMap.put("code", 0);
+        }catch (Exception e) {
+            return Result.error("测试异常，请检查参数或者SQL是否正常！");
         }
-        map.put("code", 0);
-        return Result.success(map);
+        return Result.success(resultMap);
     }
 }
