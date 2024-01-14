@@ -81,6 +81,6 @@ public class BaseConstant {
     /**
      * 需要指定catalog的数据源
      */
-    public static final List<String> CATALOG_DATA_SOURCE = Arrays.asList("sybase","mysql","mariadb","tidb","tdsql");
+    public static final List<String> CATALOG_DATA_SOURCE = Arrays.asList("sybase","mysql","mariadb","tidb","tdsql","clickhouse");
 
 }
