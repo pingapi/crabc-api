@@ -31,7 +31,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         on i.datasource_id = d.datasource_id
         <where>
             <if test="apiName !=null and apiName !=''">
-                i.api_name like concat('%',#{apiName},'%')
+                (i.api_name like concat('%',#{apiName},'%')
+                or i.api_path like concat('%',#{apiName},'%'))
             </if>
             <if test="devType !=null and devType !=''">
                 and i.api_status =#{devType}

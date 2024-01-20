@@ -92,7 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="ips != null and ips != ''">ips,</if>
         <if test="enabled != null">enabled,</if>
         <if test="createBy != null and createBy != ''">create_by,</if>
-        create_time
+        create_time,update_time
         )values(
         <if test="appName != null and appName != ''">#{appName},</if>
         <if test="appDesc != null and appDesc != ''">#{appDesc},</if>
@@ -103,7 +103,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="ips != null and ips != ''">#{ips},</if>
         <if test="enabled != null">#{enabled},</if>
         <if test="createBy != null and createBy != ''">#{createBy},</if>
-        #{createTime}
+        #{createTime},#{updateTime}
         )
     </insert>
 

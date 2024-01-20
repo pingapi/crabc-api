@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -125,9 +126,13 @@ public class BaseFlowRuleServiceImpi implements IBaseFlowRuleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer addFlowApi(Integer flowId, List<Integer> apiIds) {
         String userId = UserThreadLocal.getUserId();
         baseFlowRuleMapper.deleteFlowApi(flowId);
-        return baseFlowRuleMapper.insertFlowApi(flowId, userId, apiIds);
+        if (!apiIds.isEmpty()) {
+            baseFlowRuleMapper.insertFlowApi(flowId, userId, apiIds);
+        }
+        return 1;
     }
 }

@@ -46,6 +46,7 @@ public class BaseAppServiceImpl implements IBaseAppService {
         app.setEnabled(1);
         app.setCreateBy(UserThreadLocal.getUserId());
         app.setCreateTime(new Date());
+        app.setUpdateTime(new Date());
         return baseAppMapper.insert(app);
     }
 
