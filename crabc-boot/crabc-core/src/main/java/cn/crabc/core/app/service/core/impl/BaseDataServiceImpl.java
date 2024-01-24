@@ -11,10 +11,7 @@ import cn.crabc.core.spi.bean.BaseDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 接口执行服务 实现类
@@ -40,12 +37,15 @@ public class BaseDataServiceImpl implements IBaseDataService {
             params.put(BaseConstant.DATA_SOURCE_TYPE, datasourceType);
         }
         params.put(BaseConstant.BASE_API_EXEC_TYPE, "preview");
-        List<Map<String, Object>> list = statementMapper.selectList(datasourceId, schema, sql, params);
+        Object result = this.execute(datasourceId, datasourceType, schema, sql, params);
         PreviewVO preview = new PreviewVO();
-        if (list != null && !list.isEmpty()) {
-            preview.setData(list);
-            Set<String> fieldName = list.get(0).keySet();
-            preview.setMetadata(fieldName);
+        if (result instanceof List) {
+            List<Map<String, Object>> list = (List<Map<String, Object>>)result;
+            if (!list.isEmpty()) {
+                preview.setData(list);
+                Set<String> fieldName = list.get(0).keySet();
+                preview.setMetadata(fieldName);
+            }
         }
         return preview;
     }
@@ -59,11 +59,26 @@ public class BaseDataServiceImpl implements IBaseDataService {
         }
         String sqlType = SQLUtil.getOperateType(sql);
         if ("insert".equalsIgnoreCase(sqlType)) {
-            return statementMapper.insert(datasourceId, schema, sql, params);
+            List<Map<String, Object>> list = new ArrayList<>();
+            int insert = statementMapper.insert(datasourceId, schema, sql, params);
+            Map<String, Object> result = new HashMap<>();
+            result.put("执行结果", "执行成功，影响条数："+insert);
+            list.add(result);
+            return list;
         }else if("update".equalsIgnoreCase(sqlType)){
-            return statementMapper.update(datasourceId, schema, sql,params);
+            List<Map<String, Object>> list = new ArrayList<>();
+            int update = statementMapper.update(datasourceId, schema, sql, params);
+            Map<String, Object> result = new HashMap<>();
+            result.put("执行结果", "执行成功，影响条数："+update);
+            list.add(result);
+            return list;
         }else if("delete".equalsIgnoreCase(sqlType)){
-            return statementMapper.delete(datasourceId, schema, sql,params);
+            List<Map<String, Object>> list = new ArrayList<>();
+            int delete = statementMapper.delete(datasourceId, schema, sql, params);
+            Map<String, Object> result = new HashMap<>();
+            result.put("执行结果", "执行成功，影响条数："+delete);
+            list.add(result);
+            return list;
         } else {
             Object pageNum = params.get(BaseConstant.PAGE_NUM);
             Object pageSize = params.get(BaseConstant.PAGE_SIZE);
