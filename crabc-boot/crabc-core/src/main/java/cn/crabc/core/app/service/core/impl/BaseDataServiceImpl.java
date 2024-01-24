@@ -46,6 +46,15 @@ public class BaseDataServiceImpl implements IBaseDataService {
                 Set<String> fieldName = list.get(0).keySet();
                 preview.setMetadata(fieldName);
             }
+        }else{
+            Set<String> fieldName = new HashSet<>();
+            List<Map<String, Object>> list = new ArrayList<>();
+            Map<String, Object> data = new HashMap<>();
+            data.put("执行结果", "执行成功，影响条数："+result);
+            list.add(data);
+            preview.setData(list);
+            fieldName.add("执行结果");
+            preview.setMetadata(fieldName);
         }
         return preview;
     }
@@ -59,26 +68,11 @@ public class BaseDataServiceImpl implements IBaseDataService {
         }
         String sqlType = SQLUtil.getOperateType(sql);
         if ("insert".equalsIgnoreCase(sqlType)) {
-            List<Map<String, Object>> list = new ArrayList<>();
-            int insert = statementMapper.insert(datasourceId, schema, sql, params);
-            Map<String, Object> result = new HashMap<>();
-            result.put("执行结果", "执行成功，影响条数："+insert);
-            list.add(result);
-            return list;
+            return statementMapper.insert(datasourceId, schema, sql, params);
         }else if("update".equalsIgnoreCase(sqlType)){
-            List<Map<String, Object>> list = new ArrayList<>();
-            int update = statementMapper.update(datasourceId, schema, sql, params);
-            Map<String, Object> result = new HashMap<>();
-            result.put("执行结果", "执行成功，影响条数："+update);
-            list.add(result);
-            return list;
+            return statementMapper.update(datasourceId, schema, sql, params);
         }else if("delete".equalsIgnoreCase(sqlType)){
-            List<Map<String, Object>> list = new ArrayList<>();
-            int delete = statementMapper.delete(datasourceId, schema, sql, params);
-            Map<String, Object> result = new HashMap<>();
-            result.put("执行结果", "执行成功，影响条数："+delete);
-            list.add(result);
-            return list;
+            return statementMapper.delete(datasourceId, schema, sql, params);
         } else {
             Object pageNum = params.get(BaseConstant.PAGE_NUM);
             Object pageSize = params.get(BaseConstant.PAGE_SIZE);
