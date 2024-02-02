@@ -1,4 +1,4 @@
--- 创建库
+-- 创建库，mysql8.0+以上版本
 CREATE DATABASE IF NOT EXISTS crabc default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- 建表
 use crabc;

@@ -37,10 +37,15 @@ cn.crabc
 账号密码：admin/admin123
 
 ## 使用文档
-地址：https://www.crabc.cn/guide/
+地址：https://www.crabc.cn/guide/ \
+github：https://github.com/pingapi/crabc-api
 
 ## 商用授权
-仅个人学习使用，商用请加群联系作者
+可供个人学习使用 \
+已申请软件著作，商用请加群联系
+
+## 企业版和开源版对比
+功能对比清单：https://www.crabc.cn/auth/
 
 ## Maven集成
 
@@ -81,7 +86,9 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ![img.png](doc/flow.png)
 
 ## 交流群
+**进群前请先点 Star** 
+
+QQ群：748993036 
+
 加微信进群：
 ![img.png](doc/img.png)
-
-QQ群：748993036
