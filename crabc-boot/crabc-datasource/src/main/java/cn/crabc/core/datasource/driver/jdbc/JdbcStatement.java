@@ -147,7 +147,7 @@ public class JdbcStatement implements StatementMapper {
      */
     public Map<String, Object> setParams(String dataSourceId, String schema, String sql, Object params) {
         Map<String, Object> paramsMap = new HashMap<>();
-        paramsMap.put(BaseConstant.BASE_SQL, sql.replaceAll(";",""));
+        paramsMap.put(BaseConstant.BASE_SQL, sql);
         if (params instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) params;
             paramsMap.putAll(map);
