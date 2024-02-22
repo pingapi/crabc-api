@@ -66,7 +66,7 @@ public class SQLUtil {
 
         String regex = "<where>[\\s\\S]*?</where>|<if[\\s\\S]*?</if>|<set>[\\s\\S]*?</set>|<choose>[\\s\\S]*?</choose>|<when[\\s\\S]*?</when>";
         // 替换标签
-        return sql.replaceAll(regex,"");
+        return sql.replaceAll(regex,"a");
     }
 
     /**

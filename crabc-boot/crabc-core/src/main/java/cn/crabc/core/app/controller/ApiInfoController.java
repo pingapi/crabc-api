@@ -152,7 +152,7 @@ public class ApiInfoController {
         }
         // 提取if标签里面的请求参数
         if (sql.contains("<if ") || sql.contains("<when ")) {
-            String regex = " test=\"(\\w+)\\s*(?:!=|>=|<=|==|<|>|&lt;|&lt;=|&gt;|&gt;=)";
+            String regex = " test=['\"](\\w+)\\s*(?:!=|>=|<=|==|<|>|&lt;|&lt;=|&gt;|&gt;=)";
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(sql);
             while (matcher.find()) {
