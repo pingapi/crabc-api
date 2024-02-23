@@ -61,12 +61,9 @@ public class SQLUtil {
      * @return
      */
     public static String sqlFilter(String sql){
-        String forRegex = "<foreach[\\s\\S]*?</foreach>";
-        sql = sql.replaceAll(forRegex,"()");
-
-        String regex = "<where>[\\s\\S]*?</where>|<if[\\s\\S]*?</if>|<set>[\\s\\S]*?</set>|<choose>[\\s\\S]*?</choose>|<when[\\s\\S]*?</when>";
+        String regex = "(?i)(?<=\\bFROM\\b)([\\s\\S]*?)$";
         // 替换标签
-        return sql.replaceAll(regex,"a");
+        return sql.replaceFirst(regex, " test ");
     }
 
     /**
