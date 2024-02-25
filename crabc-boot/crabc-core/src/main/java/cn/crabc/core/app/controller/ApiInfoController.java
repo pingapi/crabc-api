@@ -170,8 +170,18 @@ public class ApiInfoController {
         sqlParseVO.setReqColumns(paramNames);
         // 返回字段
         sql = SQLUtil.sqlFilter(sql);
+        // 判断去除标签后的 sql是否正确，自动补全条件
+        if (sql.trim().toLowerCase().endsWith("from")) {
+            sql = sql +" test ";
+        }else if (sql.trim().toLowerCase().endsWith("where")) {
+            sql = sql +" 1=1 ";
+        }
         Set<ColumnParseVo> resColumns = new HashSet<>();
-        Set<String> resNames = SQLUtil.analyzeSQL(sql, sqlParse.getDatasourceType());
+        Set<String> resNames = SQLUtil.analyzeSQL(sql.trim(), sqlParse.getDatasourceType());
+        if (resNames.isEmpty()){
+            sql = SQLUtil.checkTable(sql, " test ");
+            resNames = SQLUtil.analyzeSQL(sql.trim(), sqlParse.getDatasourceType());
+        }
         for (String name : resNames) {
             if (name.startsWith("*")){
                 continue;

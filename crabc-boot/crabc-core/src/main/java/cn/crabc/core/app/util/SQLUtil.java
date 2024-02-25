@@ -61,9 +61,33 @@ public class SQLUtil {
      * @return
      */
     public static String sqlFilter(String sql){
-        String regex = "(?i)(?<=\\bFROM\\b)([\\s\\S]*?)$";
+        String forRegex = "<foreach[\\s\\S]*?</foreach>";
+        sql = sql.replaceAll(forRegex,"()");
+
+        String regex = "<where>[\\s\\S]*?</where>|<if[\\s\\S]*?</if>|<set>[\\s\\S]*?</set>|<choose>[\\s\\S]*?</choose>|<when[\\s\\S]*?</when>";
         // 替换标签
-        return sql.replaceFirst(regex, " test ");
+        return sql.replaceAll(regex,"");
+    }
+
+    /**
+     * 添加默认表名
+     * @param sql
+     * @param defaultTableName
+     * @return
+     */
+    public static String checkTable(String sql, String defaultTableName) {
+        Pattern pattern = Pattern.compile("(?i)\\bFROM\\b\\s+([\\s\\S]*?)\\bWHERE\\b", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(sql);
+
+        // 如果找到匹配项，则在匹配的内容中查找表名
+        if (matcher.find()) {
+            String fromToWhere = matcher.group(1).trim();
+            // 如果没有表名，则在 FROM 关键字后面插入默认表名
+            if (!fromToWhere.contains(" ")) {
+                sql = sql.replaceFirst("(?i)\\bFROM\\b", "FROM " + defaultTableName);
+            }
+        }
+        return sql;
     }
 
     /**
