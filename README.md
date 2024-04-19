@@ -12,7 +12,6 @@
 - **应用列表**：Code认证、签名认证的应用创建管理以及对API调用在线授权。
 - **接口列表**：查看开发中和已发布的API接口，可进行上下线管理，编辑升级等
 - **接口日志**：查看发布的接口被调用日志列表和请求详情。
-- **监控统计**：可视化查看发布的API被调用统计。
 - **流控规则**：限流、缓存等。
 
 ## 模块
@@ -46,6 +45,10 @@ github：https://github.com/pingapi/crabc-api
 
 ## 企业版和开源版对比
 功能对比清单：https://www.crabc.cn/auth/
+
+## 源码地址
+github: https://github.com/pingapi/crabc-api
+gitee: https://gitee.com/linebyte/crabc
 
 ## Maven集成
 
@@ -90,5 +93,5 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 
 QQ群：748993036 
 
-加微信进群：
+加微信进群
 ![img.png](doc/img.png)
