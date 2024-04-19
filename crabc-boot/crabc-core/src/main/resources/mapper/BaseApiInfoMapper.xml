@@ -263,14 +263,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateApiInfo" parameterType="cn.crabc.core.app.entity.BaseApiInfo">
         UPDATE base_api_info
         <set>
+            enabled = #{enabled},api_status = #{apiStatus},
             <if test="apiName != null and apiName != ''">api_name= #{apiName},</if>
             <if test="apiPath != null and apiPath != ''">api_path = #{apiPath},</if>
             <if test="apiType != null and apiType != ''">api_type = #{apiType},</if>
             <if test="apiMethod != null and apiMethod != ''">api_method = #{apiMethod},</if>
             <if test="authType != null and authType != ''">auth_type = #{authType},</if>
             <if test="groupId != null">group_id = #{groupId},</if>
-            <if test="apiStatus != null and apiStatus != ''">api_status = #{apiStatus},</if>
-            <if test="enabled != null">enabled = #{enabled},</if>
             <if test="releaseTime != null">release_time = #{releaseTime},</if>
             <if test="version != null and version != ''">version = #{version},</if>
             <if test="parentId != null">parent_id = #{parentId},</if>
