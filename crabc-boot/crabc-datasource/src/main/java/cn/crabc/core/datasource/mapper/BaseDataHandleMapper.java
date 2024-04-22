@@ -16,6 +16,7 @@
 package cn.crabc.core.datasource.mapper;
 
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 
@@ -27,6 +28,7 @@ import java.util.Map;
  *
  * @author yuqf
  */
+@Mapper
 public interface BaseDataHandleMapper {
 
     /**

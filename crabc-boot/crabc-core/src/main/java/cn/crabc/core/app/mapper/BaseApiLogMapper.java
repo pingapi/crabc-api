@@ -2,6 +2,7 @@ package cn.crabc.core.app.mapper;
 
 import cn.crabc.core.app.entity.BaseApiLog;
 import cn.crabc.core.app.entity.param.ApiLogParam;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Mapper
 public interface BaseApiLogMapper {
 
     /**

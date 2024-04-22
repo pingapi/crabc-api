@@ -3,6 +3,7 @@ package cn.crabc.core.app.mapper;
 
 import cn.crabc.core.app.entity.BaseDatasource;
 import cn.crabc.core.spi.bean.BaseDataSource;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Mapper
 public interface BaseDataSourceMapper {
 
     List<BaseDataSource> list();

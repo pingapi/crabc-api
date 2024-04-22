@@ -5,6 +5,7 @@ import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.app.entity.vo.BaseApiExcelVO;
 import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Mapper
 public interface BaseApiInfoMapper {
 
     /**
