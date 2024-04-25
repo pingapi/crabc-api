@@ -5,11 +5,17 @@
     <parent>
         <artifactId>crabc-boot</artifactId>
         <groupId>cn.crabc</groupId>
-        <version>2.8.6</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>crabc-core</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -47,7 +53,7 @@
         <dependency>
             <groupId>cn.crabc</groupId>
             <artifactId>crabc-datasource</artifactId>
-            <version>${crabc.versin}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -69,8 +75,4 @@
             <version>${easyexcel.version}</version>
         </dependency>
     </dependencies>
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
 </project>
