@@ -16,15 +16,19 @@
  */
 package cn.crabc.core.admin;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
 /**
  * 基础通用开发平台-启动类
  *
  * @author yuqf
  */
+@MapperScan({"cn.crabc.core.*.mapper"})
+@ComponentScan("cn.crabc.core")
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class AdminApplication {
     public static void main(String[] args) {

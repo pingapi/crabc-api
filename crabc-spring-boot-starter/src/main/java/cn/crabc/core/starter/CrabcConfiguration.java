@@ -15,8 +15,12 @@
  */
 package cn.crabc.core.starter;
 
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+@MapperScan({"cn.crabc.core.*.mapper"})
+@ComponentScan("cn.crabc.core")
 @Configuration
 public class CrabcConfiguration {
 }
