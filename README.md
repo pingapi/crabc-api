@@ -23,7 +23,7 @@ cn.crabc
 │           └── static       // 前端静态页面 [9377]
 │     └── crabc-datasource   // 数据源加载模块
 │     └── crabc-spi          // 插件定义模块
-├── crabc-spring-boot-starter // spring集成包
+├── crabc-spring-boot-starter // 第三方项目maven集成依赖包
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
@@ -47,10 +47,10 @@ github：https://github.com/pingapi/crabc-api
 功能对比清单：https://www.crabc.cn/auth/
 
 ## 源码地址
-github: https://github.com/pingapi/crabc-api
+github: https://github.com/pingapi/crabc-api \
 gitee: https://gitee.com/linebyte/crabc
 
-## Maven集成
+## Maven集成crabc-api
 
 ```
 <dependency>
