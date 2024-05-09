@@ -32,11 +32,12 @@ cn.crabc
 1、先执行db/dml.sql脚本，创建库表和初始化数据
 2、在编辑工具中运行启动 crabc-admin/ AdminApplication.java
 ```
-访问地址：http://127.0.0.1:9377
+访问地址：http://127.0.0.1:9377 \
 账号密码：admin/admin123
 
-## 使用文档
-地址：https://www.crabc.cn/guide/ \
+## 官网
+官网：https://www.crabc.cn/ \
+使用指南：https://www.crabc.cn/introduction/ \
 github：https://github.com/pingapi/crabc-api
 
 ## 商用授权
@@ -44,7 +45,7 @@ github：https://github.com/pingapi/crabc-api
 已申请软件著作，商用请加群联系
 
 ## 企业版和开源版对比
-功能对比清单：https://www.crabc.cn/auth/
+功能对比清单：https://www.crabc.cn/business/
 
 ## 源码地址
 github: https://github.com/pingapi/crabc-api \
