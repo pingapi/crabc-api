@@ -3,6 +3,7 @@ package cn.crabc.core.app.mapper;
 import cn.crabc.core.app.entity.BaseGroup;
 import cn.crabc.core.app.entity.vo.BaseGroupVO;
 import cn.crabc.core.app.entity.vo.GroupApiVO;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Mapper
 public interface BaseGroupMapper {
 
     /**

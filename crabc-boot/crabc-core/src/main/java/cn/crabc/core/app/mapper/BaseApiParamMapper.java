@@ -2,6 +2,7 @@ package cn.crabc.core.app.mapper;
 
 import cn.crabc.core.app.entity.BaseApiParam;
 import cn.crabc.core.app.entity.vo.RequestParamsVO;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Mapper
 public interface BaseApiParamMapper {
 
     /**

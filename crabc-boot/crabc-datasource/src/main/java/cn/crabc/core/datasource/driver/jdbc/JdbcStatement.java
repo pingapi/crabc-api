@@ -125,7 +125,7 @@ public class JdbcStatement implements StatementMapper {
     public int update(String dataSourceId, String schema, String sql, Object params) {
         try {
             Map<String, Object> paramsMap = this.setParams(dataSourceId, schema, sql, params);
-            baseMapper.executeUpdate(paramsMap);
+            return baseMapper.executeUpdate(paramsMap);
         } catch (Exception e) {
             log.error("--SQL执行失败，请检查SQL是否正常", e);
             throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), ErrorStatusEnum.API_SQL_ERROR.getMassage());
@@ -133,7 +133,6 @@ public class JdbcStatement implements StatementMapper {
             // 移除线程
             JdbcDataSourceRouter.remove();
         }
-        return 1;
     }
 
 
@@ -148,7 +147,7 @@ public class JdbcStatement implements StatementMapper {
      */
     public Map<String, Object> setParams(String dataSourceId, String schema, String sql, Object params) {
         Map<String, Object> paramsMap = new HashMap<>();
-        paramsMap.put(BaseConstant.BASE_SQL, sql.replaceAll(";",""));
+        paramsMap.put(BaseConstant.BASE_SQL, sql);
         if (params instanceof Map) {
             Map<String, Object> map = (Map<String, Object>) params;
             paramsMap.putAll(map);

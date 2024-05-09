@@ -32,7 +32,7 @@ public class ApiServiceController {
      * @return
      */
     @RequestMapping(value = "/**", method = {RequestMethod.GET, RequestMethod.DELETE})
-    public Result getService(@RequestParam Map<String, Object> paramMap) {
+    public Result getService(@RequestParam(required = false) Map<String, Object> paramMap) {
         ApiInfoDTO api = ApiThreadLocal.get();
         if (api == null) {
             return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
@@ -57,7 +57,7 @@ public class ApiServiceController {
      * @return
      */
     @RequestMapping(value = "/**", method = {RequestMethod.POST, RequestMethod.PUT})
-    public Result postService(@RequestParam Map<String, Object> paramMap, @RequestBody Object body) {
+    public Result postService(@RequestParam(required = false) Map<String, Object> paramMap, @RequestBody(required = false) Object body) {
         ApiInfoDTO api = ApiThreadLocal.get();
         if (api == null) {
             return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());

@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -79,13 +80,20 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     }
 
     @Override
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/2 * * * ?")
     public void init() {
         List<BaseDataSource> baseDataSources = this.getList();
         for (BaseDataSource dataSource : baseDataSources) {
-            byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
-            dataSource.setPassword(new String(decode));
-            dataSourceManager.createDataSource(dataSource);
+            DataSource ds = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSource.getDatasourceId());
+            if (ds != null) {
+                continue;
+            }
+            try {
+                byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
+                dataSource.setPassword(new String(decode));
+                dataSourceManager.createDataSource(dataSource);
+            }catch (Exception e) {
+            }
         }
     }
 

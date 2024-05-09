@@ -12,7 +12,6 @@
 - **应用列表**：Code认证、签名认证的应用创建管理以及对API调用在线授权。
 - **接口列表**：查看开发中和已发布的API接口，可进行上下线管理，编辑升级等
 - **接口日志**：查看发布的接口被调用日志列表和请求详情。
-- **监控统计**：可视化查看发布的API被调用统计。
 - **流控规则**：限流、缓存等。
 
 ## 模块
@@ -24,7 +23,7 @@ cn.crabc
 │           └── static       // 前端静态页面 [9377]
 │     └── crabc-datasource   // 数据源加载模块
 │     └── crabc-spi          // 插件定义模块
-├── crabc-spring-boot-starter // spring集成包
+├── crabc-spring-boot-starter // 第三方项目maven集成依赖包
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
@@ -33,16 +32,26 @@ cn.crabc
 1、先执行db/dml.sql脚本，创建库表和初始化数据
 2、在编辑工具中运行启动 crabc-admin/ AdminApplication.java
 ```
-访问地址：http://127.0.0.1:9377
+访问地址：http://127.0.0.1:9377 \
 账号密码：admin/admin123
 
-## 使用文档
-地址：https://www.crabc.cn/guide/
+## 官网
+官网：https://www.crabc.cn/ \
+使用指南：https://www.crabc.cn/introduction/ \
+github：https://github.com/pingapi/crabc-api
 
 ## 商用授权
-仅个人学习使用，商用请加群联系作者
+可供个人学习使用 \
+已申请软件著作，商用请加群联系
 
-## Maven集成
+## 企业版和开源版对比
+功能对比清单：https://www.crabc.cn/business/
+
+## 源码地址
+github: https://github.com/pingapi/crabc-api \
+gitee: https://gitee.com/linebyte/crabc
+
+## Maven集成crabc-api
 
 ```
 <dependency>
@@ -81,7 +90,9 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ![img.png](doc/flow.png)
 
 ## 交流群
-加微信进群：
-![img.png](doc/img.png)
+**进群前请先点 Star** 
 
-QQ群：748993036
+QQ群：748993036 
+
+加微信进群
+![img.png](doc/img.png)

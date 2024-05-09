@@ -15,6 +15,7 @@
  */
 package cn.crabc.core.datasource.mapper;
 import cn.crabc.core.datasource.constant.BaseConstant;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import java.util.Map;
  *
  * @author yuqf
  */
+@Mapper
 public class BaseSelectProvider {
 
     // 标签

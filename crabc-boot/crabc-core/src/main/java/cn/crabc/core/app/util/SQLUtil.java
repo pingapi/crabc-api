@@ -70,6 +70,27 @@ public class SQLUtil {
     }
 
     /**
+     * 添加默认表名
+     * @param sql
+     * @param defaultTableName
+     * @return
+     */
+    public static String checkTable(String sql, String defaultTableName) {
+        Pattern pattern = Pattern.compile("(?i)\\bFROM\\b\\s+([\\s\\S]*?)\\bWHERE\\b", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(sql);
+
+        // 如果找到匹配项，则在匹配的内容中查找表名
+        if (matcher.find()) {
+            String fromToWhere = matcher.group(1).trim();
+            // 如果没有表名，则在 FROM 关键字后面插入默认表名
+            if (!fromToWhere.contains(" ")) {
+                sql = sql.replaceFirst("(?i)\\bFROM\\b", "FROM " + defaultTableName);
+            }
+        }
+        return sql;
+    }
+
+    /**
      * 解析查询字段
      *
      * @param sql
@@ -370,4 +391,29 @@ public class SQLUtil {
         }
         return "custom";
     }
+
+    /**
+     * 字符串下划线转驼峰
+     * @param param
+     * @return
+     */
+    public static String underlineToCamel(String param){
+        if (param==null||"".equals(param.trim())){
+            return "";
+        }
+        int len=param.length();
+        StringBuilder sb=new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            char c = Character.toLowerCase(param.charAt(i));
+            if (c == '_'){
+                if (++i<len){
+                    sb.append(Character.toUpperCase(param.charAt(i)));
+                }
+            }else{
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
 }

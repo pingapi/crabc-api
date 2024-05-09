@@ -27,7 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             base_api_log
         <where>
             <if test="keyword !=null and keyword !=''">
-                api_name like concat('%',#{apiName},'%')
+                (api_name like concat('%',#{keyword},'%') or api_path like concat('%',#{keyword},'%'))
             </if>
             <if test="result !=null and result !=''">
                 and request_status =#{result}

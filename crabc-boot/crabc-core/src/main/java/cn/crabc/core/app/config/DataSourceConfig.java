@@ -7,8 +7,10 @@ import cn.crabc.core.datasource.mapper.BaseDataHandleMapper;
 import cn.crabc.core.spi.DataSourceDriver;
 import com.alibaba.druid.pool.DruidDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.HashMap;
 
@@ -17,6 +19,8 @@ import java.util.HashMap;
  *
  * @author yuqf
  */
+@EnableCaching
+@EnableScheduling
 @Configuration
 public class DataSourceConfig {
 

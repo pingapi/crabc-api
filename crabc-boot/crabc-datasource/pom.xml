@@ -6,13 +6,13 @@
     <parent>
         <groupId>cn.crabc</groupId>
         <artifactId>crabc-boot</artifactId>
-        <version>2.8.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>crabc-datasource</artifactId>
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>cn.crabc</groupId>
             <artifactId>crabc-spi</artifactId>
-            <version>${crabc.versin}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- 数据源驱动包 -->
         <dependency>
@@ -76,20 +76,20 @@
             <artifactId>Dm8JdbcDriver18</artifactId>
             <version>8.1.1.49</version>
         </dependency>
-        <dependency>
-            <groupId>com.kingbase8</groupId>
-            <artifactId>kingbase8</artifactId>
-            <version>8.6.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.xugudb</groupId>
-            <artifactId>xugu-jdbc</artifactId>
-            <version>12.1.12</version>
-        </dependency>
-        <dependency>
-            <groupId>com.highgo</groupId>
-            <artifactId>HgdbJdbc</artifactId>
-            <version>6.2.3</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.kingbase8</groupId>-->
+<!--            <artifactId>kingbase8</artifactId>-->
+<!--            <version>8.6.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.xugudb</groupId>-->
+<!--            <artifactId>xugu-jdbc</artifactId>-->
+<!--            <version>12.1.12</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.highgo</groupId>-->
+<!--            <artifactId>HgdbJdbc</artifactId>-->
+<!--            <version>6.2.3</version>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

@@ -24,14 +24,14 @@ public class FlowRuleController {
 
     /**
      * 限流规则分页
-     * @param keyword
+     * @param name
      * @param pageNum
      * @param pageSize
      * @return
      */
     @GetMapping("/page")
-    public Result page(String keyword, Integer pageNum, Integer pageSize){
-        PageInfo<BaseFlowRule> page = baseFlowRuleService.getFlowPage(keyword, pageNum, pageSize);
+    public Result page(String name, Integer pageNum, Integer pageSize){
+        PageInfo<BaseFlowRule> page = baseFlowRuleService.getFlowPage(name, pageNum, pageSize);
         return Result.success(page);
     }
 

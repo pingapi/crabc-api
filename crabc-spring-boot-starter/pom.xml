@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.crabc</groupId>
         <artifactId>crabc</artifactId>
-        <version>2.8.4</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>crabc-spring-boot-starter</artifactId>
@@ -19,7 +19,7 @@
         <dependency>
             <groupId>cn.crabc</groupId>
             <artifactId>crabc-core</artifactId>
-            <version>${crabc.versin}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

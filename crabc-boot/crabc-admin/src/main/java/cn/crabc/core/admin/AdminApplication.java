@@ -20,18 +20,14 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 基础通用开发平台-启动类
  *
  * @author yuqf
  */
-@EnableCaching
-@EnableScheduling
-@MapperScan({"cn.crabc.core.app.mapper","cn.crabc.core.datasource.mapper"})
+@MapperScan({"cn.crabc.core.*.mapper"})
 @ComponentScan("cn.crabc.core")
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 public class AdminApplication {

@@ -62,7 +62,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         updateCache(null);
     }
 
-    private void updateCache(Long apiId) {
+    public void updateCache(Long apiId) {
         List<ApiInfoDTO> apis = this.getApiCache(apiId);
         for (ApiInfoDTO api : apis) {
             apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
@@ -181,7 +181,11 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         BaseApiInfo api = params.getBaseInfo();
         BaseApiSql sql = params.getSqlInfo();
         Date updateTime = new Date();
-        api.setApiStatus(ApiStateEnum.EDIT.getName());
+        if (ApiStateEnum.RELEASE.getName().equals(params.getBaseInfo().getApiStatus())){
+            api.setApiStatus(ApiStateEnum.RELEASE.getName());
+        }else{
+            api.setApiStatus(ApiStateEnum.EDIT.getName());
+        }
         api.setEnabled(0);
         api.setDatasourceId(sql.getDatasourceId());
         api.setSchemaName(sql.getSchemaName());
@@ -240,7 +244,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         oldApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
         apiInfoMapper.updateApiInfo(oldApiInfo);
         // 更新缓存
-        this.updateCache(oldApiInfo.getApiId());
+        Thread t = new Thread(() -> updateCache(oldApiInfo.getApiId()));
+        t.start();
         return apiId;
     }
 
