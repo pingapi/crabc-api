@@ -5,12 +5,11 @@ import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 登录拦截器

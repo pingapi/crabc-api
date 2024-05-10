@@ -2,11 +2,12 @@ package cn.crabc.core.app.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Jwt工具类
@@ -16,8 +17,7 @@ import java.util.Map;
 public class JwtUtil {
     private static String header = "Authorization";
     // 令牌秘钥
-    private static String secret = "crabc";
-    private static int expireTime;
+    private static String secret = "crabcjfakdjfaldjflkadjlafjaldkjlaflkalk";
     public static final String TOKEN_PREFIX = "bearer ";
 
     /**
@@ -35,10 +35,22 @@ public class JwtUtil {
      * 生成令牌
      */
     public static String createToken(Map<String, Object> claims) {
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .signWith(SignatureAlgorithm.HS512, secret).compact();
-        return token;
+        String uuid = UUID.randomUUID().toString();
+        try {
+            return Jwts.builder()
+                    .header()
+                    .add("typ", "JWT")
+                    .add("alg", "HS256")
+                    .and()
+                    .claims(claims)
+                    // 令牌ID
+                    .id(uuid)
+                    .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .compact();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -50,11 +62,11 @@ public class JwtUtil {
     public static Claims parseToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .build()
+                    .parseSignedClaims(token).getPayload();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return null;
     }
