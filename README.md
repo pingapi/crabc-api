@@ -45,8 +45,8 @@ dev分支框架SpringBoot已升级至3.x，jdk需17及以上版本 \
 github：https://github.com/pingapi/crabc-api
 
 ## 商用授权
-可供个人学习使用 \
-已申请软件著作，商用请加群联系
+已申请软件著作，开源版仅供个人学习使用 \
+企业版功能更强大，商用请加群联系\
 
 ## 企业版和开源版对比
 功能对比清单：https://www.crabc.cn/business/
