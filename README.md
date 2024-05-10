@@ -27,6 +27,10 @@ cn.crabc
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
+## 版本说明
+dev分支框架SpringBoot已升级至3.x，jdk需17及以上版本 \
+2.x分支框架SpringBoot还是2.x
+
 ## 运行启动
 ```
 1、先执行db/dml.sql脚本，创建库表和初始化数据
