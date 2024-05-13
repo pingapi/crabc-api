@@ -98,5 +98,5 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 
 QQ群：748993036 
 
-加微信进群
+加微信进群 (备注crabc)
 ![img.png](doc/img.png)
