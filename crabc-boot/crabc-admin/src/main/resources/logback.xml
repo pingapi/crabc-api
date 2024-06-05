@@ -50,7 +50,7 @@
 		<appender-ref ref="console" />
 	</root>
 	
-	<!--系统操作日志-->
+    <!--系统操作日志-->
     <root level="info">
         <appender-ref ref="file_info" />
         <appender-ref ref="file_error" />
