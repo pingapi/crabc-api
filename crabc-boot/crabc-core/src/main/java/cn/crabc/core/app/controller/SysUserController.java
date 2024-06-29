@@ -5,10 +5,10 @@ import cn.crabc.core.app.entity.param.UserParam;
 import cn.crabc.core.app.service.system.IBaseUserService;
 import cn.crabc.core.app.util.*;
 import com.github.benmanes.caffeine.cache.Cache;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -38,13 +38,16 @@ public class SysUserController {
         if (userInfo == null) {
             return Result.error("账号或密码错误!");
         }
-        String pwd = new String(Base64Utils.decodeFromString(UserParam.getPassword()), StandardCharsets.UTF_8);
+        String pwd = new String(Base64.decodeBase64(UserParam.getPassword()), StandardCharsets.UTF_8);
         String md5 = Md5Utils.hash(pwd).toUpperCase();
         if (!userInfo.getPassword().equals(md5)) {
             return Result.error("账号或密码错误!");
         }
         Map<String, Object> user = new HashMap<>();
         String token = JwtUtil.createToken(userInfo.getUserId(), userInfo.getUsername());
+        if (token == null) {
+            return Result.error("登录失败");
+        }
         user.put("expires", 3600);
         user.put("access_token", token);
         user.put("refresh_token", UUID.randomUUID().toString().replace("-", ""));
@@ -84,12 +87,12 @@ public class SysUserController {
         if (userInfo == null) {
             return Result.error("账号不存在!");
         }
-        String pwd = new String(Base64Utils.decodeFromString(user.getPassword()), StandardCharsets.UTF_8);
+        String pwd = new String(Base64.decodeBase64(user.getPassword()), StandardCharsets.UTF_8);
         String md5Pwd = Md5Utils.hash(pwd).toUpperCase();
         if (!userInfo.getPassword().equals(md5Pwd)) {
             return Result.error("原密码错误!");
         }
-        String newPwd = new String(Base64Utils.decodeFromString(user.getNewPassword()), StandardCharsets.UTF_8);
+        String newPwd = new String(Base64.decodeBase64(user.getNewPassword()), StandardCharsets.UTF_8);
         String newMd5Pwd = Md5Utils.hash(newPwd).toUpperCase();
         userInfo.setPassword(newMd5Pwd);
         iBaseUserService.updateUser(userInfo);
@@ -103,7 +106,7 @@ public class SysUserController {
      */
     @PostMapping("/register")
     public Result register(@RequestBody UserParam user){
-        String pwd = new String(Base64Utils.decodeFromString(user.getPassword()), StandardCharsets.UTF_8);
+        String pwd = new String(Base64.decodeBase64(user.getPassword()), StandardCharsets.UTF_8);
         String md5 = Md5Utils.hash(pwd).toUpperCase();
         user.setPassword(md5);
         BaseUser baseUser = new BaseUser();

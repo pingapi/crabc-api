@@ -10,13 +10,13 @@ import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.driver.DataSourceManager;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import com.github.pagehelper.PageHelper;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.Base64;
 import java.util.Date;

@@ -12,6 +12,7 @@ import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.github.pagehelper.PageHelper;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class BaseFlowRuleServiceImpi implements IBaseFlowRuleService {
     @Autowired
     private BaseGroupMapper baseGroupMapper;
 
+    @PostConstruct
     @Scheduled(cron = "*/50 * * * * ?")
     public void task() {
         initFlowRule();
@@ -47,8 +49,7 @@ public class BaseFlowRuleServiceImpi implements IBaseFlowRuleService {
         List<FlowRule> rules = new ArrayList<>();
         List<BaseFlowRule> flowList = this.getCacheFlowList();
         for (BaseFlowRule flow : flowList) {
-            FlowRule rule = new FlowRule();
-            rule.setResource("/api/web/"+flow.getApiPath());
+            FlowRule rule = new FlowRule("/api/web/"+flow.getApiPath());
             rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
             rule.setCount(flow.getFlowCount());
             rule.setId(flow.getApiId());

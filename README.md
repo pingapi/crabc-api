@@ -27,6 +27,10 @@ cn.crabc
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
+## 版本说明
+dev分支框架SpringBoot已升级至3.x，jdk需17及以上版本 \
+2.x分支框架SpringBoot还是2.x
+
 ## 运行启动
 ```
 1、先执行db/dml.sql脚本，创建库表和初始化数据
@@ -41,8 +45,8 @@ cn.crabc
 github：https://github.com/pingapi/crabc-api
 
 ## 商用授权
-可供个人学习使用 \
-已申请软件著作，商用请加群联系
+已申请软件著作，开源版仅供个人学习使用 \
+企业版功能更强大，商用请加群联系\
 
 ## 企业版和开源版对比
 功能对比清单：https://www.crabc.cn/business/
@@ -94,5 +98,5 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 
 QQ群：748993036 
 
-加微信进群
+加微信进群 (备注crabc)
 ![img.png](doc/img.png)
