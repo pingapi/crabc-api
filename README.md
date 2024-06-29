@@ -94,7 +94,7 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ![img.png](doc/flow.png)
 
 ## 产品使用登记
-以下为部分接入crabc-api的用户 
+以下为部分接入crabc-api的用户 ，<a href="https://gitee.com/linebyte/crabc/issues/IA98CA" target="_blank"> 点击进行登记</a>
 
 | 公司机构           |
 |:---------------|
