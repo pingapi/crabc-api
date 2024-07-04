@@ -61,7 +61,7 @@ gitee: https://gitee.com/linebyte/crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>最新版本</version>
+    <version>2.8.7</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
