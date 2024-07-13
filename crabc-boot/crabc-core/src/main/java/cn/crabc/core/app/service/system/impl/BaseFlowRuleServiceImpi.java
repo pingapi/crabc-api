@@ -38,7 +38,7 @@ public class BaseFlowRuleServiceImpi implements IBaseFlowRuleService {
     private BaseGroupMapper baseGroupMapper;
 
     @PostConstruct
-    @Scheduled(cron = "*/50 * * * * ?")
+    @Scheduled(cron = "${crabc.corn.flow:0 0/1 * * * ?}")
     public void task() {
         initFlowRule();
     }

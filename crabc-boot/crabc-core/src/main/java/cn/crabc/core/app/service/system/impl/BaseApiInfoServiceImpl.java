@@ -52,7 +52,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Qualifier("apiCache")
     Cache<String, Object> apiInfoCache;
 
-    @Scheduled(cron = "*/30 * * * * ?")
+    @Scheduled(cron = "${crabc.corn.api:0 0/1 * * * ?}")
     public void task() {
         initApi();
     }
