@@ -94,7 +94,8 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
                 String jdbcUrl = null;
                 String username = null;
                 String password = null;
-                if (ds instanceof HikariDataSource hikari) {
+                if (ds instanceof HikariDataSource) {
+                    HikariDataSource hikari = (HikariDataSource) ds;
                     jdbcUrl = hikari.getJdbcUrl();
                     username = hikari.getUsername();
                     password = hikari.getPassword();
