@@ -44,7 +44,7 @@ public class DataSourceConfig {
         dataSource.setPassword(password);
         dataSource.setInitialSize(1);
         dataSource.setMinIdle(1);
-        dataSource.setMaxActive(5);
+        dataSource.setMaxActive(20);
         // 配置获取连接等待超时的时间
         dataSource.setMaxWait(6000);
         dataSource.setKeepAlive(true);

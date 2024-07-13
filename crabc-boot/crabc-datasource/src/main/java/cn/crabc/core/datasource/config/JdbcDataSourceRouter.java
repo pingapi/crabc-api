@@ -6,6 +6,8 @@ import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -19,6 +21,7 @@ import java.sql.SQLException;
  */
 public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
 
+    private static Logger log = LoggerFactory.getLogger(JdbcDataSourceRouter.class);
     /**
      * 当前线程数据源KEY
      */
@@ -155,22 +158,26 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      */
     @Override
     public Connection getConnection() throws SQLException {
-        Connection connection = this.determineTargetDataSource().getConnection();
-        Object dataSourceKey = this.determineCurrentLookupKey();
+        Connection connection  = null;
+        Object dataSourceKey = null;
         try {
+            connection = this.determineTargetDataSource().getConnection();
+            dataSourceKey = this.determineCurrentLookupKey();
             // dataSouceId:dataSourceType:schemaName
             if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
                 String[] dataSourceStr = dataSourceKey.toString().split(":");
-                String dataSourceType = dataSourceStr[1];
-                String schema = dataSourceStr[2];
-                if (BaseConstant.CATALOG_DATA_SOURCE.contains(dataSourceType)) {
-                    connection.setCatalog(schema);
-                }else {
-                    connection.setSchema(schema);
+                if (dataSourceStr.length == 3) {
+                    String dataSourceType = dataSourceStr[1];
+                    String schema = dataSourceStr[2];
+                    if (BaseConstant.CATALOG_DATA_SOURCE.contains(dataSourceType)) {
+                        connection.setCatalog(schema);
+                    }else {
+                        connection.setSchema(schema);
+                    }
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("-数据源连接获取失败,dataSourceKey:{}",dataSourceKey,e);
         }
         return connection;
     }
