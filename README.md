@@ -61,13 +61,15 @@ gitee: https://gitee.com/linebyte/crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>2.8.7</version>
+    <version>3.0.2</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
 ```
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 ```
+集成Demo参考: <a href="https://gitee.com/linebyte/crabc-spring-boot-starter-demo" style="text-decoration: none;" target="_blank">crabc-spring-boot-starter-demo</a>
+
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
