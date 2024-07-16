@@ -61,13 +61,15 @@ gitee: https://gitee.com/linebyte/crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>最新版本</version>
+    <version>3.1.0</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
 ```
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 ```
+集成Demo参考: <a href="https://gitee.com/linebyte/crabc-spring-boot-starter-demo" style="text-decoration: none;" target="_blank">crabc-spring-boot-starter-demo</a>
+
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
@@ -92,6 +94,17 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ![img.png](doc/db.png)
 ### 限流熔断
 ![img.png](doc/flow.png)
+
+## 产品使用登记
+以下为部分接入crabc-api的用户 ，<a href="https://gitee.com/linebyte/crabc/issues/IA98CA" target="_blank"> 点击进行登记</a>
+
+| 公司机构           |
+|:---------------|
+| 联通集团西部分公司      |
+| 青岛巴士科技有限公司     |
+| 阳光智维科技股份有限公司   |
+| 一步数据科技有限公司     |
+
 
 ## 交流群
 **进群前请先点 Star** 

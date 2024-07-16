@@ -10,7 +10,10 @@ import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.driver.DataSourceManager;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import com.github.pagehelper.PageHelper;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +32,8 @@ import java.util.List;
  */
 @Service
 public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
+
+    private static Logger log = LoggerFactory.getLogger(BaseDataSourceServiceImpl.class);
 
     @Autowired
     private BaseDataSourceMapper dataSourceMapper;
@@ -80,19 +85,31 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     }
 
     @Override
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "${crabc.corn.api:0 0/5 * * * ?}")
     public void init() {
         List<BaseDataSource> baseDataSources = this.getList();
         for (BaseDataSource dataSource : baseDataSources) {
             DataSource ds = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSource.getDatasourceId());
-            if (ds != null) {
-                continue;
-            }
             try {
+                String jdbcUrl = null;
+                String username = null;
+                String password = null;
+                if (ds instanceof HikariDataSource) {
+                    HikariDataSource hikari = (HikariDataSource) ds;
+                    jdbcUrl = hikari.getJdbcUrl();
+                    username = hikari.getUsername();
+                    password = hikari.getPassword();
+                }
                 byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
                 dataSource.setPassword(new String(decode));
+                // 判断数据库连接关键属性是否有修改，有修改则刷新缓存
+                if (ds != null && dataSource.getJdbcUrl().equals(jdbcUrl)
+                        && dataSource.getUsername().equals(username) && dataSource.getPassword().equals(password)) {
+                    continue;
+                }
                 dataSourceManager.createDataSource(dataSource);
             }catch (Exception e) {
+                log.error("-数据源加载异常，dataSourceId:{}",dataSource.getDatasourceId(),e);
             }
         }
     }
