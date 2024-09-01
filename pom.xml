@@ -17,7 +17,7 @@
 
     <properties>
         <!-- crabc 版本-->
-        <revision>3.1.0</revision>
+        <revision>3.2.0</revision>
         <java.version>21</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -29,9 +29,6 @@
         <fastjson.version>2.0.49</fastjson.version>
         <jwt.version>0.12.5</jwt.version>
         <commons-pool2.version>2.12.0</commons-pool2.version>
-        <sentinel.version>1.8.6</sentinel.version>
-        <easyexcel.version>3.3.2</easyexcel.version>
-        <alibaba-sentinel.version>2023.0.1.0</alibaba-sentinel.version>
     </properties>
     <dependencyManagement>
         <dependencies>
