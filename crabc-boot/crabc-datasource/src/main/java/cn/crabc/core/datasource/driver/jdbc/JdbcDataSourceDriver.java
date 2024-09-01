@@ -12,17 +12,17 @@ import cn.crabc.core.spi.StatementMapper;
 public class JdbcDataSourceDriver extends DefaultDataSourceDriver {
     private BaseDataHandleMapper baseDataHandleMapper;
     private JdbcStatement jdbcStatement;
-    private JdbcMeataData jdbcMeataData;
+    private JdbcMetaData jdbcMetaData;
 
     public JdbcDataSourceDriver(BaseDataHandleMapper baseDataHandleMapper) {
         this.baseDataHandleMapper = baseDataHandleMapper;
         jdbcStatement = new JdbcStatement(baseDataHandleMapper);
-        jdbcMeataData = new JdbcMeataData();
+        jdbcMetaData = new JdbcMetaData();
     }
 
     @Override
     public MetaDataMapper getMetaData() {
-        return jdbcMeataData;
+        return jdbcMetaData;
     }
 
     @Override

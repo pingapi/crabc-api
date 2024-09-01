@@ -5,7 +5,7 @@ import cn.crabc.core.app.entity.param.UserParam;
 import cn.crabc.core.app.service.system.IBaseUserService;
 import cn.crabc.core.app.util.*;
 import com.github.benmanes.caffeine.cache.Cache;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
