@@ -42,19 +42,11 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     @Autowired
     private IBaseDataService iBaseDataService;
 
-    @Value("${spring.datasource.url}")
-    private String jdbcUrl;
-    @Value("${spring.datasource.username}")
-    private String username;
-    @Value("${spring.datasource.password}")
-    private String password;
-
     /**
      * 启动加载
      */
     @PostConstruct
     public void load() {
-        initLocal();
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -62,26 +54,6 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
             }
         });
         t.start();
-    }
-
-    /**
-     * 把本机的数据库加载到缓存
-     */
-    private void initLocal() {
-        BaseDatasource baseDatasource = dataSourceMapper.selectOne(1);
-        if (baseDatasource != null) {
-            return;
-        }
-        BaseDatasource local = new BaseDatasource();
-        local.setDatasourceId("1");
-        local.setEnabled(1);
-        local.setDatasourceType("mysql");
-        local.setDatasourceName("local");
-        local.setJdbcUrl(jdbcUrl);
-        local.setPassword(Base64.getEncoder().encodeToString(password.getBytes()));
-        local.setUsername(username);
-        local.setRemarks("本机数据库");
-        this.addDataSource(local);
     }
 
     @Override

@@ -9,14 +9,9 @@ import cn.crabc.core.datasource.util.PageInfo;
 import cn.crabc.core.app.util.Result;
 import cn.crabc.core.app.util.SQLUtil;
 import cn.crabc.core.app.util.UserThreadLocal;
-import com.alibaba.excel.EasyExcel;
 
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -243,36 +238,5 @@ public class ApiInfoController {
     @PostMapping("/choosed")
     public Result addChooseApi(@RequestBody BaseAppApi appApis) {
         return Result.success(apiInfoService.addChooseApi(appApis));
-    }
-
-    /**
-     * API导出
-     * @param apiName
-     * @param response
-     */
-    @GetMapping("/export")
-    public void apiExport(String apiName,String devType, HttpServletResponse response) {
-        try {
-            response.setContentType("application/vnd.ms-excel");
-            String fileName = "接口列表";
-            response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
-            List<BaseApiExcelVO> data = apiInfoService.getApiInfoList(apiName, devType);
-            EasyExcel.write(response.getOutputStream(), BaseApiExcelVO.class).sheet(fileName).doWrite(data);
-        }catch (Exception e) {
-            new RuntimeException("导出异常");
-        }
-    }
-
-    /**
-     * 导入接口列表
-     * @param file
-     */
-    @PostMapping("/import")
-    public void apiImport(@RequestParam MultipartFile file, @RequestParam String type) throws IOException {
-        List<BaseApiExcelVO> list = EasyExcel.read(file.getInputStream())
-                .head(BaseApiExcelVO.class)
-                .sheet()
-                .doReadSync();
-        apiInfoService.addApiInfo(list, type);
     }
 }

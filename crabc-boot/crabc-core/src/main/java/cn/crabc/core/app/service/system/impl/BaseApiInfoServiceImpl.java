@@ -5,7 +5,6 @@ import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.entity.param.ApiInfoParam;
 import cn.crabc.core.app.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.app.entity.vo.ApiInfoVO;
-import cn.crabc.core.app.entity.vo.BaseApiExcelVO;
 import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.app.enums.ApiStateEnum;
 import cn.crabc.core.app.mapper.BaseApiInfoMapper;
@@ -285,26 +284,6 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             list.add(a);
         }
         return baseAppApiMapper.insert(list);
-    }
-
-    @Override
-    public List<BaseApiExcelVO> getApiInfoList(String apiName, String devType) {
-        return apiInfoMapper.selectApiInfoList(apiName, devType);
-    }
-
-    @Override
-    public Long addApiInfo(List<BaseApiExcelVO> list, String type) {
-        for (BaseApiExcelVO api : list) {
-            BaseApiInfo apiInfo = new BaseApiInfo();
-            BeanUtils.copyProperties(api, apiInfo);
-            if (ApiStateEnum.RELEASE.getName().equalsIgnoreCase(type)){
-                apiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
-            }else{
-                apiInfo.setApiStatus(ApiStateEnum.EDIT.getName());
-            }
-            apiInfoMapper.insertApiInfo(apiInfo);
-        }
-        return 1L;
     }
 
     /**

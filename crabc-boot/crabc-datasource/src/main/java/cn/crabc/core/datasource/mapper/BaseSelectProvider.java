@@ -28,7 +28,7 @@ import java.util.Map;
 public class BaseSelectProvider {
 
     // 标签
-    private static String[] tags = {"</if>","</foreach>","</where>","</set>","</choose>","</when>","</trim>","</otherwise"};
+    private static final String[] tags = {"</if>","</foreach>","</where>","</set>","</choose>","</when>","</trim>","</otherwise"};
 
     /**
      * 添加脚本标签前缀
