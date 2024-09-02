@@ -29,11 +29,11 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         String token = JwtUtil.getToken(request);
         if (token == null) {
-            throw new CustomException(ErrorStatusEnum.JWT_UN_AUTH.getCode(), ErrorStatusEnum.JWT_UN_AUTH.getMassage());
+            throw new CustomException(ErrorStatusEnum.JWT_LOGIN_EXPIRE.getCode(), ErrorStatusEnum.JWT_UN_AUTH.getMassage());
         }
         Claims claims = JwtUtil.parseToken(token);
         if (claims == null) {
-            throw new CustomException(ErrorStatusEnum.JWT_UN_AUTH.getCode(), ErrorStatusEnum.JWT_UN_AUTH.getMassage());
+            throw new CustomException(ErrorStatusEnum.JWT_LOGIN_EXPIRE.getCode(), ErrorStatusEnum.JWT_UN_AUTH.getMassage());
         }
         long nowTime = System.currentTimeMillis();
         Long expire = Long.parseLong(claims.get("expireTime").toString());
