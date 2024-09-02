@@ -35,7 +35,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             base_api_info a
                 JOIN base_group g on a.group_id = g.group_id
         WHERE a.api_status ='release'
-        and not exists (SELECT r.api_id FROM base_flow_api r WHERE r.api_id = a.api_id)
     </select>
     <update id="update" parameterType="cn.crabc.core.app.entity.BaseGroup">
         UPDATE base_group

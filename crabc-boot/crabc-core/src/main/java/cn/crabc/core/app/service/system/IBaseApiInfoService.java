@@ -6,7 +6,6 @@ import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.entity.param.ApiInfoParam;
 import cn.crabc.core.app.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.app.entity.vo.ApiInfoVO;
-import cn.crabc.core.app.entity.vo.BaseApiExcelVO;
 import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.datasource.util.PageInfo;
 
@@ -153,18 +152,4 @@ public interface IBaseApiInfoService {
      * @return
      */
     Integer addChooseApi(BaseAppApi appApi);
-
-    /**
-     * API基本信息列表
-     *
-     * @param apiName
-     * @return
-     */
-    List<BaseApiExcelVO> getApiInfoList(String apiName, String devType);
-
-    /**
-     * 导入新增API
-     * @return
-     */
-    Long addApiInfo(List<BaseApiExcelVO> list, String type);
 }

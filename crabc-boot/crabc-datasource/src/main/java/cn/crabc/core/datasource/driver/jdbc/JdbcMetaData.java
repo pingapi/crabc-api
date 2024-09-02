@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JdbcMeataData implements MetaDataMapper {
+public class JdbcMetaData implements MetaDataMapper {
 
     @Override
     public List<Schema> getCatalogs(String dataSourceId) {

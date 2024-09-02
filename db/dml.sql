@@ -163,32 +163,6 @@ CREATE TABLE `base_api_param` (
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API接口参数';
 
 
-DROP TABLE IF EXISTS `base_flow_api`;
-CREATE TABLE `base_flow_api` (
-                                 `id` int NOT NULL AUTO_INCREMENT,
-                                 `flow_id` int DEFAULT NULL,
-                                 `api_id` int DEFAULT NULL,
-                                 `create_time` datetime DEFAULT NULL,
-                                 `create_by` varchar(128) DEFAULT NULL,
-                                 PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API限流关系表';
-
-DROP TABLE IF EXISTS `base_flow_rule`;
-CREATE TABLE `base_flow_rule` (
-                                  `flow_id` int NOT NULL AUTO_INCREMENT,
-                                  `flow_name` varchar(128) DEFAULT NULL COMMENT '规则名称',
-                                  `flow_grade` varchar(100)  DEFAULT NULL COMMENT '限流等级',
-                                  `unit_time` int DEFAULT NULL COMMENT '单位时间s',
-                                  `flow_count` int DEFAULT NULL COMMENT '限流阈值',
-                                  `flow_type` varchar(100)  DEFAULT NULL COMMENT '策略类型：flow、degrade',
-                                  `api_count` int DEFAULT NULL COMMENT '关联API数量',
-                                  `api_json` text COMMENT 'api数据',
-                                  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-                                  `update_time` datetime DEFAULT NULL,
-                                  `create_by` varchar(128) DEFAULT NULL,
-                                  `update_by` varchar(128) DEFAULT NULL,
-                                  PRIMARY KEY (`flow_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='限流规则表';
 -- 初始化数据
 INSERT INTO base_sys_user
 (user_id, user_name, nick_name, user_type, password, `role`, email, phone, sex, picture, status, create_by, create_time, update_by, update_time, remark)

@@ -1,7 +1,6 @@
 package cn.crabc.core.app.service.system.impl;
 
 import cn.crabc.core.app.entity.BaseApp;
-import cn.crabc.core.app.entity.vo.BaseAppExcelVO;
 import cn.crabc.core.app.mapper.BaseAppMapper;
 import cn.crabc.core.app.service.system.IBaseAppService;
 import cn.crabc.core.datasource.util.PageInfo;
@@ -66,29 +65,4 @@ public class BaseAppServiceImpl implements IBaseAppService {
         return baseAppMapper.delete(appId);
     }
 
-    @Override
-    public List<BaseAppExcelVO> getAppExcelList(String appName) {
-        List<BaseApp> baseApps = baseAppMapper.selectList(appName);
-        List<BaseAppExcelVO> list = new ArrayList<>();
-        for (BaseApp app : baseApps) {
-            BaseAppExcelVO excelVO = new BaseAppExcelVO();
-            BeanUtils.copyProperties(app, excelVO);
-            list.add(excelVO);
-        }
-        return list;
-    }
-
-    @Override
-    public Integer addAppList(List<BaseAppExcelVO> data) {
-        for (BaseAppExcelVO excelVO : data) {
-            BaseApp app = new BaseApp();
-            BeanUtils.copyProperties(excelVO, app);
-            app.setEnabled(1);
-            app.setCreateBy(UserThreadLocal.getUserId());
-            app.setCreateTime(new Date());
-            app.setUpdateTime(new Date());
-            baseAppMapper.insert(app);
-        }
-        return 1;
-    }
 }
