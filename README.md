@@ -1,18 +1,17 @@
 
 ## 介绍
 **Crabc** 是低代码接口开发平台，企业级API管理系统，深度整合SpringBoot和Mybatis实现动态数据源和动态SQL。
-支持接入（mysql、oracle、postgresql、sqlserver、达梦、TiDB、es）等SQL或/NoSQL数据源，
-在编辑框内编写好SQL后即可快速生成Rest接口对外提供服务。支持Mybatis中if等标签语法、数据脱敏、
-以及复杂的多SQL执行并支持事务， 减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。可通过插件的
-方式扩展支持其他的数据源。
+支持接入（mysql、oracle、postgresql、sqlserver、达梦、TiDB、es和mongodb）等SQL或/NoSQL数据源，
+在线可视化编写SQL后即可快速生成接口对外提供服务，减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。
+支持Mybatis中if等标签语法、数据脱敏、数据转换等功能，集成微服务网关支持接口代理转发、权限认证、限流、缓存、告警监控等一站式API服务。
 
+![img.png](doc/home.png)
 ## 功能
 - **工作台**：可视化编写SQL快速的对外发布成API接口,支持多SQL同时执行、Mybatis标签语法，实现动态SQL和动态标签
 - **数据源管理**：动态加载数据库，支持多种SQL/NoSQL数据库。
 - **应用列表**：Code认证、签名认证的应用创建管理以及对API调用在线授权。
 - **接口列表**：查看开发中和已发布的API接口，可进行上下线管理，编辑升级等
 - **接口日志**：查看发布的接口被调用日志列表和请求详情。
-- **流控规则**：限流、缓存等。
 
 ## 模块
 ~~~
@@ -27,6 +26,7 @@ cn.crabc
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~ 
+
 ## 版本说明
 dev分支框架SpringBoot已升级至3.x，jdk需17及以上版本 \
 2.x分支框架SpringBoot还是2.x
@@ -48,9 +48,6 @@ github：https://github.com/pingapi/crabc-api
 已申请软件著作，开源版仅供个人学习使用 \
 企业版功能更强大，商用请加群联系\
 
-## 企业版和开源版对比
-功能对比清单：https://www.crabc.cn/business/
-
 ## 源码地址
 github: https://github.com/pingapi/crabc-api \
 gitee: https://gitee.com/linebyte/crabc
@@ -61,7 +58,7 @@ gitee: https://gitee.com/linebyte/crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>3.1.0</version>
+    <version>3.2.0</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
@@ -79,6 +76,31 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
+## 企业版和开源版对比
+| 功能     |  社区版  |  企业版  |
+|--------|--------------------------------| --------------------------|
+| 架构设计   | 单体                            | 微服务                    |
+| 接口创建模式 | SQL脚本                         | SQL脚本、图表、代理转发     |
+| 动态标签   | 支持                            | 支持                      |
+| 动态路由   | 不支持                           | 支持                      |
+| 数据库    | SQL：mysql/oracle/postgresql/sqlserver <br>TiDB/OpenGauss/Doris |SQL：mysql/oracle/postgresql/sqlserver/tidb<br>/opengauss/doris/oceanbase/dm/gbase <br> NoSQL：es/mongodb <br> TSDB: TDengine      |
+| 认证方式   | 无/Code认证/签名认证              | 无/Code认证/签名认证         |
+| SQL类型  | 查询SQL                          | 查询/插入/更新/删除等SQL     |
+| 结果类型   | json                            | json                 |
+| 接口日志   | 支持                             | 支持                       |
+| 数据转换   | 不支持                            | 支持  
+| 接口市场   | 不支持                            | 支持                       |
+| 申请审批   | 不支持                            | 支持                       |
+| 接口授权   | 不支持                            | 支持                       |
+| 系统权限   | 不支持                            | 支持                       |
+| 用户管理   | 不支持                           | 支持                         |
+| 数据脱敏   | 不支持                           | 支持                         |
+| 版本管理   | 不支持                           | 支持      
+| 接口缓存   | 不支持                           | 支持                         |
+| 限流熔断   | 仅限流                             | 限流和熔断                     |
+| IP黑白名单 | 不支持                           | 支持                         |
+| 监控报表   | 支持                             | 支持                         |
+| 集群模式   | 不支持                           | 支持                         |
 ## 效果截图
 ### 接口开发
 ![img.png](doc/sql.png)
