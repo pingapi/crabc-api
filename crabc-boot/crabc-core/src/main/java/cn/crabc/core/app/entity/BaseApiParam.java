@@ -1,10 +1,15 @@
 package cn.crabc.core.app.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * API参数
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseApiParam {
 
     private static final long serialVersionUID = 1L;
@@ -76,117 +81,5 @@ public class BaseApiParam {
      * 表名
      */
     private String tableName;
-
-    public Long getParamId() {
-        return paramId;
-    }
-
-    public void setParamId(Long paramId) {
-        this.paramId = paramId;
-    }
-
-    public Long getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
-    }
-
-    public String getParamName() {
-        return paramName;
-    }
-
-    public void setParamName(String paramName) {
-        this.paramName = paramName;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public Boolean getRequired() {
-        return required;
-    }
-
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
-
-    public String getParamType() {
-        return paramType;
-    }
-
-    public void setParamType(String paramType) {
-        this.paramType = paramType;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public String getExample() {
-        return example;
-    }
-
-    public void setExample(String example) {
-        this.example = example;
-    }
-
-    public String getParamDesc() {
-        return paramDesc;
-    }
-
-    public void setParamDesc(String paramDesc) {
-        this.paramDesc = paramDesc;
-    }
-
-    public String getDatasourceId() {
-        return datasourceId;
-    }
-
-    public void setDatasourceId(String datasourceId) {
-        this.datasourceId = datasourceId;
-    }
-
-    public String getSchemaName() {
-        return schemaName;
-    }
-
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getParamModel() {
-        return paramModel;
-    }
-
-    public void setParamModel(String paramModel) {
-        this.paramModel = paramModel;
-    }
 
 }

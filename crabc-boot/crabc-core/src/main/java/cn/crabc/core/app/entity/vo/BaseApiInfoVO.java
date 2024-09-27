@@ -1,6 +1,8 @@
 package cn.crabc.core.app.entity.vo;
 
 import cn.crabc.core.app.entity.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -9,6 +11,8 @@ import java.util.Date;
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseApiInfoVO extends BaseEntity {
 
     /**
@@ -76,133 +80,4 @@ public class BaseApiInfoVO extends BaseEntity {
 
     private Integer applyed;
 
-
-    public Long getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
-    }
-
-    public String getApiName() {
-        return apiName;
-    }
-
-    public void setApiName(String apiName) {
-        this.apiName = apiName;
-    }
-
-    public String getApiPath() {
-        return apiPath;
-    }
-
-    public void setApiPath(String apiPath) {
-        this.apiPath = apiPath;
-    }
-
-    public String getApiMethod() {
-        return apiMethod;
-    }
-
-    public void setApiMethod(String apiMethod) {
-        this.apiMethod = apiMethod;
-    }
-
-    public String getAuthType() {
-        return authType;
-    }
-
-    public String getApiLevel() {
-        return apiLevel;
-    }
-
-    public void setApiLevel(String apiLevel) {
-        this.apiLevel = apiLevel;
-    }
-
-    public void setAuthType(String authType) {
-        this.authType = authType;
-    }
-
-    public Integer getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Integer enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
-
-
-    public String getApiType() {
-        return apiType;
-    }
-
-    public void setApiType(String apiType) {
-        this.apiType = apiType;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Date getReleaseTime() {
-        return releaseTime;
-    }
-
-    public void setReleaseTime(Date releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public Integer getPageSetup() {
-        return pageSetup;
-    }
-
-    public void setPageSetup(Integer pageSetup) {
-        this.pageSetup = pageSetup;
-    }
-
-    public String getSqlType() {
-        return sqlType;
-    }
-
-    public void setSqlType(String sqlType) {
-        this.sqlType = sqlType;
-    }
-
-    public Integer getApplyed() {
-        return applyed;
-    }
-
-    public void setApplyed(Integer applyed) {
-        this.applyed = applyed;
-    }
-
-    public String getSqlScript() {
-        return sqlScript;
-    }
-
-    public void setSqlScript(String sqlScript) {
-        this.sqlScript = sqlScript;
-    }
-
-    public String getShowSqlScript() {
-        return showSqlScript;
-    }
-
-    public void setShowSqlScript(String showSqlScript) {
-        this.showSqlScript = showSqlScript;
-    }
 }

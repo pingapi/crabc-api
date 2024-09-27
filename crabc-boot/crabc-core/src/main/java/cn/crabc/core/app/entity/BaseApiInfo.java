@@ -1,5 +1,8 @@
 package cn.crabc.core.app.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
@@ -7,6 +10,8 @@ import java.util.Date;
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseApiInfo extends BaseEntity {
 
     /**
@@ -115,187 +120,4 @@ public class BaseApiInfo extends BaseEntity {
      */
     private Long parentId;
 
-    public Long getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
-    }
-
-    public String getApiName() {
-        return apiName;
-    }
-
-    public void setApiName(String apiName) {
-        this.apiName = apiName;
-    }
-
-    public String getApiPath() {
-        return apiPath;
-    }
-
-    public void setApiPath(String apiPath) {
-        this.apiPath = apiPath;
-    }
-
-    public String getApiMethod() {
-        return apiMethod;
-    }
-
-    public void setApiMethod(String apiMethod) {
-        this.apiMethod = apiMethod;
-    }
-
-    public String getAuthType() {
-        return authType;
-    }
-
-    public void setAuthType(String authType) {
-        this.authType = authType;
-    }
-
-    public Integer getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Integer enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
-
-    public String getApiStatus() {
-        return apiStatus;
-    }
-
-    public void setApiStatus(String apiStatus) {
-        this.apiStatus = apiStatus;
-    }
-
-    public String getApiType() {
-        return apiType;
-    }
-
-    public void setApiType(String apiType) {
-        this.apiType = apiType;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
-    }
-
-    public Integer getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public Date getReleaseTime() {
-        return releaseTime;
-    }
-
-    public void setReleaseTime(Date releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public Integer getPageSetup() {
-        return pageSetup;
-    }
-
-    public void setPageSetup(Integer pageSetup) {
-        this.pageSetup = pageSetup;
-    }
-
-    public String getSqlScript() {
-        return sqlScript;
-    }
-
-    public void setSqlScript(String sqlScript) {
-        this.sqlScript = sqlScript;
-    }
-
-    public String getDatasourceId() {
-        return datasourceId;
-    }
-
-    public void setDatasourceId(String datasourceId) {
-        this.datasourceId = datasourceId;
-    }
-
-    public String getSchemaName() {
-        return schemaName;
-    }
-
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
-
-    public String getDatasourceType() {
-        return datasourceType;
-    }
-
-    public void setDatasourceType(String datasourceType) {
-        this.datasourceType = datasourceType;
-    }
-
-    public String getSqlType() {
-        return sqlType;
-    }
-
-    public void setSqlType(String sqlType) {
-        this.sqlType = sqlType;
-    }
-
-    public String getDatasourceName() {
-        return datasourceName;
-    }
-
-    public void setDatasourceName(String datasourceName) {
-        this.datasourceName = datasourceName;
-    }
-
-    public String getShowSqlScript() {
-        return showSqlScript;
-    }
-
-    public void setShowSqlScript(String showSqlScript) {
-        this.showSqlScript = showSqlScript;
-    }
-
-    public String getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(String resultType) {
-        this.resultType = resultType;
-    }
 }

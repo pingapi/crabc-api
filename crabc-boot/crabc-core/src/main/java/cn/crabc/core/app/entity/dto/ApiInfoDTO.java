@@ -3,6 +3,8 @@ package cn.crabc.core.app.entity.dto;
 import cn.crabc.core.app.entity.BaseApiInfo;
 import cn.crabc.core.app.entity.BaseApiParam;
 import cn.crabc.core.app.entity.BaseApp;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +15,8 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class ApiInfoDTO extends BaseApiInfo {
 
     /**
@@ -34,43 +38,4 @@ public class ApiInfoDTO extends BaseApiInfo {
      */
     private List<BaseApiParam> requestParams;
 
-    public Date getRequestDate() {
-        return requestDate;
-    }
-
-    public void setRequestDate(Date requestDate) {
-        this.requestDate = requestDate;
-    }
-
-    public Long getRequestTime() {
-        return requestTime;
-    }
-
-    public void setRequestTime(Long requestTime) {
-        this.requestTime = requestTime;
-    }
-
-    public List<BaseApp> getAppList() {
-        return appList;
-    }
-
-    public void setAppList(List<BaseApp> appList) {
-        this.appList = appList;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public List<BaseApiParam> getRequestParams() {
-        return requestParams;
-    }
-
-    public void setRequestParams(List<BaseApiParam> requestParams) {
-        this.requestParams = requestParams;
-    }
 }

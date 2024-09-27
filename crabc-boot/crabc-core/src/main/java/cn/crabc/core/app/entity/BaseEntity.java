@@ -1,5 +1,10 @@
 package cn.crabc.core.app.entity;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -8,7 +13,10 @@ import java.util.Date;
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseEntity implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -28,35 +36,4 @@ public class BaseEntity implements Serializable {
      */
     private Date updateTime;
 
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(String updateBy) {
-        this.updateBy = updateBy;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
 }
