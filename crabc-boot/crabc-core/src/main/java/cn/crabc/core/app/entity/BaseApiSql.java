@@ -1,10 +1,15 @@
 package cn.crabc.core.app.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * API SQL配置
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseApiSql extends BaseEntity {
 
     /**
@@ -40,60 +45,4 @@ public class BaseApiSql extends BaseEntity {
      */
     private String datasourceType;
 
-
-    public Long getSqlId() {
-        return sqlId;
-    }
-
-    public void setSqlId(Long sqlId) {
-        this.sqlId = sqlId;
-    }
-
-    public Long getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
-    }
-
-    public String getSqlScript() {
-        return sqlScript;
-    }
-
-    public void setSqlScript(String sqlScript) {
-        this.sqlScript = sqlScript;
-    }
-
-    public String getDatasourceId() {
-        return datasourceId;
-    }
-
-    public void setDatasourceId(String datasourceId) {
-        this.datasourceId = datasourceId;
-    }
-
-    public String getDatasourceType() {
-        return datasourceType;
-    }
-
-    public void setDatasourceType(String datasourceType) {
-        this.datasourceType = datasourceType;
-    }
-
-    public String getSchemaName() {
-        return schemaName;
-    }
-
-    public void setSchemaName(String schemaName) {
-        this.schemaName = schemaName;
-    }
-
-    public Integer getPageSetup() {
-        return pageSetup;
-    }
-
-    public void setPageSetup(Integer pageSetup) {
-        this.pageSetup = pageSetup;
-    }
 }
