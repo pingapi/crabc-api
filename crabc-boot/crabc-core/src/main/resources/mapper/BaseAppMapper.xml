@@ -68,7 +68,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UPDATE base_app
         <set>
             <if test="appName != null and appName != ''">app_name =#{appName},</if>
-            <if test="appDesc != null and appDesc != ''">app_desc =#{appDesc},</if>
             <if test="appCode != null and appCode != ''">app_code =#{appCode},</if>
             <if test="appKey != null and appKey != ''">app_key =#{appKey},</if>
             <if test="appSecret != null and appSecret != ''">app_secret =#{appSecret},</if>
@@ -76,7 +75,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ips != null and ips != ''">ips =#{ips},</if>
             <if test="enabled != null">enabled =#{enabled},</if>
             <if test="updateBy != null and updateBy != ''">update_by=#{updateBy},</if>
-            update_time =#{updateTime}
+            update_time =#{updateTime},app_desc =#{appDesc}
         </set>
         WHERE app_id = #{appId}
     </update>

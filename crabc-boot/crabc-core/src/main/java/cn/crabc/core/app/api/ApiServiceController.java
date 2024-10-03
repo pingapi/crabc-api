@@ -39,6 +39,9 @@ public class ApiServiceController {
         }
         if (paramMap != null && api.getPageSetup() != null) {
             paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup());
+            if (api.getPageSetup() == 1 && !paramMap.containsKey(BaseConstant.PAGE_NUM)) {
+                return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
+            }
         }
         Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
         if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {

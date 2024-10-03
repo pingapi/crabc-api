@@ -28,7 +28,7 @@ public class DataSourceManager {
     /**
      * 支持的关系型数据源类型
      */
-    private static final List<String> JDBC_DATA_SOURCE_TYPE = Arrays.asList("mysql", "mariadb", "oracle", "sqlserver", "postgresql","sybase", "db2","doris", "sqlite", "tidb", "opengauss", "oceanbase", "polardb", "tdsql", "dm", "gbase", "hive2");
+    private static final List<String> JDBC_DATA_SOURCE_TYPE = Arrays.asList("mysql", "mariadb", "oracle", "sqlserver", "postgresql","sybase", "db2","doris", "sqlite", "tidb","starrocks","clickhouse", "opengauss","gaussdb", "oceanbase", "polardb", "tdsql", "dm", "gbase");
     /**
      * 默认数据源驱动实现
      */
