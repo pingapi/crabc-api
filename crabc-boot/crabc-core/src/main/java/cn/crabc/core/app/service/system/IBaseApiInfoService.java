@@ -153,4 +153,10 @@ public interface IBaseApiInfoService {
      */
     Integer addChooseApi(BaseAppApi appApi);
 
+    /**
+     * 销毁接口
+     * @param apiId
+     * @return
+     */
+    Integer destroyApiInfo(Long apiId);
 }
