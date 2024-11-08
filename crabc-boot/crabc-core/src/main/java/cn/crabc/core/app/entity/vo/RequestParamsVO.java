@@ -1,7 +1,11 @@
 package cn.crabc.core.app.entity.vo;
 
-public class RequestParamsVO {
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
+public class RequestParamsVO {
     /**
      * 参数名
      */
@@ -42,67 +46,4 @@ public class RequestParamsVO {
      */
     private String paramDesc;
 
-    public String getParamName() {
-        return paramName;
-    }
-
-    public void setParamName(String paramName) {
-        this.paramName = paramName;
-    }
-
-    public String getParamModel() {
-        return paramModel;
-    }
-
-    public void setParamModel(String paramModel) {
-        this.paramModel = paramModel;
-    }
-
-    public String getRequired() {
-        return required;
-    }
-
-    public void setRequired(String required) {
-        this.required = required;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    public String getParamType() {
-        return paramType;
-    }
-
-    public void setParamType(String paramType) {
-        this.paramType = paramType;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public String getExample() {
-        return example;
-    }
-
-    public void setExample(String example) {
-        this.example = example;
-    }
-
-    public String getParamDesc() {
-        return paramDesc;
-    }
-
-    public void setParamDesc(String paramDesc) {
-        this.paramDesc = paramDesc;
-    }
 }

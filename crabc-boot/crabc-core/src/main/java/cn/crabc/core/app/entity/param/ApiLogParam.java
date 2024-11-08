@@ -1,10 +1,15 @@
 package cn.crabc.core.app.entity.param;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * API日志查询请求参数
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class ApiLogParam {
     private String result;
 
@@ -17,52 +22,4 @@ public class ApiLogParam {
     private Integer pageNum;
 
     private Integer pageSize;
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public String getKeyword() {
-        return keyword;
-    }
-
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
-
-    public Integer getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
 }

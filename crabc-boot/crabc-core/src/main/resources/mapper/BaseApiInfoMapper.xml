@@ -49,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         api_status,
         group_id
         FROM
-        base_api_info where  api_status !='history'
+        base_api_info where  api_status in ('edit','release')
         <if test="groupId !=null">
             and group_id = #{groupId}
         </if>

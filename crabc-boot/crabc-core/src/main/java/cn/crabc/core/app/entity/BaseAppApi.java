@@ -1,5 +1,8 @@
 package cn.crabc.core.app.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +11,8 @@ import java.util.List;
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseAppApi {
 
     private Long appId;
@@ -20,43 +25,4 @@ public class BaseAppApi {
 
     private List<Long> apiIds;
 
-    public Long getAppId() {
-        return appId;
-    }
-
-    public void setAppId(Long appId) {
-        this.appId = appId;
-    }
-
-    public List<Long> getApiIds() {
-        return apiIds;
-    }
-
-    public void setApiIds(List<Long> apiIds) {
-        this.apiIds = apiIds;
-    }
-
-    public Long getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
-    }
-
-    public String getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
 }

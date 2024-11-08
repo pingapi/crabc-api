@@ -100,19 +100,19 @@ public class SQLUtil {
     public static Set<String> analyzeSQL(String sql, String dbType) {
         Set<String> aliasList = new HashSet<>();
         try {
+            if ("doris".equalsIgnoreCase(dbType) || "starrocks".equalsIgnoreCase(dbType)) {
+                dbType = "mysql";
+            }
             List<SQLStatement> sqlStatementList = SQLUtils.parseStatements(sql, DbType.valueOf(dbType), false);
             if (sqlStatementList == null || sqlStatementList.isEmpty()) {
                 //throw new IllegalArgumentException("不是有效语句");
                 return aliasList;
-            } else if (sqlStatementList.size() > 1) {
-                throw new CustomException(55000, "不支持多条SQL语句！请删除多余的SQL");
             }
-
-            if (!(sqlStatementList.get(0) instanceof SQLSelectStatement)) {
+            if (!(sqlStatementList.get(sqlStatementList.size() -1) instanceof SQLSelectStatement)) {
                 return aliasList;
             }
 
-            SQLSelectStatement selectStatement = (SQLSelectStatement) sqlStatementList.get(0);
+            SQLSelectStatement selectStatement = (SQLSelectStatement) sqlStatementList.get(sqlStatementList.size() -1);
 
             SQLSelect sqlSelect = selectStatement.getSelect();
 

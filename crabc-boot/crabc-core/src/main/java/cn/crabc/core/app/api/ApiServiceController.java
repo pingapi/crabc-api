@@ -1,5 +1,6 @@
 package cn.crabc.core.app.api;
 
+import cn.crabc.core.app.entity.BaseApiParam;
 import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.enums.ResultTypeEnum;
 import cn.crabc.core.app.service.core.IBaseDataService;
@@ -10,6 +11,7 @@ import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,8 +39,12 @@ public class ApiServiceController {
         if (api == null) {
             return Result.error(ErrorStatusEnum.API_INVALID.getCode(), ErrorStatusEnum.API_INVALID.getMassage());
         }
-        if (paramMap != null && api.getPageSetup() != null) {
-            paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup());
+        if (paramMap != null ) {
+            paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup() == null ? 0 : api.getPageSetup());
+            if (!checkParams(api.getRequestParams(), paramMap) ||
+                    (api.getPageSetup() == 1 && !paramMap.containsKey(BaseConstant.PAGE_NUM))) {
+                return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
+            }
         }
         Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
         if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {
@@ -69,6 +75,10 @@ public class ApiServiceController {
             Map<String, Object> map = (Map<String, Object>) body;
             paramMap.putAll(map);
         }
+        // 校验参数
+        if (!checkParams( api.getRequestParams(), paramMap)) {
+            return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
+        }
         paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup());
         Object data = baseDataService.execute(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript(), paramMap);
         if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {
@@ -77,5 +87,34 @@ public class ApiServiceController {
         }else{
             return Result.success(data);
         }
+    }
+
+    /**
+     * 校验参数
+     *
+     * @param apiParams
+     * @param paramMap
+     * @return
+     */
+    public boolean checkParams(List<BaseApiParam> apiParams, Map<String, Object> paramMap) {
+        if (apiParams == null || paramMap == null) {
+            return true;
+        }
+        for (BaseApiParam param : apiParams) {
+            String paramName = param.getParamName();
+            String paramType = param.getParamType();
+            if (!paramMap.containsKey(paramName) && param.getRequired()) {
+                return false;
+            }
+            Object value = paramMap.get(paramName);
+            // Array类型的拼接参数 进行拆分
+            if ("Array".equalsIgnoreCase(paramType) && value !=null) {
+                String[] values = value.toString().split(",");
+                paramMap.put(paramName, Arrays.asList(values));
+            }else if ("Array".equalsIgnoreCase(paramType) && "".equals(value)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

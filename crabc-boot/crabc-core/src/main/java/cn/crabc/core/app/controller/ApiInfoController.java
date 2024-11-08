@@ -123,6 +123,16 @@ public class ApiInfoController {
     }
 
     /**
+     * 销毁发布接口
+     * @param apiId
+     * @return
+     */
+    @DeleteMapping("/destroy/{apiId}")
+    public Result destroy(@PathVariable Long apiId) {
+        apiInfoService.destroyApiInfo(apiId);
+        return Result.success();
+    }
+    /**
      * SQL解析
      *
      * @param

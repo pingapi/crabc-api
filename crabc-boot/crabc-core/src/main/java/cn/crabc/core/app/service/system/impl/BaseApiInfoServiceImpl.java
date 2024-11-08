@@ -286,6 +286,21 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         return baseAppApiMapper.insert(list);
     }
 
+    @Override
+    public Integer destroyApiInfo(Long apiId) {
+        String userId = UserThreadLocal.getUserId();
+
+        BaseApiInfo baseApiInfo = new BaseApiInfo();
+        baseApiInfo.setUpdateTime(new Date());
+        baseApiInfo.setUpdateBy(userId);
+        baseApiInfo.setApiStatus(ApiStateEnum.DESTROY.getName());
+        baseApiInfo.setApiId(apiId);
+        apiInfoMapper.updateApiState(baseApiInfo);
+        // 更新缓存
+        this.updateCache(apiId);
+        return 1;
+    }
+
     /**
      * api信息历史发布版本存档
      *

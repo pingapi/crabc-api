@@ -108,10 +108,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="username != null and username != ''">username = #{username},</if>
             <if test="password != null and password != ''">password = #{password},</if>
             <if test="classify != null and classify != ''">classify = #{classify},</if>
-            <if test="remarks != null and remarks != ''">remarks = #{remarks},</if>
             <if test="secretKey != null and secretKey != ''">secret_key = #{secretKey},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            update_time =#{updateTime}
+            update_time =#{updateTime},remarks = #{remarks}
         </set>
         WHERE datasource_id = #{datasourceId}
     </update>

@@ -1,5 +1,8 @@
 package cn.crabc.core.app.entity.vo;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +13,10 @@ import java.util.Set;
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class PreviewVO implements Serializable {
     private static final long serialVersionUID = 1L;
-
     /**
      * 标题字段名
      */
@@ -23,19 +27,4 @@ public class PreviewVO implements Serializable {
      */
     List<Map<String, Object>> data;
 
-    public Set<String> getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(Set<String> metadata) {
-        this.metadata = metadata;
-    }
-
-    public List<Map<String, Object>> getData() {
-        return data;
-    }
-
-    public void setData(List<Map<String, Object>> data) {
-        this.data = data;
-    }
 }

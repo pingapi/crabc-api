@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <set>
             <if test="groupName != null and groupName != ''">group_name = #{groupName},</if>
             <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
-            <if test="groupDesc != null and groupDesc != ''">group_desc = #{groupDesc},</if>
+            group_desc = #{groupDesc},
             update_time =#{updateTime}
         </set>
         WHERE group_id = #{groupId}

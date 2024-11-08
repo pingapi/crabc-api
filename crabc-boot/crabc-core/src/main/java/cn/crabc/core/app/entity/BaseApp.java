@@ -1,11 +1,16 @@
 package cn.crabc.core.app.entity;
 
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 应用秘密
  *
  * @author yuqf
  */
+@Setter
+@Getter
 public class BaseApp extends BaseEntity {
 
     /**
@@ -48,84 +53,4 @@ public class BaseApp extends BaseEntity {
      * 关联的apiId
      */
     private Long apiId;
-
-    public Long getAppId() {
-        return appId;
-    }
-
-    public void setAppId(Long appId) {
-        this.appId = appId;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public String getAppDesc() {
-        return appDesc;
-    }
-
-    public void setAppDesc(String appDesc) {
-        this.appDesc = appDesc;
-    }
-
-    public String getAppCode() {
-        return appCode;
-    }
-
-    public void setAppCode(String appCode) {
-        this.appCode = appCode;
-    }
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
-    }
-
-    public String getAppSecret() {
-        return appSecret;
-    }
-
-    public void setAppSecret(String appSecret) {
-        this.appSecret = appSecret;
-    }
-
-    public String getStrategyType() {
-        return strategyType;
-    }
-
-    public void setStrategyType(String strategyType) {
-        this.strategyType = strategyType;
-    }
-
-    public String getIps() {
-        return ips;
-    }
-
-    public void setIps(String ips) {
-        this.ips = ips;
-    }
-
-    public Integer getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(Integer enabled) {
-        this.enabled = enabled;
-    }
-
-    public Long getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(Long apiId) {
-        this.apiId = apiId;
-    }
 }
