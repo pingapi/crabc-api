@@ -74,6 +74,13 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
+## Windows桌面运行
+先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
+```
+java -jar crabc-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root 
+```
+
+
 ## 效果截图
 ### 接口开发
 ![img.png](doc/sql.png)
@@ -93,7 +100,5 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ## 交流群
 **进群前请先点 Star** 
 
-QQ群：748993036 
-
-加微信进群
+加微信进群 (请备注crabc)
 ![img.png](doc/img.png)
