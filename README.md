@@ -58,7 +58,7 @@ gitee: https://gitee.com/linebyte/crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>3.2.1</version>
+    <version>3.2.2</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
@@ -76,31 +76,38 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
+## Windows桌面运行
+先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
+```
+java -jar crabc-admin.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root 
+```
+
 ## 企业版和开源版对比
 | 功能     |  社区版  |  企业版  |
-|--------|--------------------------------| --------------------------|
-| 架构设计   | 单体                            | 微服务                    |
-| 接口创建模式 | SQL脚本                         | SQL脚本、图表、代理转发     |
-| 动态标签   | 支持                            | 支持                      |
-| 动态路由   | 不支持                           | 支持                      |
+|--------|------------------------------| --------------------------|
+| 架构设计   | 单体                           | 微服务                    |
+| 接口创建模式 | SQL脚本                        | SQL脚本、图表、代理转发     |
+| 动态标签   | 支持                           | 支持                      |
+| 动态路由   | 不支持                          | 支持                      |
 | 数据库    | SQL：mysql/oracle/postgresql/sqlserver <br>TiDB/OpenGauss/Doris |SQL：mysql/oracle/postgresql/sqlserver/tidb<br>/opengauss/doris/oceanbase/dm/gbase <br> NoSQL：es/mongodb <br> TSDB: TDengine      |
 | 认证方式   | 无/Code认证/签名认证              | 无/Code认证/签名认证         |
-| SQL类型  | 查询SQL                          | 查询/插入/更新/删除等SQL     |
-| 结果类型   | json                            | json                 |
-| 接口日志   | 支持                             | 支持                       |
-| 数据转换   | 不支持                            | 支持  
-| 接口市场   | 不支持                            | 支持                       |
-| 申请审批   | 不支持                            | 支持                       |
-| 接口授权   | 不支持                            | 支持                       |
-| 系统权限   | 不支持                            | 支持                       |
-| 用户管理   | 不支持                           | 支持                         |
-| 数据脱敏   | 不支持                           | 支持                         |
-| 版本管理   | 不支持                           | 支持      
-| 接口缓存   | 不支持                           | 支持                         |
-| 限流熔断   | 仅限流                             | 限流和熔断                     |
-| IP黑白名单 | 不支持                           | 支持                         |
-| 监控报表   | 支持                             | 支持                         |
-| 集群模式   | 不支持                           | 支持                         |
+| SQL类型  | 查询SQL                        | 查询/插入/更新/删除等SQL     |
+| 结果类型   | json                         | json                 |
+| 接口日志   | 支持                           | 支持                       |
+| 数据转换   | 不支持                          | 支持                       |
+| 嵌套结构   | 不支持                          | 支持                       |
+| 接口市场   | 不支持                          | 支持                       |
+| 申请审批   | 不支持                          | 支持                       |
+| 接口授权   | 不支持                          | 支持                       |
+| 系统权限   | 不支持                          | 支持                       |
+| 用户管理   | 不支持                          | 支持                         |
+| 数据脱敏   | 不支持                          | 支持                         |
+| 版本管理   | 不支持                          | 支持      
+| 接口缓存   | 不支持                          | 支持                         |
+| 限流熔断   | 不支持                           | 限流和熔断                     |
+| IP黑白名单 | 不支持                          | 支持                         |
+| 监控报表   | 支持                           | 支持                         |
+| 集群模式   | 不支持                          | 支持                         |
 ## 效果截图
 ### 接口开发
 ![img.png](doc/sql.png)
@@ -132,5 +139,5 @@ docker run -p 9377:9377 --env db_url=jdbc连接(如：jdbc:mysql://localhost:330
 ## 交流群
 **进群前请先点 Star**
 
-加微信进群 (备注crabc)
+加微信进群 (请备注crabc)
 ![img.png](doc/img.png)
