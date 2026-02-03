@@ -1,10 +1,10 @@
 package cn.crabc.core.app.util;
+import org.apache.commons.codec.binary.Hex;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Security;
-import java.util.HexFormat;
 
 /**
  *  国密SM3加密工具类
@@ -36,7 +36,7 @@ public class SM3Util {
         digest.update(bytes, 0, bytes.length);
         byte[] result = new byte[digest.getDigestSize()];
         digest.doFinal(result, 0);
-        return HexFormat.of().formatHex(result);
+        return new String(Hex.encodeHex(result));
     }
 
     /**

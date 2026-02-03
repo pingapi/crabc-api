@@ -12,21 +12,19 @@
     <description>接口开发平台</description>
     <modules>
         <module>crabc-api</module>
-<!--        <module>crabc-spring-boot-starter</module>-->
     </modules>
 
     <properties>
         <!-- crabc 版本-->
-        <revision>4.0.0</revision>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <revision>2.9.0</revision>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.5.9</spring-boot.version>
-        <spring-boot.mybatis.version>3.0.5</spring-boot.mybatis.version>
-        <mybatis-plus.version>3.5.15</mybatis-plus.version>
-        <pagehelper.boot.version>2.1.1</pagehelper.boot.version>
-        <spring-boot.druid.version>1.2.27</spring-boot.druid.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot.mybatis.version>2.3.2</spring-boot.mybatis.version>
+        <pagehelper.boot.version>2.1.0</pagehelper.boot.version>
+        <spring-boot.druid.version>1.2.25</spring-boot.druid.version>
         <fastjson.version>2.0.49</fastjson.version>
         <jwt.version>0.12.5</jwt.version>
         <commons-pool2.version>2.12.0</commons-pool2.version>

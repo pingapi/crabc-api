@@ -3,7 +3,7 @@ server:
   port: 9377
 spring:
   application:
-    name: crabc-admin
+    name: crabc-api
   main:
     banner-mode: off
   jackson:

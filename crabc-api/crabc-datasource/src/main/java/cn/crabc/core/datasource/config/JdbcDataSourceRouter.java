@@ -73,9 +73,11 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
             return;
         }
         try {
-            if (dataSource instanceof DruidDataSource druidDataSource) {
+            if (dataSource instanceof DruidDataSource) {
+                DruidDataSource druidDataSource = (DruidDataSource) dataSource;
                 druidDataSource.close();
-            } else if (dataSource instanceof HikariDataSource hikariDataSource) {
+            } else if (dataSource instanceof HikariDataSource) {
+                HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
                 hikariDataSource.close();
             }
         } finally {

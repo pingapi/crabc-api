@@ -11,8 +11,8 @@ import cn.crabc.core.app.util.SM3Util;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,13 +72,16 @@ public class AuthInterceptor implements HandlerInterceptor {
         try {
             // 应用列表
             List<BaseApp> appList = apiInfo.getAppList();
-
-            return switch (apiInfo.getAuthType().toUpperCase()) {
-                case "APP_CODE" -> checkAppCode(request,response, appList);
-                case "APP_KEY" -> checkAppKey(request,response, appList);
-                case "APP_SECRET" -> checkSM3(request,response, appList);
-                default -> true;
-            };
+            switch (apiInfo.getAuthType().toUpperCase()) {
+                case "APP_CODE":
+                    return checkAppCode(request, response, appList);
+                case "APP_KEY":
+                    return checkAppKey(request, response, appList);
+                case "APP_SECRET":
+                    return checkSM3(request, response, appList);
+                default:
+                    return true;
+            }
         }catch (Exception e) {
             setErrorResponse(request,response,ErrorStatusEnum.API_UN_AUTH.getCode(),ErrorStatusEnum.API_UN_AUTH.getMassage());
             return false;

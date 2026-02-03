@@ -3,7 +3,7 @@ package cn.crabc.core.app.exception;
 import cn.crabc.core.app.util.Result;
 import cn.crabc.core.datasource.exception.CustomException;
 import cn.crabc.core.spi.PluginException;
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageNotReadableException;
