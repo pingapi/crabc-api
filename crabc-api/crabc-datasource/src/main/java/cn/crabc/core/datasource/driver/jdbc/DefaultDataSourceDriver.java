@@ -62,23 +62,31 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
 
         HikariDataSource dataSource = createHikariDataSource(ds, false);
         JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
+        boolean initSuccess = false;
         // 连接池预热
         try (Connection conn = dataSource.getConnection()) {
             if (conn.isValid(1)) {
+                initSuccess = true;
                 log.debug("数据源初始化成功.");
             } else {
                 log.error("数据源初始化失败.");
             }
         } catch (SQLException e) {
             log.error("Failed to warm up DataSource. Shutting down.", e);
-            dataSource.close(); // 初始化失败，及时释放资源
         }
-        if (oldDataSource != null){
-            if (oldDataSource instanceof DruidDataSource) {
-                ((DruidDataSource) oldDataSource).close();
-            } else if (oldDataSource instanceof HikariDataSource) {
-                ((HikariDataSource) oldDataSource).close();
+        // 仅在初始化成功时才添加到路由池
+        if (initSuccess) {
+            JdbcDataSourceRouter.setDataSource(datasourceId, dataSource);
+            // 关闭旧数据源
+            if (oldDataSource != null){
+                if (oldDataSource instanceof DruidDataSource) {
+                    ((DruidDataSource) oldDataSource).close();
+                } else if (oldDataSource instanceof HikariDataSource) {
+                    ((HikariDataSource) oldDataSource).close();
+                }
             }
+        } else {
+            dataSource.close();
         }
     }
 

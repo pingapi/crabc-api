@@ -159,6 +159,13 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
             }
             return connection;
         } catch (Exception e) {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException closeException) {
+                    log.error("关闭连接时发生异常", closeException);
+                }
+            }
             log.error("数据源连接获取失败, dataSourceKey: {}", dataSourceKey, e);
             throw e;
         }
