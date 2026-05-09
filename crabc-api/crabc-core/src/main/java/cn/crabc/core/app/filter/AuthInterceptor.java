@@ -49,17 +49,20 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     @Qualifier("apiCache")
     private Cache<String, ApiInfoDTO> apiCache;
-
-    private ApiInfoDTO getApiData(String key) {
-        String[] split = key.split("_");
-        return iBaseApiInfoService.getApiInfoCache(split[0], split[1]);
-    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getRequestURI();
         String method = request.getMethod();
+        String apiPath = IBaseApiInfoService.normalizeApiPath(path.replace(API_PRE, ""));
+        String cacheKey = IBaseApiInfoService.buildCacheKey(method, apiPath);
 
-        ApiInfoDTO apiInfo = apiCache.get(method + "_" + path.replace(API_PRE, ""), this::getApiData);
+        ApiInfoDTO apiInfo = apiCache.getIfPresent(cacheKey);
+        if (apiInfo == null) {
+            apiInfo = iBaseApiInfoService.getApiInfoCache(method, apiPath);
+            if (apiInfo != null) {
+                apiCache.put(cacheKey, apiInfo);
+            }
+        }
         if (apiInfo == null) {
             setErrorResponse(request, response,ErrorStatusEnum.API_INVALID.getCode(),ErrorStatusEnum.API_INVALID.getMassage());
             return false;

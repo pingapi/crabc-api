@@ -25,13 +25,13 @@ public class CacheConfig {
     }
 
     /**
-     * 缓存API对象 10小时
+     * 缓存API对象 30分钟
      * @return
      */
     @Bean("apiCache")
     public Cache<String, ApiInfoDTO> apiCaffeine() {
         return Caffeine.newBuilder()
-                .expireAfterAccess(1, TimeUnit.MINUTES)
+                .expireAfterWrite(30, TimeUnit.MINUTES)
                 .build();
     }
 

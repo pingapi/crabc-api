@@ -68,11 +68,25 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         return apiInfo;
     }
 
-    public void updateCache(Long apiId) {
-        List<ApiInfoDTO> apis = this.getApiCache(apiId);
-        for (ApiInfoDTO api : apis) {
-            apiInfoCache.put(api.getApiMethod() + "_" + api.getApiPath(), api);
+    private void invalidateApiCache(String method, String apiPath) {
+        if (method == null || apiPath == null || apiPath.isBlank()) {
+            return;
         }
+        apiInfoCache.invalidate(IBaseApiInfoService.buildCacheKey(method, apiPath));
+    }
+
+    private void invalidateApiCache(BaseApiInfo apiInfo) {
+        if (apiInfo == null) {
+            return;
+        }
+        invalidateApiCache(apiInfo.getApiMethod(), apiInfo.getApiPath());
+    }
+
+    private BaseApiInfo getApiForCacheInvalidation(Long apiId) {
+        if (apiId == null) {
+            return null;
+        }
+        return apiInfoMapper.selectApiById(apiId);
     }
 
     @Override
@@ -185,6 +199,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (count == 0) {
             throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
+        BaseApiInfo previousApi = getApiForCacheInvalidation(apiId);
         BaseApiInfo api = params.getBaseInfo();
         BaseApiSql sql = params.getSqlInfo();
         Date updateTime = new Date();
@@ -205,6 +220,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         apiParamMapper.delete(apiId);
         // 参数
         this.insertApiParams(params.getRequestParam(),params.getResponseParam(), api.getApiId());
+        invalidateApiCache(previousApi);
+        invalidateApiCache(api);
         return apiId;
     }
 
@@ -214,6 +231,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (count == 0) {
             throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
+        BaseApiInfo previousApi = getApiForCacheInvalidation(apiId);
         BaseApiInfo baseApiInfo = new BaseApiInfo();
         baseApiInfo.setApiId(apiId);
         baseApiInfo.setUpdateTime(new Date());
@@ -224,16 +242,17 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (enabled != null) {
             baseApiInfo.setEnabled(enabled);
         }
-        // 更新缓存
         apiInfoMapper.updateApiState(baseApiInfo);
-        this.updateCache(apiId);
+        invalidateApiCache(previousApi);
         return 1;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Integer deleteApi(Long apiId, String userId) {
+        BaseApiInfo previousApi = getApiForCacheInvalidation(apiId);
         Integer result = apiInfoMapper.deleteApiInfo(apiId, userId);
+        invalidateApiCache(previousApi);
         return result;
     }
 
@@ -251,9 +270,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         oldApiInfo.setUpdateBy(UserThreadLocal.getUserId());
         oldApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
         apiInfoMapper.updateApiInfo(oldApiInfo);
-        // 更新缓存
-        Thread t = new Thread(() -> updateCache(oldApiInfo.getApiId()));
-        t.start();
+        invalidateApiCache(oldApiInfo);
         return apiId;
     }
 
@@ -298,6 +315,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Override
     public Integer destroyApiInfo(Long apiId) {
         String userId = UserThreadLocal.getUserId();
+        BaseApiInfo previousApi = getApiForCacheInvalidation(apiId);
 
         BaseApiInfo baseApiInfo = new BaseApiInfo();
         baseApiInfo.setUpdateTime(new Date());
@@ -305,8 +323,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         baseApiInfo.setApiStatus(ApiStateEnum.DESTROY.getName());
         baseApiInfo.setApiId(apiId);
         apiInfoMapper.updateApiState(baseApiInfo);
-        // 更新缓存
-        this.updateCache(apiId);
+        invalidateApiCache(previousApi);
         return 1;
     }
 

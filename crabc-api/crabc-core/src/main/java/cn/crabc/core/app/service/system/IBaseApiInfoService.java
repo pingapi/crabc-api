@@ -10,6 +10,7 @@ import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.datasource.util.PageInfo;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * API 基本信息 服务接口
@@ -17,6 +18,18 @@ import java.util.List;
  * @author yuqf
  */
 public interface IBaseApiInfoService {
+
+    static String normalizeApiPath(String apiPath) {
+        if (apiPath == null || apiPath.isBlank()) {
+            return "";
+        }
+        return apiPath.startsWith("/") ? apiPath.substring(1) : apiPath;
+    }
+
+    static String buildCacheKey(String method, String apiPath) {
+        String httpMethod = method == null ? "" : method.toUpperCase(Locale.ROOT);
+        return httpMethod + "::" + normalizeApiPath(apiPath);
+    }
 
     /**
      * 根据接口url获取API关联数据
