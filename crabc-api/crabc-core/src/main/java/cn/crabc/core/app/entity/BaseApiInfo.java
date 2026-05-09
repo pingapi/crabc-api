@@ -120,4 +120,9 @@ public class BaseApiInfo extends BaseEntity {
     /** 分组名称 */
     private String groupName;
 
+    /**
+     * 已发布接口的暂存内容
+     */
+    private String draftContent;
+
 }

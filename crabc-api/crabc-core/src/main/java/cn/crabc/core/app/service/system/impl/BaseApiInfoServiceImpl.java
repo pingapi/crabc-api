@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +51,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Autowired
     @Qualifier("apiCache")
     Cache<String, ApiInfoDTO> apiInfoCache;
+    @Autowired
+    private JsonMapper jsonMapper;
 
 
     @Override
@@ -150,6 +153,16 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     public ApiInfoVO getApiInfo(Long apiId) {
         ApiInfoVO result = new ApiInfoVO();
         BaseApiInfo baseApiInfo = apiInfoMapper.selectApiById(apiId);
+        if (baseApiInfo == null) {
+            return result;
+        }
+        if (ApiStateEnum.RELEASE.getName().equals(baseApiInfo.getApiStatus()) && hasDraft(baseApiInfo)) {
+            result = buildApiInfoVO(readDraftContent(baseApiInfo.getDraftContent()), true);
+            result.getBaseInfo().setApiId(apiId);
+            result.getBaseInfo().setApiStatus(ApiStateEnum.RELEASE.getName());
+            result.getBaseInfo().setEnabled(baseApiInfo.getEnabled());
+            return result;
+        }
         BaseApiSql baseApiSql = new BaseApiSql();
         BeanUtils.copyProperties(baseApiInfo, baseApiSql);
         result.setSqlInfo(baseApiSql);
@@ -200,14 +213,14 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
         BaseApiInfo previousApi = getApiForCacheInvalidation(apiId);
+        if (ApiStateEnum.RELEASE.getName().equals(previousApi.getApiStatus())) {
+            saveDraftContent(apiId, params, previousApi);
+            return apiId;
+        }
         BaseApiInfo api = params.getBaseInfo();
         BaseApiSql sql = params.getSqlInfo();
         Date updateTime = new Date();
-        if (ApiStateEnum.RELEASE.getName().equals(params.getBaseInfo().getApiStatus())){
-            api.setApiStatus(ApiStateEnum.RELEASE.getName());
-        }else{
-            api.setApiStatus(ApiStateEnum.EDIT.getName());
-        }
+        api.setApiStatus(ApiStateEnum.EDIT.getName());
         api.setEnabled(0);
         api.setDatasourceId(sql.getDatasourceId());
         api.setSchemaName(sql.getSchemaName());
@@ -257,20 +270,42 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long apiPublish(ApiInfoParam apiInfoParam) {
         Long apiId = apiInfoParam.getBaseInfo().getApiId();
         BaseApiInfo oldApiInfo = apiInfoMapper.selectApiById(apiId);
         if (oldApiInfo == null) {
             throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
         }
+        BaseApiInfo previousApi = copyApiInfo(oldApiInfo);
+        boolean publishDraft = ApiStateEnum.RELEASE.getName().equals(oldApiInfo.getApiStatus()) && hasDraft(oldApiInfo);
+        ApiInfoParam publishParam = publishDraft ? readDraftContent(oldApiInfo.getDraftContent()) : apiInfoParam;
         Date updateTime = new Date();
-        oldApiInfo.setEnabled(1);
-        oldApiInfo.setParentId(0L);
-        oldApiInfo.setReleaseTime(updateTime);
-        oldApiInfo.setUpdateBy(UserThreadLocal.getUserId());
-        oldApiInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
-        apiInfoMapper.updateApiInfo(oldApiInfo);
-        invalidateApiCache(oldApiInfo);
+        BaseApiInfo api = publishDraft ? publishParam.getBaseInfo() : oldApiInfo;
+        BaseApiSql sql = publishDraft ? publishParam.getSqlInfo() : null;
+        api.setApiId(apiId);
+        api.setEnabled(1);
+        api.setParentId(0L);
+        api.setReleaseTime(updateTime);
+        api.setUpdateTime(updateTime);
+        api.setUpdateBy(UserThreadLocal.getUserId());
+        api.setApiStatus(ApiStateEnum.RELEASE.getName());
+        if (sql != null) {
+            api.setDatasourceId(sql.getDatasourceId());
+            api.setSchemaName(sql.getSchemaName());
+            api.setTableName(sql.getTableName());
+            api.setDatasourceType(sql.getDatasourceType());
+            api.setSqlScript(sql.getSqlScript());
+            api.setPageSetup(sql.getPageSetup());
+        }
+        apiInfoMapper.updateApiInfo(api);
+        if (publishDraft) {
+            apiParamMapper.delete(apiId);
+            this.insertApiParams(publishParam.getRequestParam(), publishParam.getResponseParam(), apiId);
+            apiInfoMapper.updateDraftContent(apiId, null, UserThreadLocal.getUserId());
+        }
+        invalidateApiCache(previousApi);
+        invalidateApiCache(api);
         return apiId;
     }
 
@@ -359,5 +394,49 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (params.size() > 0) {
             apiParamMapper.insertBatch(params,apiId);
         }
+    }
+
+    private boolean hasDraft(BaseApiInfo apiInfo) {
+        return apiInfo.getDraftContent() != null && !apiInfo.getDraftContent().isBlank();
+    }
+
+    private void saveDraftContent(Long apiId, ApiInfoParam params, BaseApiInfo publishedApi) {
+        BaseApiInfo draftBaseInfo = params.getBaseInfo();
+        draftBaseInfo.setApiId(apiId);
+        draftBaseInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
+        draftBaseInfo.setEnabled(publishedApi.getEnabled());
+        if (params.getSqlInfo() != null) {
+            params.getSqlInfo().setApiId(apiId);
+        }
+        try {
+            apiInfoMapper.updateDraftContent(apiId, jsonMapper.writeValueAsString(params), UserThreadLocal.getUserId());
+        } catch (Exception e) {
+            throw new CustomException(ErrorStatusEnum.SYSTEM_ERROR.getCode(), "暂存接口信息失败");
+        }
+    }
+
+    private ApiInfoParam readDraftContent(String draftContent) {
+        try {
+            return jsonMapper.readValue(draftContent, ApiInfoParam.class);
+        } catch (Exception e) {
+            throw new CustomException(ErrorStatusEnum.SYSTEM_ERROR.getCode(), "读取暂存接口信息失败");
+        }
+    }
+
+    private ApiInfoVO buildApiInfoVO(ApiInfoParam params, boolean hasDraft) {
+        ApiInfoVO result = new ApiInfoVO();
+        result.setBaseInfo(params.getBaseInfo() == null ? new BaseApiInfo() : params.getBaseInfo());
+        result.setSqlInfo(params.getSqlInfo() == null ? new BaseApiSql() : params.getSqlInfo());
+        result.setRequestParam(params.getRequestParam() == null ? new ArrayList<>() : params.getRequestParam());
+        result.setResponseParam(params.getResponseParam() == null ? new ArrayList<>() : params.getResponseParam());
+        result.setQueryEngine(params.getQueryEngine() == null ? "jdbc" : params.getQueryEngine());
+        result.setHasDraft(hasDraft);
+        return result;
+    }
+
+    private BaseApiInfo copyApiInfo(BaseApiInfo apiInfo) {
+        BaseApiInfo copy = new BaseApiInfo();
+        BeanUtils.copyProperties(apiInfo, copy);
+        return copy;
     }
 }

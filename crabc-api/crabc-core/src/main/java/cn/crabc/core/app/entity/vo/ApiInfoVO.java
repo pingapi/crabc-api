@@ -39,4 +39,9 @@ public class ApiInfoVO {
      */
     private List<BaseApiParam> responseParam = new ArrayList<>();
 
+    /**
+     * 是否存在已发布接口暂存内容
+     */
+    private Boolean hasDraft = false;
+
 }

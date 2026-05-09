@@ -156,7 +156,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             sql_script,
             page_setup,
             sql_type,
-            result_type
+            result_type,
+            draft_content
         FROM
             base_api_info
         WHERE
@@ -285,6 +286,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             update_time = #{updateTime},
         </set>
         WHERE api_id =#{apiId}
+    </update>
+
+    <update id="updateDraftContent">
+        UPDATE base_api_info
+        SET
+            draft_content = #{draftContent,jdbcType=LONGVARCHAR},
+            update_by = #{updateBy},
+            update_time = NOW()
+        WHERE api_id = #{apiId}
     </update>
 
     <delete id="deleteApiInfo">

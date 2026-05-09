@@ -106,6 +106,16 @@ public interface BaseApiInfoMapper {
     Integer updateApiState(BaseApiInfo apiInfo);
 
     /**
+     * 更新API暂存内容
+     *
+     * @param apiId
+     * @param draftContent
+     * @param updateBy
+     * @return
+     */
+    Integer updateDraftContent(@Param("apiId") Long apiId, @Param("draftContent") String draftContent, @Param("updateBy") String updateBy);
+
+    /**
      * 删除API
      * @param apiId
      * @return
