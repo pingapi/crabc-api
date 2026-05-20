@@ -39,7 +39,7 @@ dev分支框架SpringBoot已升级至4.0，jdk需21及以上版本 \
 jdk8分支框架SpringBoot是2.x + jdk8
 
 ## 企业版
-https://pingapi.cn
+https://pingapi.cn/home
 
 ## 企业版架构图
 
@@ -52,7 +52,7 @@ https://pingapi.cn
 账号密码：admin/admin123
 
 ## 官网
-官网：https://www.crabc.cn/ \
+官网：https://pingapi.cn/home \
 使用指南：https://www.crabc.cn/introduction/ \
 github：https://github.com/pingapi/crabc-api
 
