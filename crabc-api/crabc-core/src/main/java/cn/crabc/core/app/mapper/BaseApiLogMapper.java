@@ -2,6 +2,9 @@ package cn.crabc.core.app.mapper;
 
 import cn.crabc.core.app.entity.BaseApiLog;
 import cn.crabc.core.app.entity.param.ApiLogParam;
+import cn.crabc.core.app.entity.vo.ApiLogDailyTrendVO;
+import cn.crabc.core.app.entity.vo.ApiLogGroupCountVO;
+import cn.crabc.core.app.entity.vo.ApiLogSummaryVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -37,4 +40,44 @@ public interface BaseApiLogMapper {
      * @return
      */
     BaseApiLog selectOne(Long logId);
+
+    /**
+     * 查询日志摘要统计
+     *
+     * @param param 统计筛选条件
+     * @return 总量、成功量、失败量和耗时摘要
+     */
+    ApiLogSummaryVO selectLogSummary(ApiLogParam param);
+
+    /**
+     * 查询每日调用趋势
+     *
+     * @param param 统计筛选条件
+     * @return 按 request_time 日期聚合的趋势数据
+     */
+    List<ApiLogDailyTrendVO> selectDailyTrend(ApiLogParam param);
+
+    /**
+     * 查询请求状态分布
+     *
+     * @param param 统计筛选条件
+     * @return success/fail 分组计数
+     */
+    List<ApiLogGroupCountVO> selectStatusStats(ApiLogParam param);
+
+    /**
+     * 查询接口调用量Top10列表
+     *
+     * @param param 统计筛选条件
+     * @return 按接口聚合的调用量Top10
+     */
+    List<ApiLogGroupCountVO> selectTopApis(ApiLogParam param);
+
+    /**
+     * 查询成功接口耗时Top10列表
+     *
+     * @param param 统计筛选条件，服务层会固定 request_status=success
+     * @return 按接口平均耗时聚合的成功调用Top10
+     */
+    List<ApiLogGroupCountVO> selectTopCostApis(ApiLogParam param);
 }

@@ -32,4 +32,70 @@ public class ApiLogController {
         PageInfo page = iBaseApiLogService.page(apiLogParam);
         return Result.success(page);
     }
+
+    /**
+     * 日志摘要统计
+     *
+     * @param apiLogParam 统计筛选条件，未传时间时默认近七天
+     * @return 监控页顶部指标卡数据
+     */
+    @PostMapping("/summary")
+    public Result summary(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.summary(apiLogParam));
+    }
+
+    /**
+     * 日志每日调用趋势
+     *
+     * @param apiLogParam 统计筛选条件，未传时间时默认近七天
+     * @return 按天聚合的调用趋势
+     */
+    @PostMapping("/dailyTrend")
+    public Result dailyTrend(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.dailyTrend(apiLogParam));
+    }
+
+    /**
+     * 日志请求结果占比
+     *
+     * @param apiLogParam 统计筛选条件，未传时间时默认近七天
+     * @return success/fail等状态分组计数
+     */
+    @PostMapping("/statusPie")
+    public Result statusPie(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.statusPie(apiLogParam));
+    }
+
+    /**
+     * 接口调用量Top10
+     *
+     * @param apiLogParam 统计筛选条件，未传时间时默认近七天
+     * @return 按接口聚合的调用量Top10
+     */
+    @PostMapping("/topApis")
+    public Result topApis(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.topApis(apiLogParam));
+    }
+
+    /**
+     * 接口耗时Top10
+     *
+     * @param apiLogParam 统计筛选条件，服务层固定只统计成功调用
+     * @return 按接口平均耗时聚合的成功调用Top10
+     */
+    @PostMapping("/topCostApis")
+    public Result topCostApis(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.topCostApis(apiLogParam));
+    }
+
+    /**
+     * 日志统计兼容接口
+     *
+     * @param apiLogParam 统计筛选条件，未传时间时默认近七天
+     * @return 监控页指标卡和图表数据
+     */
+    @PostMapping("/statistics")
+    public Result statistics(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.statistics(apiLogParam));
+    }
 }
