@@ -1,5 +1,5 @@
 FROM eclipse-temurin:21-jdk-alpine
-LABEL version="4.4.0"
+LABEL version="5.0.0"
 
 COPY crabc-admin.jar /app.jar
 ENV LANG="en_US.UTF-8"
