@@ -79,6 +79,11 @@ public class BaseConstant {
     public static final String BASE_API_EXEC_TYPE = "base_api_exec_type:";
 
     /**
+     * 是否开启事务，接口在线调用和测试执行通过该参数控制多脚本提交/回滚边界
+     */
+    public static final String TRANSACTION_ENABLED = "transactionEnabled";
+
+    /**
      * 需要指定catalog的数据源
      */
     public static final List<String> CATALOG_DATA_SOURCE = Arrays.asList("sybase","mysql","mariadb","doris","starrocks","tidb","tdsql");

@@ -61,6 +61,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (apiInfo == null) {
             return null;
         }
+        fillTransactionDefault(apiInfo);
         // 应用
         List<BaseApp> appApis = baseAppMapper.selectApiApp(apiInfo.getApiId());
         // 请求参数
@@ -105,6 +106,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         List<BaseApiParam> baseApiParams = apiParamMapper.selectReqParams(apiId);
         Map<Long, List<BaseApiParam>> paramMap = baseApiParams.stream().collect(Collectors.groupingBy(BaseApiParam::getApiId));
         for (ApiInfoDTO api : apiInfos) {
+            fillTransactionDefault(api);
             Long apiIdKey = api.getApiId();
             if (appMap.containsKey(apiIdKey)) {
                 api.setAppList(appMap.get(apiIdKey));
@@ -146,7 +148,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     @Override
     public BaseApiInfoVO getApiDetail(Long apiId) {
-        return apiInfoMapper.selectBaseApi(apiId);
+        BaseApiInfoVO apiInfo = apiInfoMapper.selectBaseApi(apiId);
+        fillTransactionDefault(apiInfo);
+        return apiInfo;
     }
 
     @Override
@@ -156,6 +160,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         if (baseApiInfo == null) {
             return result;
         }
+        fillTransactionDefault(baseApiInfo);
         if (ApiStateEnum.RELEASE.getName().equals(baseApiInfo.getApiStatus()) && hasDraft(baseApiInfo)) {
             result = buildApiInfoVO(readDraftContent(baseApiInfo.getDraftContent()), true);
             result.getBaseInfo().setApiId(apiId);
@@ -192,6 +197,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         api.setTableName(sql.getTableName());
         api.setDatasourceType(sql.getDatasourceType());
         api.setSqlScript(sql.getSqlScript());
+        fillTransactionDefault(api);
         api.setCreateTime(date);
         api.setUpdateTime(date);
         api.setCreateBy(UserThreadLocal.getUserId());
@@ -227,6 +233,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         api.setTableName(sql.getTableName());
         api.setDatasourceType(sql.getDatasourceType());
         api.setSqlScript(sql.getSqlScript());
+        fillTransactionDefault(api);
         api.setUpdateTime(updateTime);
         api.setUpdateBy(UserThreadLocal.getUserId());
         apiInfoMapper.updateApiInfo(api);
@@ -298,6 +305,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             api.setSqlScript(sql.getSqlScript());
             api.setPageSetup(sql.getPageSetup());
         }
+        fillTransactionDefault(api);
         apiInfoMapper.updateApiInfo(api);
         if (publishDraft) {
             apiParamMapper.delete(apiId);
@@ -405,6 +413,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
         draftBaseInfo.setApiId(apiId);
         draftBaseInfo.setApiStatus(ApiStateEnum.RELEASE.getName());
         draftBaseInfo.setEnabled(publishedApi.getEnabled());
+        fillTransactionDefault(draftBaseInfo);
         if (params.getSqlInfo() != null) {
             params.getSqlInfo().setApiId(apiId);
         }
@@ -425,13 +434,37 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     private ApiInfoVO buildApiInfoVO(ApiInfoParam params, boolean hasDraft) {
         ApiInfoVO result = new ApiInfoVO();
-        result.setBaseInfo(params.getBaseInfo() == null ? new BaseApiInfo() : params.getBaseInfo());
+        BaseApiInfo baseInfo = params.getBaseInfo() == null ? new BaseApiInfo() : params.getBaseInfo();
+        fillTransactionDefault(baseInfo);
+        result.setBaseInfo(baseInfo);
         result.setSqlInfo(params.getSqlInfo() == null ? new BaseApiSql() : params.getSqlInfo());
         result.setRequestParam(params.getRequestParam() == null ? new ArrayList<>() : params.getRequestParam());
         result.setResponseParam(params.getResponseParam() == null ? new ArrayList<>() : params.getResponseParam());
         result.setQueryEngine(params.getQueryEngine() == null ? "jdbc" : params.getQueryEngine());
         result.setHasDraft(hasDraft);
         return result;
+    }
+
+    /**
+     * 事务开关对旧数据和旧草稿保持向后兼容：缺省按关闭处理，避免空值被执行层误判。
+     *
+     * @param apiInfo API基本信息
+     */
+    private void fillTransactionDefault(BaseApiInfo apiInfo) {
+        if (apiInfo != null && apiInfo.getTransactionEnabled() == null) {
+            apiInfo.setTransactionEnabled(0);
+        }
+    }
+
+    /**
+     * 详情VO直接返回给前端，旧接口没有事务字段时统一回填关闭状态。
+     *
+     * @param apiInfo API详情VO
+     */
+    private void fillTransactionDefault(BaseApiInfoVO apiInfo) {
+        if (apiInfo != null && apiInfo.getTransactionEnabled() == null) {
+            apiInfo.setTransactionEnabled(0);
+        }
     }
 
     private BaseApiInfo copyApiInfo(BaseApiInfo apiInfo) {

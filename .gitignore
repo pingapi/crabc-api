@@ -69,4 +69,5 @@ db/
 *.log
 AGENTS.md
 tmp/
-/crabc-web/
+.pnpm-store/
+.omx/

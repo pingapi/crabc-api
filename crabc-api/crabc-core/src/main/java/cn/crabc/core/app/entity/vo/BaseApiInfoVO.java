@@ -70,6 +70,11 @@ public class BaseApiInfoVO extends BaseEntity {
      */
     private Integer pageSetup;
 
+    /**
+     * 是否开启事务，1 开启、0 关闭；仅接口调用和测试多脚本DML时生效
+     */
+    private Integer transactionEnabled;
+
     private String sqlScript;
     /**
      * 发布时间

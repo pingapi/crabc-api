@@ -89,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             remarks,
             version,
             page_setup,
+            transaction_enabled,
             datasource_id,
             datasource_type,
             schema_name,
@@ -119,6 +120,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             remarks,
             version,
             page_setup,
+            transaction_enabled,
             datasource_id,
             datasource_type,
             schema_name,
@@ -155,6 +157,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             table_name,
             sql_script,
             page_setup,
+            transaction_enabled,
             sql_type,
             result_type,
             draft_content
@@ -177,6 +180,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             b.remarks,
             u.nick_name create_by,
             b.page_setup,
+            b.transaction_enabled,
             b.create_time,
             b.sql_script,
             b.update_time,
@@ -216,6 +220,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="schemaName != null and schemaName != ''">schema_name,</if>
         <if test="tableName != null and tableName != ''">table_name,</if>
         <if test="pageSetup != null">page_setup,</if>
+        <if test="transactionEnabled != null">transaction_enabled,</if>
         enabled,
         create_by,
         create_time,
@@ -240,6 +245,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="schemaName != null and schemaName != ''">#{schemaName},</if>
         <if test="tableName != null and tableName != ''">#{tableName},</if>
         <if test="pageSetup != null">#{pageSetup},</if>
+        <if test="transactionEnabled != null">#{transactionEnabled},</if>
         #{enabled},
         #{createBy},
         #{createTime},
@@ -270,6 +276,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="schemaName != null and schemaName != ''">schema_name =#{schemaName},</if>
             <if test="tableName != null and tableName != ''">table_name =#{tableName},</if>
             <if test="pageSetup != null">page_setup =#{pageSetup},</if>
+            <if test="transactionEnabled != null">transaction_enabled =#{transactionEnabled},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
             update_time = #{updateTime}
         </set>

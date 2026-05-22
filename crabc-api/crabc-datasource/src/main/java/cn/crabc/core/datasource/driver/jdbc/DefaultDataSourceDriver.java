@@ -174,6 +174,13 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
                 break;
             case "clickhouse":
                 dataSource.setDriverClassName(JdbcConstants.CLICKHOUSE_DRIVER_NEW);
+                break;
+            case "duckdb":
+                dataSource.setDriverClassName("org.duckdb.DuckDBDriver");
+                break;
+            case "dolphindb":
+                dataSource.setDriverClassName("com.dolphindb.jdbc.Driver");
+                break;
         }
     }
 }

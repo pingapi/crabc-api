@@ -91,5 +91,23 @@
             <artifactId>clickhouse-jdbc</artifactId>
             <version>0.9.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.duckdb</groupId>
+            <artifactId>duckdb_jdbc</artifactId>
+            <version>1.5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dolphindb</groupId>
+            <artifactId>jdbc</artifactId>
+            <version>3.00.5.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/com.dolphindb/dolphindb-javaapi -->
+        <dependency>
+            <groupId>com.dolphindb</groupId>
+            <artifactId>dolphindb-javaapi</artifactId>
+            <version>3.00.5.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -5,6 +5,7 @@ import cn.crabc.core.app.entity.vo.PreviewVO;
 import cn.crabc.core.app.enums.ResultTypeEnum;
 import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.util.Result;
+import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -120,7 +121,16 @@ public class ApiTestController {
                 paramsMap.put("pageSetup", params.getPageSetup());
             }
         }
+        // 事务开关只由测试弹窗显式传入，开发页运行/预览不进入多脚本执行入口。
+        paramsMap.put(BaseConstant.TRANSACTION_ENABLED, normalizeTransactionEnabled(params.getTransactionEnabled()));
         return paramsMap;
+    }
+
+    /**
+     * 测试参数兼容旧前端请求，未传事务开关时按关闭处理。
+     */
+    private Integer normalizeTransactionEnabled(Integer transactionEnabled) {
+        return transactionEnabled == null ? 0 : transactionEnabled;
     }
 
     /**

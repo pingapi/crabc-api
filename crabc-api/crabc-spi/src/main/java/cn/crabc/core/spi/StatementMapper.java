@@ -91,4 +91,16 @@ public interface StatementMapper<T> extends Mapper<T> {
      * @return
      */
     int update(String dataSourceId, String schema, String sql, Object params);
+
+    /**
+     * 批量执行多条DML脚本，调用方负责保证脚本只包含insert/update/delete。
+     *
+     * @param dataSourceId 数据源ID
+     * @param schema schema或catalog
+     * @param sqlList 已拆分的DML脚本
+     * @param params SQL参数
+     * @param transactionEnabled 是否开启事务
+     * @return 总影响行数
+     */
+    int executeBatchDml(String dataSourceId, String schema, List<String> sqlList, Object params, boolean transactionEnabled);
 }

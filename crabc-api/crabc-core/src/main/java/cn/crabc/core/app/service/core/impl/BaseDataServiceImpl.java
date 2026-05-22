@@ -6,6 +6,7 @@ import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.util.SQLUtil;
 import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.driver.DataSourceManager;
+import cn.crabc.core.datasource.exception.CustomException;
 import cn.crabc.core.spi.StatementMapper;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,28 +61,52 @@ public class BaseDataServiceImpl implements IBaseDataService {
     @Override
     public Object execute(String datasourceId, String datasourceType, String schema, String sql, Map<String, Object> params) {
         StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
-        
+
+        if (params == null) {
+            params = new HashMap<>();
+        }
         if (datasourceType != null && !params.containsKey(BaseConstant.DATA_SOURCE_TYPE)) {
             params.put(BaseConstant.DATA_SOURCE_TYPE, datasourceType);
         }
 
-        String sqlType = SQLUtil.getOperateType(sql).toLowerCase();
+        List<String> statements = SQLUtil.splitSqlStatements(sql);
+        if (statements.size() > 1) {
+            if (!params.containsKey(BaseConstant.TRANSACTION_ENABLED)) {
+                throw new CustomException(40011, "当前执行入口不支持多脚本SQL");
+            }
+            SQLUtil.validateBatchDmlStatements(statements);
+            return statementMapper.executeBatchDml(datasourceId, schema, statements, params, isTransactionEnabled(params));
+        }
+
+        String executeSql = statements.isEmpty() ? sql : statements.get(0);
+        String sqlType = SQLUtil.getOperateType(executeSql).toLowerCase();
         switch (sqlType) {
             case "insert":
-                return statementMapper.insert(datasourceId, schema, sql, params);
+                return statementMapper.insert(datasourceId, schema, executeSql, params);
             case "update":
-                return statementMapper.update(datasourceId, schema, sql, params);
+                return statementMapper.update(datasourceId, schema, executeSql, params);
             case "delete":
-                return statementMapper.delete(datasourceId, schema, sql, params);
+                return statementMapper.delete(datasourceId, schema, executeSql, params);
             default:
                 Object pageNum = params.get(BaseConstant.PAGE_NUM);
                 Object pageSize = params.get(BaseConstant.PAGE_SIZE);
                 if (pageNum != null && pageSize != null) {
-                    return statementMapper.selectPage(datasourceId, schema, sql, params,
+                    return statementMapper.selectPage(datasourceId, schema, executeSql, params,
                             Integer.parseInt(pageNum.toString()),
                             Integer.parseInt(pageSize.toString()));
                 }
-                return statementMapper.selectList(datasourceId, schema, sql, params);
+                return statementMapper.selectList(datasourceId, schema, executeSql, params);
         }
+    }
+
+    /**
+     * 执行层兼容前端1/0、测试Boolean等常见表示，只有明确为1或true时开启事务。
+     */
+    private boolean isTransactionEnabled(Map<String, Object> params) {
+        Object value = params.get(BaseConstant.TRANSACTION_ENABLED);
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        return value != null && "1".equals(value.toString());
     }
 }

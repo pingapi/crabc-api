@@ -145,6 +145,11 @@ public class ApiServiceController {
      * 执行API调用
      */
     private Result executeApi(ApiInfoDTO api, Map<String, Object> params) {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        // 事务开关属于接口配置的内部执行参数，覆盖同名请求参数以避免外部调用篡改事务边界。
+        params.put(BaseConstant.TRANSACTION_ENABLED, normalizeTransactionEnabled(api.getTransactionEnabled()));
         Object data = baseDataService.execute(api.getDatasourceId().toString(), api.getDatasourceType(),
                                             api.getSchemaName(), api.getSqlScript(), params);
                                             
@@ -153,5 +158,12 @@ public class ApiServiceController {
             return Result.success(list.isEmpty() ? null : list.get(0));
         }
         return Result.success(data);
+    }
+
+    /**
+     * 事务字段持久化使用1/0，执行层只需要稳定的数字语义。
+     */
+    private Integer normalizeTransactionEnabled(Integer transactionEnabled) {
+        return transactionEnabled == null ? 0 : transactionEnabled;
     }
 }
