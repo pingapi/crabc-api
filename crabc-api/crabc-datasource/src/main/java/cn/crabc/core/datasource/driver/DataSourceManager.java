@@ -5,11 +5,10 @@ import cn.crabc.core.spi.DataSourceDriver;
 import cn.crabc.core.spi.MetaDataMapper;
 import cn.crabc.core.spi.StatementMapper;
 import cn.crabc.core.spi.bean.BaseDataSource;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -100,8 +99,10 @@ public class DataSourceManager {
      */
     public void remove(String datasourceId) {
         DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
-        if (dataSource instanceof HikariDataSource) {
-            HikariDataSource hikariDataSource = (HikariDataSource) dataSource;
+        // 只有连接池数据源需要显式关闭，DuckDB直连数据源只需从缓存移除。
+        if (dataSource instanceof DruidDataSource druidDataSource) {
+            druidDataSource.close();
+        } else if (dataSource instanceof HikariDataSource hikariDataSource) {
             hikariDataSource.close();
         }
         DATA_SOURCE_POOL_JDBC.remove(datasourceId);

@@ -102,12 +102,5 @@
             <version>3.00.5.0</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/com.dolphindb/dolphindb-javaapi -->
-        <dependency>
-            <groupId>com.dolphindb</groupId>
-            <artifactId>dolphindb-javaapi</artifactId>
-            <version>3.00.5.0</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 </project>

@@ -8,6 +8,7 @@ import cn.crabc.core.app.util.SQLUtil;
 import cn.crabc.core.datasource.util.PageInfo;
 import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.driver.DataSourceManager;
+import cn.crabc.core.datasource.driver.jdbc.DuckDbDataSource;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import com.github.pagehelper.PageHelper;
 import com.zaxxer.hikari.HikariDataSource;
@@ -16,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +24,7 @@ import javax.sql.DataSource;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 数据源 服务实现
@@ -63,20 +64,11 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         for (BaseDataSource dataSource : baseDataSources) {
             DataSource ds = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSource.getDatasourceId().toString());
             try {
-                String jdbcUrl = null;
-                String username = null;
-                String password = null;
-                if (ds instanceof HikariDataSource) {
-                    HikariDataSource hikari = (HikariDataSource) ds;
-                    jdbcUrl = hikari.getJdbcUrl();
-                    username = hikari.getUsername();
-                    password = hikari.getPassword();
-                }
+                DataSourceIdentity oldIdentity = buildIdentity(ds);
                 byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
                 dataSource.setPassword(new String(decode));
-                // 判断数据库连接关键属性是否有修改，有修改则刷新缓存
-                if (ds != null && dataSource.getJdbcUrl().equals(jdbcUrl)
-                        && dataSource.getUsername().equals(username) && dataSource.getPassword().equals(password)) {
+                // 判断数据库连接关键属性是否有修改，有修改则刷新缓存；空快照表示缓存不存在或类型未知，需要重建。
+                if (oldIdentity.exists() && oldIdentity.sameAs(dataSource)) {
                     continue;
                 }
                 dataSourceManager.createDataSource(dataSource);
@@ -182,5 +174,59 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
             pwd = new String(decode);
         }
         dataSource.setPassword(pwd);
+    }
+
+    /**
+     * 判断数据源类型
+     */
+    private DataSourceIdentity buildIdentity(DataSource dataSource) {
+        if (dataSource instanceof HikariDataSource hikari) {
+            return new DataSourceIdentity(hikari.getJdbcUrl(), hikari.getUsername(), hikari.getPassword());
+        }
+        if (dataSource instanceof DuckDbDataSource duckDb) {
+            return new DataSourceIdentity(duckDb.getJdbcUrl(), duckDb.getUsername(), duckDb.getPassword());
+        }
+        return DataSourceIdentity.empty();
+    }
+
+    /**
+     * 数据源连接关键属性快照，仅用于判断缓存是否需要重建。
+     */
+    private static class DataSourceIdentity {
+
+        private final String jdbcUrl;
+        private final String username;
+        private final String password;
+
+        private DataSourceIdentity(String jdbcUrl, String username, String password) {
+            this.jdbcUrl = jdbcUrl;
+            this.username = username;
+            this.password = password;
+        }
+
+        private static DataSourceIdentity empty() {
+            return new DataSourceIdentity(null, null, null);
+        }
+
+        /**
+         * 只有识别到缓存中的数据源类型时才允许复用，避免未知DataSource误判为未修改。
+         */
+        private boolean exists() {
+            return jdbcUrl != null;
+        }
+
+        /**
+         * 比较数据库连接关键属性，密码已在调用前解码成明文。
+         */
+        private boolean sameAs(BaseDataSource dataSource) {
+            return dataSource != null
+                    && equals(dataSource.getJdbcUrl(), jdbcUrl)
+                    && equals(dataSource.getUsername(), username)
+                    && equals(dataSource.getPassword(), password);
+        }
+
+        private boolean equals(String left, String right) {
+            return Objects.equals(left, right);
+        }
     }
 }

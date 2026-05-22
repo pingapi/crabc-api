@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class DefaultDataSourceDriver implements DataSourceDriver {
     private static final Logger log = LoggerFactory.getLogger(DefaultDataSourceDriver.class);
+    private static final String DUCKDB = "duckdb";
 
     @Override
     public String getName() {
@@ -30,9 +31,9 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
     @Override
     public String test(BaseDataSource baseDataSource) {
         Connection connection = null;
-        HikariDataSource dataSource = null;
+        DataSource dataSource = null;
         try {
-            dataSource = createHikariDataSource(baseDataSource, true);
+            dataSource = createDataSource(baseDataSource, true);
             connection = dataSource.getConnection();
 
         } catch (Exception e) {
@@ -48,7 +49,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
                 }
             }
             if (dataSource != null) {
-                dataSource.close();
+                closeDataSource(dataSource);
             }
         }
         return "1";
@@ -60,7 +61,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         DataSource oldDataSource = JdbcDataSourceRouter.exist(datasourceId) ? 
                                  JdbcDataSourceRouter.getDataSource(datasourceId) : null;
 
-        HikariDataSource dataSource = createHikariDataSource(ds, false);
+        DataSource dataSource = createDataSource(ds, false);
         
         // 连接池预热
         boolean initSuccess = false;
@@ -89,7 +90,7 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
             }
         } else {
             // 初始化失败，立即关闭新数据源，不添加到路由池
-            dataSource.close();
+            closeDataSource(dataSource);
         }
     }
 
@@ -98,6 +99,22 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
         JdbcDataSourceRouter.destroy(dataSourceId);
     }
 
+    /**
+     * DuckDB文件库不使用连接池，其他JDBC数据源沿用Hikari连接池配置。
+     */
+    private DataSource createDataSource(BaseDataSource ds, boolean isTest) {
+        if (isDuckDb(ds)) {
+            return new DuckDbDataSource(ds);
+        }
+        return createHikariDataSource(ds, isTest);
+    }
+
+    /**
+     * 创建Hikari连接池
+     * @param ds
+     * @param isTest
+     * @return
+     */
     private HikariDataSource createHikariDataSource(BaseDataSource ds, boolean isTest) {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setUsername(ds.getUsername());
@@ -181,6 +198,24 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
             case "dolphindb":
                 dataSource.setDriverClassName("com.dolphindb.jdbc.Driver");
                 break;
+        }
+    }
+
+    /**
+     * 数据源类型统一在驱动层判断，避免调用方感知DuckDB的特殊初始化路径。
+     */
+    private boolean isDuckDb(BaseDataSource ds) {
+        return ds != null && DUCKDB.equalsIgnoreCase(ds.getDatasourceType());
+    }
+
+    /**
+     * 只关闭真正持有连接池资源的数据源，DuckDB直连数据源无常驻连接可关闭。
+     */
+    private void closeDataSource(DataSource dataSource) {
+        if (dataSource instanceof DruidDataSource druidDataSource) {
+            druidDataSource.close();
+        } else if (dataSource instanceof HikariDataSource hikariDataSource) {
+            hikariDataSource.close();
         }
     }
 }
