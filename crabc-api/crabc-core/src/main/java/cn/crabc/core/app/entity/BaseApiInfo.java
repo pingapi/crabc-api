@@ -91,6 +91,16 @@ public class BaseApiInfo extends BaseEntity {
     private Integer transactionEnabled;
 
     /**
+     * 限流时间窗口秒数；为空或小于等于0时不启用限流。
+     */
+    private Integer rateLimitWindowSeconds;
+
+    /**
+     * 限流窗口内允许请求次数；为空或小于等于0时不启用限流。
+     */
+    private Integer rateLimitCount;
+
+    /**
      * 数据源Id
      */
     private Integer datasourceId;

@@ -3,8 +3,10 @@ package cn.crabc.core.app.service.system.impl;
 import cn.crabc.core.app.entity.*;
 import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.entity.param.ApiInfoParam;
+import cn.crabc.core.app.entity.param.ApiRateLimitParam;
 import cn.crabc.core.app.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.app.entity.vo.ApiInfoVO;
+import cn.crabc.core.app.entity.vo.ApiRateLimitVO;
 import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.app.enums.ApiStateEnum;
 import cn.crabc.core.app.mapper.BaseApiInfoMapper;
@@ -53,6 +55,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     Cache<String, ApiInfoDTO> apiInfoCache;
     @Autowired
     private JsonMapper jsonMapper;
+    @Autowired
+    private ApiRateLimitService apiRateLimitService;
 
 
     @Override
@@ -144,6 +148,45 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     public Boolean checkApiPath(Long apiId, String apiPath, String method) {
         Integer count = apiInfoMapper.checkApiPath(apiId, apiPath, method);
         return count > 0 ? true : false;
+    }
+
+    @Override
+    public ApiRateLimitVO getRateLimit(Long apiId) {
+        BaseApiInfo apiInfo = apiInfoMapper.selectApiById(apiId);
+        if (apiInfo == null) {
+            throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
+        }
+        ApiRateLimitVO result = new ApiRateLimitVO();
+        result.setApiId(apiInfo.getApiId());
+        result.setApiName(apiInfo.getApiName());
+        result.setApiMethod(apiInfo.getApiMethod());
+        result.setApiPath(apiInfo.getApiPath());
+        result.setLimitCount(apiInfo.getRateLimitCount());
+        fillWindowDisplay(apiInfo.getRateLimitWindowSeconds(), result);
+        return result;
+    }
+
+    @Override
+    public Integer saveRateLimit(ApiRateLimitParam param) {
+        if (param == null || param.getApiId() == null) {
+            throw new CustomException(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), "接口ID不能为空");
+        }
+        BaseApiInfo oldApi = getApiForCacheInvalidation(param.getApiId());
+        if (oldApi == null) {
+            throw new CustomException(ErrorStatusEnum.API_NOT_FOUNT.getCode(), ErrorStatusEnum.API_NOT_FOUNT.getMassage());
+        }
+        BaseApiInfo apiInfo = new BaseApiInfo();
+        apiInfo.setApiId(param.getApiId());
+        apiInfo.setUpdateTime(new Date());
+        apiInfo.setUpdateBy(UserThreadLocal.getUserId());
+        if (!isClearRateLimit(param)) {
+            apiInfo.setRateLimitWindowSeconds(parseWindowSeconds(param));
+            apiInfo.setRateLimitCount(parseLimitCount(param));
+        }
+        Integer result = apiInfoMapper.updateRateLimit(apiInfo);
+        invalidateApiCache(oldApi);
+        apiRateLimitService.invalidate(oldApi.getApiMethod(), oldApi.getApiPath());
+        return result;
     }
 
     @Override
@@ -453,6 +496,61 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     private void fillTransactionDefault(BaseApiInfo apiInfo) {
         if (apiInfo != null && apiInfo.getTransactionEnabled() == null) {
             apiInfo.setTransactionEnabled(0);
+        }
+    }
+
+    /**
+     * 限流弹框允许三个字段同时为空，表示清空当前接口限流配置。
+     */
+    private boolean isClearRateLimit(ApiRateLimitParam param) {
+        return param.getWindowValue() == null
+                && (param.getWindowUnit() == null || param.getWindowUnit().isBlank())
+                && param.getLimitCount() == null;
+    }
+
+    /**
+     * 限流窗口统一落库为秒，避免执行链路反复处理单位换算。
+     */
+    private Integer parseWindowSeconds(ApiRateLimitParam param) {
+        if (param.getWindowValue() == null || param.getWindowValue() <= 0
+                || param.getWindowUnit() == null || param.getWindowUnit().isBlank()) {
+            throw new CustomException(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), "限流时间窗口不能为空");
+        }
+        String unit = param.getWindowUnit().toUpperCase();
+        return switch (unit) {
+            case "SECOND" -> param.getWindowValue();
+            case "MINUTE" -> param.getWindowValue() * 60;
+            case "HOUR" -> param.getWindowValue() * 3600;
+            default -> throw new CustomException(ErrorStatusEnum.FORBID_OPERATE.getCode(), "限流时间单位无效");
+        };
+    }
+
+    /**
+     * 请求次数必须为正数，窗口和次数任一缺失都不能形成有效限流规则。
+     */
+    private Integer parseLimitCount(ApiRateLimitParam param) {
+        if (param.getLimitCount() == null || param.getLimitCount() <= 0) {
+            throw new CustomException(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), "限流请求次数不能为空");
+        }
+        return param.getLimitCount();
+    }
+
+    /**
+     * 回显时优先使用能整除的最大常用单位，保持页面展示简洁。
+     */
+    private void fillWindowDisplay(Integer windowSeconds, ApiRateLimitVO result) {
+        if (windowSeconds == null || windowSeconds <= 0) {
+            return;
+        }
+        if (windowSeconds % 3600 == 0) {
+            result.setWindowValue(windowSeconds / 3600);
+            result.setWindowUnit("HOUR");
+        } else if (windowSeconds % 60 == 0) {
+            result.setWindowValue(windowSeconds / 60);
+            result.setWindowUnit("MINUTE");
+        } else {
+            result.setWindowValue(windowSeconds);
+            result.setWindowUnit("SECOND");
         }
     }
 

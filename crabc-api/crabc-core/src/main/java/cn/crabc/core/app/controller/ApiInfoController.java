@@ -3,6 +3,7 @@ package cn.crabc.core.app.controller;
 import cn.crabc.core.app.entity.BaseApiInfo;
 import cn.crabc.core.app.entity.BaseAppApi;
 import cn.crabc.core.app.entity.param.ApiInfoParam;
+import cn.crabc.core.app.entity.param.ApiRateLimitParam;
 import cn.crabc.core.app.entity.vo.*;
 import cn.crabc.core.app.service.system.IBaseApiInfoService;
 import cn.crabc.core.datasource.util.PageInfo;
@@ -198,6 +199,28 @@ public class ApiInfoController {
             return Result.error("50011", "该接口地址已存在");
         }
         return Result.success();
+    }
+
+    /**
+     * 查询发布接口限流配置
+     *
+     * @param apiId 接口ID
+     * @return 限流配置
+     */
+    @GetMapping("/rateLimit")
+    public Result getRateLimit(Long apiId) {
+        return Result.success(apiInfoService.getRateLimit(apiId));
+    }
+
+    /**
+     * 保存或清空发布接口限流配置
+     *
+     * @param param 限流配置
+     * @return 影响行数
+     */
+    @PostMapping("/rateLimit")
+    public Result saveRateLimit(@RequestBody ApiRateLimitParam param) {
+        return Result.success(apiInfoService.saveRateLimit(param));
     }
 
     /**

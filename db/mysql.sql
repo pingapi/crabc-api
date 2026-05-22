@@ -17,6 +17,8 @@ CREATE TABLE `base_api_info` (
                                  `tenant_id` varchar(128)  DEFAULT NULL COMMENT '租户ID',
                                  `page_setup` int DEFAULT NULL COMMENT '分页设置，不分页：0, 分页：1',
                                  `transaction_enabled` int DEFAULT 0 COMMENT '是否开启事务 1/0',
+                                 `rate_limit_window_seconds` int DEFAULT NULL COMMENT '限流时间窗口秒数',
+                                 `rate_limit_count` int DEFAULT NULL COMMENT '限流窗口请求次数',
                                  `sql_type` varchar(20) DEFAULT NULL COMMENT 'SQL执行类型（select、insert、update、delete）',
                                  `result_type` varchar(30) DEFAULT NULL COMMENT '返回结果类型： one、array、excel',
                                  `sql_script` text COMMENT 'SQL脚本',

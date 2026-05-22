@@ -4,8 +4,10 @@ import cn.crabc.core.app.entity.BaseApiInfo;
 import cn.crabc.core.app.entity.BaseAppApi;
 import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.entity.param.ApiInfoParam;
+import cn.crabc.core.app.entity.param.ApiRateLimitParam;
 import cn.crabc.core.app.entity.vo.ApiComboBoxVO;
 import cn.crabc.core.app.entity.vo.ApiInfoVO;
+import cn.crabc.core.app.entity.vo.ApiRateLimitVO;
 import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.datasource.util.PageInfo;
 
@@ -178,4 +180,20 @@ public interface IBaseApiInfoService {
      * @return
      */
     Integer destroyApiInfo(Long apiId);
+
+    /**
+     * 查询发布接口限流配置。
+     *
+     * @param apiId 接口ID
+     * @return 限流配置
+     */
+    ApiRateLimitVO getRateLimit(Long apiId);
+
+    /**
+     * 保存或清空发布接口限流配置。
+     *
+     * @param param 限流配置
+     * @return 影响行数
+     */
+    Integer saveRateLimit(ApiRateLimitParam param);
 }

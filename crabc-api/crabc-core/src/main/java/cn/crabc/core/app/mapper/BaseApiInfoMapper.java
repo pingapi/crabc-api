@@ -106,6 +106,14 @@ public interface BaseApiInfoMapper {
     Integer updateApiState(BaseApiInfo apiInfo);
 
     /**
+     * 更新API限流配置，窗口和次数同时为空表示清空限流。
+     *
+     * @param apiInfo API限流字段
+     * @return 影响行数
+     */
+    Integer updateRateLimit(BaseApiInfo apiInfo);
+
+    /**
      * 更新API暂存内容
      *
      * @param apiId

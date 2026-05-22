@@ -5,6 +5,7 @@ import cn.crabc.core.app.entity.BaseApp;
 import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.service.system.IBaseApiInfoService;
 import cn.crabc.core.app.service.system.IBaseApiLogService;
+import cn.crabc.core.app.service.system.impl.ApiRateLimitService;
 import cn.crabc.core.app.util.ApiThreadLocal;
 import cn.crabc.core.app.util.RequestUtils;
 import cn.crabc.core.app.util.Result;
@@ -49,6 +50,8 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Autowired
     @Qualifier("apiCache")
     private Cache<String, ApiInfoDTO> apiCache;
+    @Autowired
+    private ApiRateLimitService apiRateLimitService;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getRequestURI();
@@ -69,6 +72,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         }
         if (apiInfo.getEnabled() == 0) {
             setErrorResponse(request, response,ErrorStatusEnum.API_OFFLINE.getCode(),ErrorStatusEnum.API_OFFLINE.getMassage());
+            return false;
+        }
+        if (!apiRateLimitService.tryConsume(apiInfo)) {
+            setErrorResponse(request, response, ErrorStatusEnum.API_LIMIT.getCode(), ErrorStatusEnum.API_LIMIT.getMassage());
             return false;
         }
 
