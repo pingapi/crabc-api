@@ -70,20 +70,22 @@ public class AuthInterceptor implements HandlerInterceptor {
             setErrorResponse(request, response,ErrorStatusEnum.API_INVALID.getCode(),ErrorStatusEnum.API_INVALID.getMassage());
             return false;
         }
-        if (apiInfo.getEnabled() == 0) {
-            setErrorResponse(request, response,ErrorStatusEnum.API_OFFLINE.getCode(),ErrorStatusEnum.API_OFFLINE.getMassage());
-            return false;
-        }
-        if (!apiRateLimitService.tryConsume(apiInfo)) {
-            setErrorResponse(request, response, ErrorStatusEnum.API_LIMIT.getCode(), ErrorStatusEnum.API_LIMIT.getMassage());
-            return false;
-        }
-
         // 存入当前时间，当作是日志的请求时间
         apiInfo.setRequestDate(new Date());
         apiInfo.setRequestTime(System.currentTimeMillis());
         // 放入上下文
         ApiThreadLocal.set(apiInfo);
+
+        if (apiInfo.getEnabled() == 0) {
+            setErrorResponse(request, response,ErrorStatusEnum.API_OFFLINE.getCode(),ErrorStatusEnum.API_OFFLINE.getMassage());
+            return false;
+        }
+
+        if (!apiRateLimitService.tryConsume(apiInfo)) {
+            setErrorResponse(request, response, ErrorStatusEnum.API_LIMIT.getCode(), ErrorStatusEnum.API_LIMIT.getMassage());
+            return false;
+        }
+
         try {
             // 应用列表
             List<BaseApp> appList = apiInfo.getAppList();
@@ -136,6 +138,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         BaseApiLog apiLog = new BaseApiLog();
         long endTime = System.currentTimeMillis();
         ApiInfoDTO apiInfo = ApiThreadLocal.get();
+        Date date = new Date();
         if (apiInfo != null) {
             apiLog.setApiId(apiInfo.getApiId());
             apiLog.setApiName(apiInfo.getApiName());
@@ -143,12 +146,16 @@ public class AuthInterceptor implements HandlerInterceptor {
             apiLog.setAuthType(apiInfo.getAuthType());
             apiLog.setRequestTime(apiInfo.getRequestDate());
             apiLog.setCostTime(endTime - apiInfo.getRequestTime());
+        }else{
+            apiLog.setRequestTime(date);
+            apiLog.setApiPath(request.getRequestURI());
+            apiLog.setApiMethod(request.getMethod());
         }
         int status = response.getStatus();
         apiLog.setAppName(RequestUtils.getAppKey(request));
         apiLog.setApiPath(request.getRequestURI());
         apiLog.setRequestIp(RequestUtils.getIp(request));
-        apiLog.setResponseTime(new Date());
+        apiLog.setResponseTime(date);
         apiLog.setQueryParam(request.getQueryString());
         apiLog.setResponseCode(status);
         apiLog.setRequestStatus(status == 200 ? "success" : "fail");
