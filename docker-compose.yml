@@ -1,6 +1,6 @@
 version: "3"
 services:
-  crabcdb:
+  mysql:
     image: mysql:latest
     networks:
       - crabc_network
@@ -16,18 +16,18 @@ services:
       - MYSQL_ROOT_PASSWORD:=admin123
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=admin123
-  crabc-admin:
-    image: crabc/crabc-admin:latest
-    container_name: crabc-admin
+  crabc-api:
+    image: crabc/crabc-api:latest
+    container_name: crabc-api
     depends_on:
-      - crabcdb
+      - mysql
     networks:
       - crabc_network
     ports:
       - "9377:9377"
     environment:
-      - db_url=jdbc:mysql://crabcdb:3306/crabc
-      - db_user=admindb
+      - db_url=jdbc:mysql://mysql:3306/crabc
+      - db_user=root
       - db_pwd=admin123
 networks:
   crabc_network:
