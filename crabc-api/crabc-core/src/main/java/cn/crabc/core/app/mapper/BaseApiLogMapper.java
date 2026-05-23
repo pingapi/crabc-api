@@ -80,4 +80,12 @@ public interface BaseApiLogMapper {
      * @return 按接口平均耗时聚合的成功调用Top10
      */
     List<ApiLogGroupCountVO> selectTopCostApis(ApiLogParam param);
+
+    /**
+     * 查询IP访问量Top10列表
+     *
+     * @param param 统计筛选条件
+     * @return 按request_ip分组聚合的访问量Top10
+     */
+    List<ApiLogGroupCountVO> selectTopIps(ApiLogParam param);
 }

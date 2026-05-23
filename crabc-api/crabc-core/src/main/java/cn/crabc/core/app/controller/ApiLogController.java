@@ -89,6 +89,17 @@ public class ApiLogController {
     }
 
     /**
+     * IP访问量Top10
+     *
+     * @param apiLogParam 统计筛选条件，未传时间时默认近七天
+     * @return 按request_ip分组聚合的访问量Top10
+     */
+    @PostMapping("/topIps")
+    public Result topIps(@RequestBody ApiLogParam apiLogParam) {
+        return Result.success(iBaseApiLogService.topIps(apiLogParam));
+    }
+
+    /**
      * 日志统计兼容接口
      *
      * @param apiLogParam 统计筛选条件，未传时间时默认近七天

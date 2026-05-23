@@ -88,6 +88,13 @@ public class IBaseApiLogServiceImpl implements IBaseApiLogService {
     }
 
     @Override
+    public List<ApiLogGroupCountVO> topIps(ApiLogParam param) {
+        ApiLogParam queryParam = param == null ? new ApiLogParam() : param;
+        fillDefaultTimeRange(queryParam);
+        return emptyIfNull(baseApiLogMapper.selectTopIps(queryParam));
+    }
+
+    @Override
     public ApiLogStatisticsVO statistics(ApiLogParam param) {
         ApiLogStatisticsVO statistics = new ApiLogStatisticsVO();
         statistics.setSummary(summary(copyParam(param)));
@@ -95,6 +102,7 @@ public class IBaseApiLogServiceImpl implements IBaseApiLogService {
         statistics.setStatusPie(statusPie(copyParam(param)));
         statistics.setTopApis(topApis(copyParam(param)));
         statistics.setTopCostApis(topCostApis(copyParam(param)));
+        statistics.setTopIps(topIps(copyParam(param)));
         return statistics;
     }
 

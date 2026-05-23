@@ -83,6 +83,14 @@ public interface IBaseApiLogService {
     List<ApiLogGroupCountVO> topCostApis(ApiLogParam param);
 
     /**
+     * IP访问量Top10
+     *
+     * @param param 查询条件，未传时间时默认近七天，避免统计接口扫描全量日志
+     * @return 按request_ip分组聚合的访问量Top10
+     */
+    List<ApiLogGroupCountVO> topIps(ApiLogParam param);
+
+    /**
      * API日志统计兼容接口
      *
      * @param param 查询条件，未传时间时默认近七天，避免统计接口扫描全量日志

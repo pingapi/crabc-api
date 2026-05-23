@@ -37,4 +37,9 @@ public class ApiLogStatisticsVO implements Serializable {
      * 平均耗时最高的成功接口列表，固定返回Top10。
      */
     private List<ApiLogGroupCountVO> topCostApis;
+
+    /**
+     * 访问量最高的IP列表，固定返回Top10。
+     */
+    private List<ApiLogGroupCountVO> topIps;
 }

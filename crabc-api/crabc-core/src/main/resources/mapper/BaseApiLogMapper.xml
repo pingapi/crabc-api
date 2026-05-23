@@ -186,4 +186,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY avgCostTime DESC, maxCostTime DESC, count DESC
         LIMIT 10
     </select>
+
+    <!-- IP访问量Top10，按request_ip分组统计调用量 -->
+    <select id="selectTopIps" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO">
+        SELECT
+            ifnull(request_ip, 'unknown') AS groupKey,
+            ifnull(request_ip, 'unknown') AS groupName,
+            count(1) AS count
+        FROM
+            base_api_log
+        <include refid="statisticsWhere" />
+        GROUP BY ifnull(request_ip, 'unknown')
+        ORDER BY count DESC
+        LIMIT 10
+    </select>
 </mapper>
