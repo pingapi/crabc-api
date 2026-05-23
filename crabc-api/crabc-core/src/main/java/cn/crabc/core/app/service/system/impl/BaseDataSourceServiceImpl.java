@@ -64,9 +64,6 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         for (BaseDataSource dataSource : baseDataSources) {
             DataSource ds = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSource.getDatasourceId().toString());
             try {
-                if (ds == null) {
-                    continue;
-                }
                 DataSourceIdentity oldIdentity = buildIdentity(ds);
                 byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
                 dataSource.setPassword(new String(decode));
@@ -183,6 +180,9 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
      * 判断数据源类型
      */
     private DataSourceIdentity buildIdentity(DataSource dataSource) {
+        if (dataSource == null) {
+            return DataSourceIdentity.empty();
+        }
         if (dataSource instanceof HikariDataSource hikari) {
             return new DataSourceIdentity(hikari.getJdbcUrl(), hikari.getUsername(), hikari.getPassword());
         }
