@@ -64,6 +64,9 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         for (BaseDataSource dataSource : baseDataSources) {
             DataSource ds = DataSourceManager.DATA_SOURCE_POOL_JDBC.get(dataSource.getDatasourceId().toString());
             try {
+                if (ds == null) {
+                    continue;
+                }
                 DataSourceIdentity oldIdentity = buildIdentity(ds);
                 byte[] decode = Base64.getDecoder().decode(dataSource.getPassword());
                 dataSource.setPassword(new String(decode));
@@ -165,7 +168,7 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
     private void parsePassword(BaseDatasource dataSource) {
         String password = dataSource.getPassword();
         String pwd = null;
-        if (password != null && !"".equals(password.trim())) {
+        if (password != null && !password.trim().isEmpty()) {
             byte[] decode = Base64.getDecoder().decode(password);
             pwd = new String(decode);
         }else if (dataSource.getDatasourceId() != null){
