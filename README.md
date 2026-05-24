@@ -83,7 +83,7 @@ gitee: https://gitee.com/linebyte/crabc
 
 X86/AMD架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/crabc -e DB_USER=root -e DB_PWD=root -d --name crabc-api crabc/crabc-api:latest
+docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/crabc -e DB_USER=root -e DB_PWD=root -d --name crabc-api crabc/apigo:latest
 ```
 ARM架构
 ```
