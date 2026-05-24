@@ -116,11 +116,11 @@ java -jar crabc-api.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crab
 #### 日志管理
 ![img.png](doc/logs.png)
 #### 数据源列表
-![img.png](doc/dbs.png)
+![img.png](doc/db.png)
 #### 数据查询
 ![img.png](doc/data.png)
 #### 数据源类型
-![img.png](doc/db.png)
+![img.png](doc/type.png)
 
 ## 交流群
 **进群前请先点【Star】谢谢**
