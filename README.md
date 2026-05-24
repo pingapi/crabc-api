@@ -53,8 +53,8 @@ https://pingapi.cn/home
 账号密码：admin/admin123
 
 ## 官网
-官网：https://pingapi.cn/home \
-使用指南：https://www.crabc.cn/introduction/ \
+官网：https://apigo.cn \
+使用指南：http://docs.apigo.cn  \
 github：https://github.com/pingapi/crabc-api
 
 ## 商用授权
@@ -71,7 +71,7 @@ gitee: https://gitee.com/linebyte/crabc
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
