@@ -83,11 +83,11 @@ gitee: https://gitee.com/pingapi/crabc-api
 
 X86/AMD架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/crabc -e DB_USER=root -e DB_PWD=root -d --name crabc-api crabc/apigo:latest
+docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:latest
 ```
 ARM架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/crabc -e DB_USER=root -e DB_PWD=root -d --name crabc-admin crabc/crabc-admin:latest
+docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:latest
 ```
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123

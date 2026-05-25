@@ -1,7 +1,7 @@
 -- 创建库，mysql8.0+以上版本
-CREATE DATABASE IF NOT EXISTS crabc default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE DATABASE IF NOT EXISTS apigo default charset utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 -- 建表
-use crabc;
+use apigo;
 -- 1.0
 CREATE TABLE `base_api_info` (
                                  `api_id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
