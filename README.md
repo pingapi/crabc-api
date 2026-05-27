@@ -38,14 +38,14 @@ dev分支框架SpringBoot已升级至4.0，jdk需21及以上版本 \
 jdk8分支框架SpringBoot是2.x + jdk8
 
 ## 企业版
-https://pingapi.cn/home
+https://apigo.cn
 
 ## 企业版架构图
 
 ## 运行启动
 ```
 1、先执行db/dml.sql脚本，创建库表和初始化数据
-2、在编辑工具中运行启动 crabc-admin/ AdminApplication.java
+2、在编辑工具中运行启动 crabc-api/ AdminApplication.java
 ```
 访问地址：http://127.0.0.1:9377 \
 账号密码：admin/admin123
@@ -87,12 +87,12 @@ docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=r
 ```
 ARM架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:latest
+docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:5.0.0
 ```
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
 
-_## Windows桌面运行
+## Windows桌面运行
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
 java -jar crabc-api.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root 
