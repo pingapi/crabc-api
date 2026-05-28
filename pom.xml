@@ -17,7 +17,7 @@
 
     <properties>
         <!-- crabc 版本-->
-        <revision>5.0.0</revision>
+        <revision>5.1.0</revision>
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
