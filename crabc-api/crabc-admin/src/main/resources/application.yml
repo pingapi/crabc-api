@@ -1,6 +1,8 @@
-# Tomcat
+# Server
 server:
-  port: 9377
+  port: ${SERVER_PORT:9377}
+
+# Keep secrets out of git. Override via environment variables when running locally or in containers.
 spring:
   application:
     name: crabc-api
@@ -17,16 +19,17 @@ spring:
       recycler-pool: thread-local  # Jackson3性能恢复
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://127.0.0.1:3306/crabc?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://8.138.199.189:33061/test?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password:
+    password: Crabc123.
 # mybatis配置
 mybatis:
   # 搜索指定包别名
   typeAliasesPackage: cn.crabc.core.admin.entity
-  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  # 配置 mapper 扫描，找到所有 mapper.xml 映射文件
   mapperLocations: classpath*:mapper/**/*.xml
   config-location: classpath:mybatis-config.xml
+
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
