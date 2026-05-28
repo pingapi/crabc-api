@@ -63,9 +63,9 @@ public class RequestUtils {
      * @return
      */
     public static String getAppKey(HttpServletRequest req) {
-        String appCode = req.getHeader("appKey");
+        String appCode = req.getHeader("X-AppKey");
         if (appCode == null) {
-            String[] codeNames = new String[]{"appKey","AppKey", "app_key"};
+            String[] codeNames = new String[]{"appKey","AppKey", "app_key","appkey"};
             for(String codeName : codeNames) {
                 appCode = req.getParameter(codeName);
                 if (appCode != null) {

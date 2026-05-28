@@ -212,12 +212,12 @@ public class AuthInterceptor implements HandlerInterceptor {
     private boolean checkAppKey(HttpServletRequest request, HttpServletResponse response, List<BaseApp> appList) throws Exception {
         String appKey = RequestUtils.getAppKey(request);
         if (appKey == null || appKey.isEmpty()) {
-            setErrorResponse(request,response,ErrorStatusEnum.SHA_APPKEY_NOT_FOUNT.getCode(),ErrorStatusEnum.SHA_APPKEY_NOT_FOUNT.getMassage());
+            setErrorResponse(request,response,ErrorStatusEnum.APP_UN_AUTH.getCode(),ErrorStatusEnum.APP_UN_AUTH.getMassage());
             return false;
         }
         boolean check = appList.stream().anyMatch(app -> app.getAppKey().equals(appKey));
         if (!check) {
-            setErrorResponse(request,response,ErrorStatusEnum.APP_UN_AUTH.getCode(),ErrorStatusEnum.APP_UN_AUTH.getMassage());
+            setErrorResponse(request,response,ErrorStatusEnum.API_AUTH_ERROR.getCode(),ErrorStatusEnum.API_AUTH_ERROR.getMassage());
         }
         return check;
     }
@@ -232,9 +232,10 @@ public class AuthInterceptor implements HandlerInterceptor {
      */
     public boolean checkSM3(HttpServletRequest request, HttpServletResponse response, List<BaseApp> appList) throws Exception {
         // 认证参数
-        String sign = Optional.ofNullable(request.getHeader("sign")).orElse(request.getParameter("sign"));
-        String timeStamp = Optional.ofNullable(request.getHeader("timestamp")).orElse(request.getParameter("timestamp"));
-        String appKey = Optional.ofNullable(request.getHeader("appkey")).orElse(request.getParameter("appkey"));
+        String sign = Optional.ofNullable(request.getHeader("X-Sign")).orElse(request.getHeader("sign"));
+        String timeStamp = Optional.ofNullable(request.getHeader("X-Timestamp")).orElse(request.getHeader("timestamp"));
+        String appKey = Optional.ofNullable(request.getHeader("X-AppKey")).orElse(request.getHeader("appkey"));
+        String nonce = Optional.ofNullable(request.getHeader("X-Nonce")).orElse(request.getHeader("nonce"));
         if (appKey == null || sign == null || timeStamp == null) {
             setErrorResponse(request,response,ErrorStatusEnum.SHA_PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
             return false;
@@ -252,11 +253,21 @@ public class AuthInterceptor implements HandlerInterceptor {
                 .map(BaseApp::getAppSecret)
                 .findFirst()
                 .orElse("");
-
-        boolean verify = SM3Util.verify(appSecret + timeStamp, sign);
+        String buildData = this.buildData(request, appKey, timeStamp, nonce);
+        boolean verify = SM3Util.verify(buildData, appSecret, sign);
         if (!verify) {
-            setErrorResponse(request,response,ErrorStatusEnum.API_UN_AUTH.getCode(),ErrorStatusEnum.API_UN_AUTH.getMassage());
+            setErrorResponse(request,response,ErrorStatusEnum.API_AUTH_ERROR.getCode(),ErrorStatusEnum.API_AUTH_ERROR.getMassage());
         }
         return verify;
+    }
+
+    /**
+     * 构建签名数据
+     * @return
+     */
+    private String buildData(HttpServletRequest request, String appKey, String timestamp, String nonce) {
+        String method = request.getMethod();
+        String path = request.getRequestURI();
+        return method + "_" + path + "_" + appKey + "_" + timestamp + "_" + nonce;
     }
 }

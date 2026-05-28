@@ -105,7 +105,6 @@ public class ApiTestController {
             } else {
                 throw new IllegalArgumentException("参数校验失败");
             }
-            paramsMap.put("pageSetup", params.getPageSetup());
         } else if (requestParams instanceof List) {
             List<Map<String,Object>> paramsList = (List<Map<String, Object>>) requestParams;
             for (Map<String, Object> entry : paramsList) {
@@ -117,7 +116,7 @@ public class ApiTestController {
                     throw new IllegalArgumentException("参数校验失败");
                 }
             }
-            if (paramsList.isEmpty()) {
+            if (paramsList.isEmpty() && params.getPageSetup() != null) {
                 paramsMap.put("pageSetup", params.getPageSetup());
             }
         }
