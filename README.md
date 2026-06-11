@@ -34,7 +34,7 @@ cn.crabc
 ~~~
 
 ## 版本说明
-dev分支框架SpringBoot已升级至4.0，jdk需21及以上版本 \
+dev分支框架SpringBoot已升级至4.1.0，jdk需21及以上版本 \
 jdk8分支框架SpringBoot是2.x + jdk8
 
 ## 企业版
@@ -51,8 +51,10 @@ https://apigo.cn
 账号密码：admin/admin123
 
 ## 官网
-官网：https://apigo.cn \
-使用指南：http://docs.apigo.cn  \
+官网：https://apigo.cn 
+
+使用指南：http://docs.apigo.cn  
+
 github：https://github.com/pingapi/apigo
 
 ## 商用授权
@@ -69,7 +71,7 @@ gitee: https://gitee.com/pingapi/crabc-api
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>5.1.0</version>
+    <version>5.2.0</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
@@ -83,11 +85,11 @@ gitee: https://gitee.com/pingapi/crabc-api
 
 X86/AMD架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:5.1.0
+docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:5.2.0
 ```
 ARM架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:5.1.0
+docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:5.2.0
 ```
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
