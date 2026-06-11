@@ -253,6 +253,8 @@ public class AuthInterceptor implements HandlerInterceptor {
                 .map(BaseApp::getAppSecret)
                 .findFirst()
                 .orElse("");
+
+
         String buildData = this.buildData(request, appKey, timeStamp, nonce);
         boolean verify = SM3Util.verify(buildData, appSecret, sign);
         if (!verify) {

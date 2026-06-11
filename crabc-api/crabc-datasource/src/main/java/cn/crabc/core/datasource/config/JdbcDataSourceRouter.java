@@ -25,7 +25,7 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
     /**
      * 当前线程数据源KEY
      */
-    private static final ThreadLocal<String> DATA_SOURCE_KEY = new InheritableThreadLocal<>();
+    private static final ThreadLocal<String> DATA_SOURCE_KEY = new ThreadLocal<>();
 
     /**
      * 获取数据源key
@@ -72,14 +72,13 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         if (dataSource == null) {
             return;
         }
-        try {
-            if (dataSource instanceof DruidDataSource druidDataSource) {
-                druidDataSource.close();
-            } else if (dataSource instanceof HikariDataSource hikariDataSource) {
-                hikariDataSource.close();
-            }
-        } finally {
-            DataSourceManager.DATA_SOURCE_POOL_JDBC.remove(dataSourceId);
+        // 移除缓存
+        DataSourceManager.DATA_SOURCE_POOL_JDBC.remove(dataSourceId);
+        // 关闭连接池
+        if (dataSource instanceof DruidDataSource druidDataSource) {
+            druidDataSource.close();
+        } else if (dataSource instanceof HikariDataSource hikariDataSource) {
+            hikariDataSource.close();
         }
     }
 
@@ -143,16 +142,38 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
      */
     @Override
     public Connection getConnection() throws SQLException {
-        Connection connection = null;
-        Object dataSourceKey = null;
+        log.debug("---->>切换数据库连接----");
+        Connection connection = this.determineTargetDataSource().getConnection();
+
+        String originalCatalog = null;
+        String originalSchema = null;
+        // 标记：是否执行了catalog/schema 切换
+        boolean needReset = false;
+
         try {
-            connection = determineTargetDataSource().getConnection();
-            dataSourceKey = determineCurrentLookupKey();
-            
+            Object dataSourceKey = this.determineCurrentLookupKey();
             if (dataSourceKey != null && dataSourceKey.toString().contains(":")) {
-                String[] dataSourceInfo = dataSourceKey.toString().split(":");
-                if (dataSourceInfo.length == 3) {
-                    setConnectionSchema(connection, dataSourceInfo[1], dataSourceInfo[2]);
+                String[] dataSourceStr = dataSourceKey.toString().split(":");
+                if (dataSourceStr.length < 3) {
+                    return connection;
+                }
+                String dataSourceType = dataSourceStr[1];
+                String targetSchema = dataSourceStr[2];
+
+                // 原始状态
+                originalCatalog = connection.getCatalog();
+                originalSchema = connection.getSchema();
+
+                if (BaseConstant.CATALOG_DATA_SOURCE.contains(dataSourceType)) {
+                    if (!equalsIgnoreNull(originalCatalog, targetSchema)) {
+                        connection.setCatalog(targetSchema);
+                        needReset = true;
+                    }
+                } else {
+                    if (!equalsIgnoreNull(originalSchema, targetSchema)) {
+                        connection.setSchema(targetSchema);
+                        needReset = true;
+                    }
                 }
             }
             return connection;
@@ -161,23 +182,45 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
                 try {
                     connection.close();
                 } catch (SQLException closeException) {
-                    log.error("关闭连接时发生异常", closeException);
+                    log.error("关闭异常连接失败", closeException);
                 }
             }
-            log.error("数据源连接获取失败, dataSourceKey: {}", dataSourceKey, e);
-            throw e;
+            log.error("数据源连接获取失败, dataSourceKey: {}", determineCurrentLookupKey(), e);
+            throw new SQLException(e);
+        } finally {
+            if (needReset && connection != null && !connection.isClosed()) {
+                try {
+                    // 还原 Catalog
+                    if (!equalsIgnoreNull(connection.getCatalog(), originalCatalog)) {
+                        connection.setCatalog(originalCatalog);
+                    }
+                    // 还原 Schema
+                    if (!equalsIgnoreNull(connection.getSchema(), originalSchema)) {
+                        connection.setSchema(originalSchema);
+                    }
+                } catch (Exception resetEx) {
+                    // 还原失败 → 直接销毁脏连接
+                    log.warn("重置连接schema/catalog失败，销毁脏连接", resetEx);
+                    try {
+                        connection.close();
+                    } catch (SQLException ignored) {}
+                }
+            }
         }
     }
-    
+
     /**
-     * 设置连接的schema
+     * 对比方法
+     *
      */
-    private void setConnectionSchema(Connection connection, String dataSourceType, String schema) throws SQLException {
-        if (BaseConstant.CATALOG_DATA_SOURCE.contains(dataSourceType)) {
-            connection.setCatalog(schema);
-        } else {
-            connection.setSchema(schema);
+    private boolean equalsIgnoreNull(String original, String target) {
+        if (original == null && target == null) {
+            return true;
         }
+        if (original == null || target == null) {
+            return false;
+        }
+        return original.equals(target);
     }
 
     @Override

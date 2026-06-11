@@ -99,12 +99,12 @@ public class DataSourceManager {
      */
     public void remove(String datasourceId) {
         DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
-        // 只有连接池数据源需要显式关闭，DuckDB直连数据源只需从缓存移除。
+        // 移除缓存
+        DATA_SOURCE_POOL_JDBC.remove(datasourceId);
         if (dataSource instanceof DruidDataSource druidDataSource) {
             druidDataSource.close();
         } else if (dataSource instanceof HikariDataSource hikariDataSource) {
             hikariDataSource.close();
         }
-        DATA_SOURCE_POOL_JDBC.remove(datasourceId);
     }
 }
