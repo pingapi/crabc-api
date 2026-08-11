@@ -12,7 +12,7 @@ CREATE TABLE `base_api_info` (
                                  `auth_type` varchar(50)  DEFAULT NULL COMMENT '授权类型：none、code、secret',
                                  `enabled` int DEFAULT NULL COMMENT '开放启用 1/0',
                                  `api_status` varchar(50)  DEFAULT NULL COMMENT 'API状态：编辑edit、审批audit、发布release、销毁destroy',
-                                 `group_id` varchar(128)  DEFAULT NULL COMMENT '分组ID',
+                                 `group_id` int  DEFAULT NULL COMMENT '分组ID',
                                  `parent_id` bigint DEFAULT NULL COMMENT '父级关联Id',
                                  `tenant_id` varchar(128)  DEFAULT NULL COMMENT '租户ID',
                                  `page_setup` int DEFAULT NULL COMMENT '分页设置，不分页：0, 分页：1',
@@ -36,7 +36,10 @@ CREATE TABLE `base_api_info` (
                                  `update_by` varchar(128) DEFAULT NULL,
                                  `update_time` datetime DEFAULT NULL,
                                  PRIMARY KEY (`api_id`),
-                                 KEY `api_path_method_inx` (`api_path`,`api_method`) USING BTREE
+                                 KEY `api_path_method_inx` (`api_path`(255),`api_method`) USING BTREE,
+                                 KEY `idx_api_status_release_time` (`api_status`, `release_time` DESC),
+                                 KEY `idx_group_id` (`group_id`),
+                                 KEY `idx_parent_id_status` (`parent_id`, `api_status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API信息表';
 
 
@@ -59,7 +62,11 @@ CREATE TABLE `base_api_log` (
                                 `response_time` datetime DEFAULT NULL COMMENT '响应时间',
                                 `cost_time` int DEFAULT '0' COMMENT '消耗时间',
                                 `visitor_name` varchar(50) DEFAULT NULL COMMENT '访问人员',
-                                PRIMARY KEY (`log_id`)
+                                PRIMARY KEY (`log_id`),
+                                KEY `idx_api_id` (`api_id`),
+                                KEY `idx_request_time` (`request_time` DESC),
+                                KEY `idx_app_name` (`app_name`),
+                                KEY `idx_api_id_time` (`api_id`, `request_time` DESC)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='接口访问日志';
 
 CREATE TABLE `base_app` (
@@ -85,7 +92,9 @@ CREATE TABLE `base_app_api` (
                                 `api_id` bigint DEFAULT NULL COMMENT 'ApiId',
                                 `create_by` varchar(128) DEFAULT NULL,
                                 `create_time` datetime DEFAULT NULL,
-                                PRIMARY KEY (`id`)
+                                PRIMARY KEY (`id`),
+                                KEY `idx_api_id` (`api_id`),
+                                KEY `idx_app_api` (`app_id`, `api_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='应用与API授权关系';
 
 CREATE TABLE `base_datasource` (
@@ -107,10 +116,10 @@ CREATE TABLE `base_datasource` (
   `keepalive_time` int DEFAULT NULL COMMENT '保活时间',
   `extend` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '扩展配置',
   `secret_key` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci COMMENT '密码解密密钥',
-  `create_by` int DEFAULT NULL,
+  `create_by` varchar(128) DEFAULT NULL,
   `create_time` datetime DEFAULT NULL,
   `update_time` datetime DEFAULT NULL,
-  `update_by` int DEFAULT NULL,
+  `update_by` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`datasource_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='数据源配置';
 
@@ -148,7 +157,9 @@ CREATE TABLE `base_sys_user` (
                                  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-                                 PRIMARY KEY (`user_id`)
+                                 PRIMARY KEY (`user_id`),
+                                 UNIQUE KEY `uk_user_name` (`user_name`),
+                                 KEY `idx_status` (`status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户信息表';
 
 -- 2.0新增表
@@ -169,7 +180,9 @@ CREATE TABLE `base_api_param` (
                                   `table_name` varchar(256)  DEFAULT NULL COMMENT '表名',
                                   `param_desc` varchar(512)  DEFAULT NULL COMMENT '描述',
                                   `create_time` datetime DEFAULT NULL,
-                                  PRIMARY KEY (`param_id`)
+                                  PRIMARY KEY (`param_id`),
+                                  KEY `idx_api_id` (`api_id`),
+                                  KEY `idx_api_id_model` (`api_id`, `param_model`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='API接口参数';
 
 -- 初始化数据

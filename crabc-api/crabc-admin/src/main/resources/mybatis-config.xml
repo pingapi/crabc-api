@@ -12,4 +12,10 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<setting name="callSettersOnNulls" value="true" />
 		<setting name="mapUnderscoreToCamelCase" value="true" /><!-- 驼峰下划线映射 -->
 	</settings>
+
+	<!-- 数据库厂商标识配置，用于支持多数据库 -->
+	<databaseIdProvider type="DB_VENDOR">
+		<property name="MySQL" value="mysql"/>
+		<property name="PostgreSQL" value="postgresql"/>
+	</databaseIdProvider>
 </configuration>
