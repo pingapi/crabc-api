@@ -37,6 +37,31 @@ cn.crabc
 dev分支框架SpringBoot已升级至4.1.0，jdk需21及以上版本 \
 jdk8分支框架SpringBoot是2.x + jdk8
 
+## 社区版压测报告
+
+> 压测工具：JMeter ｜ 部署环境：4c8g 服务器，jdk21
+
+| 压测参数 | 值         |
+|:--|:----------|
+| 压测接口 | 一个        |
+| 并发线程数 | 100       |
+| 执行时长 | 180 秒     |
+
+| 核心指标 | 数值             |
+|:--|:---------------|
+| **QPS（吞吐量）** | **287.8 请求/秒** |
+| 总请求数 | 51,959         |
+| 成功数 | 51,959         |
+| 失败数 | 0              |
+| **失败率** | **0.00%**      |
+| 平均响应时间 | 286 ms         |
+| 最大响应时间 | 1,118 ms       |
+| P50 | 291 ms         |
+| P90 | 457 ms         |
+| P95 | 602 ms         |
+| P99 | 785 ms         |
+
+
 ## 企业版
 https://apigo.cn
 
@@ -44,7 +69,7 @@ https://apigo.cn
 
 ## 运行启动
 ```
-1、先执行db/dml.sql脚本，创建库表和初始化数据
+1、先执行db/dml.sql脚本，创建库表和初始化数据，支持mysql和postgresql，建议mysql 8.0+版本和postgresql 14+版本
 2、在编辑工具中运行启动 crabc-api/ AdminApplication.java
 ```
 访问地址：http://127.0.0.1:9377 \
@@ -71,7 +96,7 @@ gitee: https://gitee.com/pingapi/crabc-api
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>5.2.0</version>
+    <version>5.5.0</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
