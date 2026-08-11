@@ -41,7 +41,6 @@ public class ApiThreadLocal {
      * 清除
      */
     public static void remove(){
-        log.info("<-- 清除上下文API信息");
         apiInfo.remove();
     }
 }

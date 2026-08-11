@@ -50,9 +50,9 @@ buildNumber.properties
 .settings
 bin/
 logs/
-db/
+crabc-web/
 .classpathc
-
+开发计划.md
 
 ####################### idea ##############################
 .idea

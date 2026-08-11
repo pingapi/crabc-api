@@ -40,7 +40,7 @@ public class IBaseApiLogServiceImpl implements IBaseApiLogService {
 
     @Override
     public PageInfo page(ApiLogParam param) {
-        PageHelper.startPage(param.getPageNum(), param.getPageSize());
+        PageHelper.startPage(param.getPageNum(), param.getPageSize(), false);
         List<BaseApiLog> list = baseApiLogMapper.selectList(param);
         return new PageInfo<>(list, param.getPageNum(), param.getPageSize());
     }

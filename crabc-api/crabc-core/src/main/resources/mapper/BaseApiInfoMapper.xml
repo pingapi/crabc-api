@@ -198,7 +198,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             b.version
         FROM
             base_api_info b
-            left join base_sys_user u on b.create_by = u.user_id
+            left join base_sys_user u on b.create_by = CAST(u.user_id AS VARCHAR)
         WHERE
             b.api_id =#{apiId}
     </select>

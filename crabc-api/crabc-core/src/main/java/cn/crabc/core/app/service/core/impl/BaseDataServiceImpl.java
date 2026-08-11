@@ -32,7 +32,6 @@ public class BaseDataServiceImpl implements IBaseDataService {
 
     @Override
     public PreviewVO sqlPreview(String datasourceId,String datasourceType, String schema, String sql) {
-        StatementMapper statementMapper = dataSourceManager.getStatementMapper(datasourceId);
         Map<String, Object> params = new HashMap<>();
         // 数据源类型
         if (datasourceType != null) {

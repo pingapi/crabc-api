@@ -46,7 +46,7 @@ public class JdbcStatement implements StatementMapper<Map<String, Object>> {
     private static final Logger log = LoggerFactory.getLogger(JdbcStatement.class);
     private static final String[] SCRIPT_TAGS = {"</if>","</foreach>","</where>","</set>","</choose>","</when>","</trim>","</otherwise"};
     private final BaseDataHandleMapper baseMapper;
-    private static final int PAGE_SIZE = 100;
+    private static final int PAGE_SIZE = 1000;
     private static final int PAGE_NUM = 1;
     private final Configuration myBatisConfiguration = new Configuration();
 
@@ -77,8 +77,12 @@ public class JdbcStatement implements StatementMapper<Map<String, Object>> {
             
             Object pageSetup = paramsMap.get(BaseConstant.PAGE_SETUP);
             int pageCount = pageSetup != null ? Integer.parseInt(pageSetup.toString()) : 0;
-            
-            if (pageCount != 0 && !checkPage(sql)) {
+
+            // 页面预览结果不需要查询总数
+            if ("preview".equals(execType)) {
+                PageHelper.startPage(pageNum, pageSize, false);
+                pageHelperStarted = true;
+            }else if (pageCount != 0 && !checkPage(sql)) {
                 PageHelper.startPage(pageNum, pageSize);
                 pageHelperStarted = true;
             }

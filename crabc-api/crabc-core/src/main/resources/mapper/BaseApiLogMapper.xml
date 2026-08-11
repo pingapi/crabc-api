@@ -36,8 +36,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and app_name like concat('%',#{appName},'%')
             </if>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-                and request_time &gt;=#{startTime}
-                and request_time &lt;=#{endTime}
+                and request_time &gt;=CAST(#{startTime} AS TIMESTAMP)
+                and request_time &lt;=CAST(#{endTime} AS TIMESTAMP)
             </if>
         </where>
         order by log_id desc
@@ -113,8 +113,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and app_name like concat('%',#{appName},'%')
             </if>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-                and request_time &gt;=#{startTime}
-                and request_time &lt;=#{endTime}
+                and request_time &gt;=CAST(#{startTime} AS TIMESTAMP)
+                and request_time &lt;=CAST(#{endTime} AS TIMESTAMP)
             </if>
         </where>
     </sql>
@@ -124,20 +124,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             count(1) AS totalCount,
             sum(case when request_status = 'success' then 1 else 0 end) AS successCount,
             sum(case when request_status = 'fail' then 1 else 0 end) AS failCount,
-            avg(ifnull(cost_time, 0)) AS avgCostTime,
-            max(ifnull(cost_time, 0)) AS maxCostTime
+            avg(COALESCE(cost_time, 0)) AS avgCostTime,
+            max(COALESCE(cost_time, 0)) AS maxCostTime
         FROM
             base_api_log
         <include refid="statisticsWhere" />
     </select>
 
-    <select id="selectDailyTrend" resultType="cn.crabc.core.app.entity.vo.ApiLogDailyTrendVO">
+    <select id="selectDailyTrend" resultType="cn.crabc.core.app.entity.vo.ApiLogDailyTrendVO" databaseId="mysql">
         SELECT
             DATE_FORMAT(request_time,'%Y-%m-%d') AS statisticDate,
             count(1) AS totalCount,
             sum(case when request_status = 'success' then 1 else 0 end) AS successCount,
             sum(case when request_status = 'fail' then 1 else 0 end) AS failCount,
-            avg(ifnull(cost_time, 0)) AS avgCostTime
+            avg(COALESCE(cost_time, 0)) AS avgCostTime
         FROM
             base_api_log
         <include refid="statisticsWhere" />
@@ -145,19 +145,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY statisticDate ASC
     </select>
 
+    <select id="selectDailyTrend" resultType="cn.crabc.core.app.entity.vo.ApiLogDailyTrendVO" databaseId="postgresql">
+        SELECT
+            TO_CHAR(request_time,'YYYY-MM-DD') AS statisticDate,
+            count(1) AS totalCount,
+            sum(case when request_status = 'success' then 1 else 0 end) AS successCount,
+            sum(case when request_status = 'fail' then 1 else 0 end) AS failCount,
+            avg(COALESCE(cost_time, 0)) AS avgCostTime
+        FROM
+            base_api_log
+        <include refid="statisticsWhere" />
+        GROUP BY TO_CHAR(request_time,'YYYY-MM-DD')
+        ORDER BY statisticDate ASC
+    </select>
+
     <select id="selectStatusStats" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO">
         SELECT
-            ifnull(request_status, 'unknown') AS groupKey,
-            ifnull(request_status, 'unknown') AS groupName,
+            COALESCE(request_status, 'unknown') AS groupKey,
+            COALESCE(request_status, 'unknown') AS groupName,
             count(1) AS count
         FROM
             base_api_log
         <include refid="statisticsWhere" />
-        GROUP BY ifnull(request_status, 'unknown')
+        GROUP BY COALESCE(request_status, 'unknown')
         ORDER BY count DESC
     </select>
 
-    <select id="selectTopApis" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO">
+    <select id="selectTopApis" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO" databaseId="mysql">
         SELECT
             ifnull(cast(api_id as char), api_path) AS groupKey,
             ifnull(api_name, api_path) AS groupName,
@@ -171,7 +185,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LIMIT 10
     </select>
 
-    <select id="selectTopCostApis" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO">
+    <select id="selectTopApis" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO" databaseId="postgresql">
+        SELECT
+            COALESCE(CAST(api_id AS VARCHAR), api_path) AS groupKey,
+            COALESCE(api_name, api_path) AS groupName,
+            api_path AS apiPath,
+            count(1) AS count
+        FROM
+            base_api_log
+        <include refid="statisticsWhere" />
+        GROUP BY api_id, api_name, api_path
+        ORDER BY count DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectTopCostApis" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO" databaseId="mysql">
         SELECT
             ifnull(cast(api_id as char), api_path) AS groupKey,
             ifnull(api_name, api_path) AS groupName,
@@ -187,16 +215,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         LIMIT 10
     </select>
 
+    <select id="selectTopCostApis" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO" databaseId="postgresql">
+        SELECT
+            COALESCE(CAST(api_id AS VARCHAR), api_path) AS groupKey,
+            COALESCE(api_name, api_path) AS groupName,
+            api_path AS apiPath,
+            count(1) AS count,
+            avg(COALESCE(cost_time, 0)) AS avgCostTime,
+            max(COALESCE(cost_time, 0)) AS maxCostTime
+        FROM
+            base_api_log
+        <include refid="statisticsWhere" />
+        GROUP BY api_id, api_name, api_path
+        ORDER BY avgCostTime DESC, maxCostTime DESC, count DESC
+        LIMIT 10
+    </select>
+
     <!-- IP访问量Top10，按request_ip分组统计调用量 -->
     <select id="selectTopIps" resultType="cn.crabc.core.app.entity.vo.ApiLogGroupCountVO">
         SELECT
-            ifnull(request_ip, 'unknown') AS groupKey,
-            ifnull(request_ip, 'unknown') AS groupName,
+            COALESCE(request_ip, 'unknown') AS groupKey,
+            COALESCE(request_ip, 'unknown') AS groupName,
             count(1) AS count
         FROM
             base_api_log
         <include refid="statisticsWhere" />
-        GROUP BY ifnull(request_ip, 'unknown')
+        GROUP BY COALESCE(request_ip, 'unknown')
         ORDER BY count DESC
         LIMIT 10
     </select>
