@@ -36,6 +36,7 @@ public interface BaseDataHandleMapper {
      */
     @SelectProvider(type = BaseSelectProvider.class, method = "executeQuery")
     @ResultType(LinkedHashMap.class)
+    @Options(timeout = 30)  // 超时时间
     List<LinkedHashMap<String, Object>> executeQuery(Map<String, Object> params);
 
     /**
@@ -44,6 +45,7 @@ public interface BaseDataHandleMapper {
      * @return
      */
     @InsertProvider(type = BaseSelectProvider.class, method = "executeInsert")
+    @Options(timeout = 60)
     Integer executeInsert(Map<String, Object> params);
 
     /**
@@ -52,6 +54,7 @@ public interface BaseDataHandleMapper {
      * @return
      */
     @UpdateProvider(type = BaseSelectProvider.class, method = "executeUpdate")
+    @Options(timeout = 30)
     Integer executeUpdate(Map<String, Object> params);
 
     /**
@@ -60,5 +63,6 @@ public interface BaseDataHandleMapper {
      * @return
      */
     @UpdateProvider(type = BaseSelectProvider.class, method = "executeDelete")
+    @Options(timeout = 30)
     Integer executeDelete(Map<String, Object> params);
 }

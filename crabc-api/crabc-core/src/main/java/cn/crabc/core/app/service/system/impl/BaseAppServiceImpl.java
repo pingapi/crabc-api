@@ -1,14 +1,17 @@
 package cn.crabc.core.app.service.system.impl;
 
 import cn.crabc.core.app.entity.BaseApp;
+import cn.crabc.core.app.entity.dto.ApiInfoDTO;
 import cn.crabc.core.app.mapper.BaseAppMapper;
 import cn.crabc.core.app.service.system.IBaseAppService;
 import cn.crabc.core.datasource.util.PageInfo;
 import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,6 +27,9 @@ public class BaseAppServiceImpl implements IBaseAppService {
 
     @Autowired
     private BaseAppMapper baseAppMapper;
+    @Autowired
+    @Qualifier("apiCache")
+    Cache<String, ApiInfoDTO> apiInfoCache;
 
     @Override
     public PageInfo<BaseApp> appPage(String appName, String appCode, Integer pageNum, Integer pageSize) {
@@ -55,14 +61,16 @@ public class BaseAppServiceImpl implements IBaseAppService {
         }
         app.setUpdateTime(new Date());
         app.setUpdateBy(UserThreadLocal.getUserId());
-        return baseAppMapper.update(app);
+        baseAppMapper.update(app);
+        apiInfoCache.invalidateAll();
+        return 1;
     }
 
     @Override
     public Integer deleteApp(Long appId) {
-        return baseAppMapper.delete(appId);
+        baseAppMapper.delete(appId);
+        apiInfoCache.invalidateAll();
+        return 1;
     }
-
-
 
 }

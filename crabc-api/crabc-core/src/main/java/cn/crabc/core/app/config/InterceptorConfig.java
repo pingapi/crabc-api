@@ -3,12 +3,12 @@ package cn.crabc.core.app.config;
 import cn.crabc.core.app.filter.ApiFilter;
 import cn.crabc.core.app.filter.AuthInterceptor;
 import cn.crabc.core.app.filter.JwtInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 
 
 /**
@@ -41,6 +41,8 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/web/**"); // 需要拦截的请求
     }
 
+    @Value("${crabc.api-log.response-body:false}")
+    public Boolean responseBody = false;
     /**
      * 日志过滤器
      * @return
@@ -49,7 +51,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Bean
     public FilterRegistrationBean builderRegistrationBean(){
         FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new ApiFilter());
+        registration.setFilter(new ApiFilter(responseBody));
         registration.addUrlPatterns("/api/web/*");
         registration.setName("apiFilter");
         registration.setOrder(-1);

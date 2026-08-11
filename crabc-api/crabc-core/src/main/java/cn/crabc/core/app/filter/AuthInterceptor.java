@@ -12,6 +12,7 @@ import cn.crabc.core.app.util.Result;
 import cn.crabc.core.app.util.SM3Util;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * API开放接口鉴权过滤 拦截器
@@ -39,6 +41,13 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     // API开放接口前缀
     private static final String API_PRE = "/api/web/";
+
+    // Nonce缓存：防止重放攻击（存储已使用的nonce）
+    private final Cache<String, Long> nonceCache = Caffeine.newBuilder()
+            .expireAfterWrite(15, TimeUnit.MINUTES) // nonce有效期15分钟
+            .maximumSize(10000) // 最多缓存1万个nonce
+            .build();
+
     @Autowired
     private IBaseApiLogService iBaseApiLogService;
     @Autowired
@@ -59,6 +68,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         String apiPath = IBaseApiInfoService.normalizeApiPath(path.replace(API_PRE, ""));
         String cacheKey = IBaseApiInfoService.buildCacheKey(method, apiPath);
 
+        // 1. 获取API配置
         ApiInfoDTO apiInfo = apiCache.getIfPresent(cacheKey);
         if (apiInfo == null) {
             apiInfo = iBaseApiInfoService.getApiInfoCache(method, apiPath);
@@ -66,37 +76,42 @@ public class AuthInterceptor implements HandlerInterceptor {
                 apiCache.put(cacheKey, apiInfo);
             }
         }
+
+        // 2. API存在性验证
         if (apiInfo == null) {
             setErrorResponse(request, response,ErrorStatusEnum.API_INVALID.getCode(),ErrorStatusEnum.API_INVALID.getMassage());
             return false;
         }
-        // 存入当前时间，当作是日志的请求时间
+
+        // 3. 存入上下文（记录请求时间用于日志和性能监控）
         apiInfo.setRequestDate(new Date());
         apiInfo.setRequestTime(System.currentTimeMillis());
-        // 放入上下文
         ApiThreadLocal.set(apiInfo);
 
+        // 4. API启用状态检查
         if (apiInfo.getEnabled() == 0) {
             setErrorResponse(request, response,ErrorStatusEnum.API_OFFLINE.getCode(),ErrorStatusEnum.API_OFFLINE.getMassage());
             return false;
         }
 
+        // 5. 限流检查（防止API被恶意频繁调用）
         if (!apiRateLimitService.tryConsume(apiInfo)) {
             setErrorResponse(request, response, ErrorStatusEnum.API_LIMIT.getCode(), ErrorStatusEnum.API_LIMIT.getMassage());
             return false;
         }
 
         try {
-            // 应用列表
+            // 6. 根据认证类型进行鉴权
             List<BaseApp> appList = apiInfo.getAppList();
 
             return switch (apiInfo.getAuthType().toUpperCase()) {
                 case "APP_CODE" -> checkAppCode(request,response, appList);
                 case "APP_KEY" -> checkAppKey(request,response, appList);
                 case "APP_SECRET" -> checkSM3(request,response, appList);
-                default -> true;
+                default -> true; // 无认证模式
             };
         }catch (Exception e) {
+            log.error("API认证异常: {}", e.getMessage(), e);
             setErrorResponse(request,response,ErrorStatusEnum.API_UN_AUTH.getCode(),ErrorStatusEnum.API_UN_AUTH.getMassage());
             return false;
         }
@@ -231,33 +246,70 @@ public class AuthInterceptor implements HandlerInterceptor {
      * @throws Exception
      */
     public boolean checkSM3(HttpServletRequest request, HttpServletResponse response, List<BaseApp> appList) throws Exception {
-        // 认证参数
+        // 1. 获取认证参数（支持X-前缀和无前缀两种header）
         String sign = Optional.ofNullable(request.getHeader("X-Sign")).orElse(request.getHeader("sign"));
         String timeStamp = Optional.ofNullable(request.getHeader("X-Timestamp")).orElse(request.getHeader("timestamp"));
         String appKey = Optional.ofNullable(request.getHeader("X-AppKey")).orElse(request.getHeader("appkey"));
         String nonce = Optional.ofNullable(request.getHeader("X-Nonce")).orElse(request.getHeader("nonce"));
+
+        // 2. 必填参数检查
         if (appKey == null || sign == null || timeStamp == null) {
             setErrorResponse(request,response,ErrorStatusEnum.SHA_PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
             return false;
         }
-        // 校验时间戳,超过10分钟失效
-        long authTime = Long.parseLong(timeStamp);
+
+        // 3. 时间戳有效性验证（防止过期请求）
+        long authTime;
+        try {
+            authTime = Long.parseLong(timeStamp);
+        } catch (NumberFormatException e) {
+            setErrorResponse(request,response,ErrorStatusEnum.SHA_TIMESTAMP_EXPIRE.getCode(), "时间戳格式错误");
+            return false;
+        }
+
         long nowTime = System.currentTimeMillis() - authTime;
-        if (nowTime > expiresTime * 60 * 1000) {
+        // 检查时间戳是否在有效期内（默认10分钟）
+        if (nowTime > expiresTime * 60 * 1000L || nowTime < 0) {
             setErrorResponse(request,response,ErrorStatusEnum.SHA_TIMESTAMP_EXPIRE.getCode(), ErrorStatusEnum.SHA_TIMESTAMP_EXPIRE.getMassage());
             return false;
         }
 
+        // 4. Nonce防重放验证（如果提供了nonce）
+        if (nonce != null && !nonce.isEmpty()) {
+            // 生成唯一的nonce key（appKey + nonce组合，防止不同应用nonce冲突）
+            String nonceKey = appKey + ":" + nonce;
+
+            // 检查nonce是否已被使用
+            if (nonceCache.getIfPresent(nonceKey) != null) {
+                log.warn("检测到重放攻击 - AppKey: {}, Nonce: {}, IP: {}",
+                        appKey, nonce, RequestUtils.getIp(request));
+                setErrorResponse(request,response,ErrorStatusEnum.API_AUTH_ERROR.getCode(), "请求已失效");
+                return false;
+            }
+
+            // 记录nonce到缓存，防止重复使用
+            nonceCache.put(nonceKey, authTime);
+        }
+
+        // 5. 获取应用密钥
         String appSecret = appList.stream()
                 .filter(app -> app.getAppKey().equals(appKey))
                 .map(BaseApp::getAppSecret)
                 .findFirst()
                 .orElse("");
 
+        if (appSecret.isEmpty()) {
+            setErrorResponse(request,response,ErrorStatusEnum.API_AUTH_ERROR.getCode(),"AppKey不存在");
+            return false;
+        }
 
+        // 6. 构建签名数据并验证
         String buildData = this.buildData(request, appKey, timeStamp, nonce);
         boolean verify = SM3Util.verify(buildData, appSecret, sign);
+
         if (!verify) {
+            log.warn("签名验证失败 - AppKey: {}, IP: {}, 签名数据: {}",
+                    appKey, RequestUtils.getIp(request), buildData);
             setErrorResponse(request,response,ErrorStatusEnum.API_AUTH_ERROR.getCode(),ErrorStatusEnum.API_AUTH_ERROR.getMassage());
         }
         return verify;

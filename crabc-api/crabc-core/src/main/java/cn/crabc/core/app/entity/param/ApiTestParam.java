@@ -33,7 +33,10 @@ public class ApiTestParam {
 
     private Object requestParams;
 
-    private String bodyData;
+    /**
+     * 请求体参数，页面测试弹窗传入：可能是 JSON 字符串（"{\"list\":[1,2]}"），也可能是已反序列化的对象
+     */
+    private Object bodyData;
 
     private Map<String,Object> queryParam;
 }

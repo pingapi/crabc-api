@@ -1,7 +1,6 @@
 package cn.crabc.core.app.filter;
 
 import cn.crabc.core.app.util.ApiThreadLocal;
-import cn.crabc.core.app.util.UserThreadLocal;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +10,13 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 
 public class ApiFilter implements Filter {
+
+
+    public Boolean responseBody;
+
+    public ApiFilter( Boolean responseBody) {
+        this.responseBody = responseBody;
+    }
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
@@ -23,7 +29,7 @@ public class ApiFilter implements Filter {
         ContentCachingResponseWrapper responseWrapper = null;
         try {
             // 包装类
-            if (request.getContentType() == null || request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE)) {
+            if (responseBody && (request.getContentType() == null || request.getContentType().contains(MediaType.APPLICATION_JSON_VALUE))) {
                 BaseRequestWrapper requestWrapper = new BaseRequestWrapper(request);
                 responseWrapper = new ContentCachingResponseWrapper(response);
                 filterChain.doFilter(requestWrapper, responseWrapper);

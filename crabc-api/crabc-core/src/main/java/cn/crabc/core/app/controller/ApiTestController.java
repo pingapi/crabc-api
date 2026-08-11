@@ -83,42 +83,87 @@ public class ApiTestController {
     }
 
     /**
-     * 构建参数Map
+     * 构建运行时参数Map，供SQL执行层使用。
+     * body 参数来自 bodyData（页面Body编辑器，可能是JSON字符串或对象），
+     * query 参数来自 requestParams/requestParam 数组中 paramPosition=query 的项。
      */
     private Map<String, Object> buildParamsMap(ApiTestParam params) throws Exception {
         Map<String, Object> paramsMap = new HashMap<>();
-        
-        // 处理body参数
-        if (params.getBodyData() != null && params.getBodyData().startsWith("{")) {
-            paramsMap = jsonMapper.readValue(params.getBodyData(), HashMap.class);
-        }else if (params.getBodyData() != null && params.getBodyData().startsWith("[")) {
-            List list = jsonMapper.readValue(params.getBodyData(), List.class);
-            paramsMap.put("list", list);
+
+        // 1. 解析 body 参数：bodyData 可能是 JSON 字符串、双重编码字符串或对象
+        Object bodyData = params.getBodyData();
+        if (bodyData instanceof String) {
+            String bodyStr = (String) bodyData;
+            // 兼容双重序列化：bodyData 可能以引号开头（JSON 字符串字面量），先剥掉外层引号还原 JSON 文本
+            if (bodyStr.startsWith("\"") && bodyStr.endsWith("\"")) {
+                bodyStr = jsonMapper.readValue(bodyStr, String.class);
+            }
+            if (bodyStr.startsWith("{")) {
+                Map<String, Object> bodyMap = jsonMapper.readValue(bodyStr, HashMap.class);
+                if (bodyMap != null) {
+                    paramsMap.putAll(bodyMap);
+                }
+            } else if (bodyStr.startsWith("[")) {
+                List<?> bodyList = jsonMapper.readValue(bodyStr, List.class);
+                paramsMap.put("list", bodyList);
+            }
+        } else if (bodyData instanceof Map) {
+            paramsMap.putAll((Map<String, Object>) bodyData);
+        } else if (bodyData instanceof List) {
+            paramsMap.put("list", bodyData);
         }
 
-        // 处理query参数
+        // 2. 解析 requestParams：
+        //    - Map 形式：可能是已组装好的键值对（如 {"list":["1","2"],"pageSetup":0}），直接合并；
+        //    - List 形式：参数定义数组，仅取 paramPosition=query 的项，body/header 参数值由 bodyData/请求头单独注入
         Object requestParams = params.getRequestParams();
         if (requestParams instanceof Map) {
-            Map<String, Object> queryParam = (Map<String, Object>) requestParams;
-            if (validateParams(queryParam)) {
-                paramsMap.putAll(queryParam);
+            Map<String, Object> requestMap = (Map<String, Object>) requestParams;
+            // 单个参数定义（含 paramName/value 键）也按定义处理，否则视为键值对直接合并
+            if (requestMap.containsKey("paramName") && requestMap.containsKey("value")) {
+                Object name = requestMap.get("paramName");
+                Object value = requestMap.get("value");
+                if (name != null && value != null && !"".equals(value)) {
+                    paramsMap.put(name.toString(), value);
+                }
             } else {
-                throw new IllegalArgumentException("参数校验失败");
+                paramsMap.putAll(requestMap);
             }
         } else if (requestParams instanceof List) {
-            List<Map<String,Object>> paramsList = (List<Map<String, Object>>) requestParams;
+            List<Map<String, Object>> paramsList = (List<Map<String, Object>>) requestParams;
             for (Map<String, Object> entry : paramsList) {
-                if (validateParams(entry)) {
-                    if (entry.containsKey("name")) {
-                        paramsMap.put(entry.get("name").toString(), entry.get("value"));
-                    }
-                } else {
-                    throw new IllegalArgumentException("参数校验失败");
+                String position = entry.get("paramPosition") == null
+                    ? "query" : String.valueOf(entry.get("paramPosition"));
+                // 跳过 body/header 位置参数，避免无 value 的 Array 类型被误判为必填失败
+                if (!"query".equalsIgnoreCase(position)) {
+                    continue;
                 }
+                Object name = entry.get("paramName");
+                if (name == null) {
+                    continue;
+                }
+                Object value = entry.get("value");
+                if (value == null || "".equals(value)) {
+                    continue;
+                }
+                // Array 类型做逗号分隔转换
+                String paramType = String.valueOf(entry.get("paramType"));
+                if ("Array".equalsIgnoreCase(paramType) && !(value instanceof List)) {
+                    value = Arrays.asList(value.toString().split(","));
+                }
+                paramsMap.put(name.toString(), value);
             }
-            if (paramsList.isEmpty() && params.getPageSetup() != null) {
-                paramsMap.put("pageSetup", params.getPageSetup());
-            }
+        }
+
+        // 3. 兼容旧字段 queryParam（Map 形式）
+        Map<String, Object> queryParam = params.getQueryParam();
+        if (queryParam != null && !queryParam.isEmpty()) {
+            paramsMap.putAll(queryParam);
+        }
+
+        // 分页开关
+        if (params.getPageSetup() != null) {
+            paramsMap.put("pageSetup", params.getPageSetup());
         }
         // 事务开关只由测试弹窗显式传入，开发页运行/预览不进入多脚本执行入口。
         paramsMap.put(BaseConstant.TRANSACTION_ENABLED, normalizeTransactionEnabled(params.getTransactionEnabled()));
@@ -135,32 +180,11 @@ public class ApiTestController {
     /**
      * 格式化返回数据
      */
-    private String formatResultData(Object data, String resultType) throws Exception {
+    private String formatResultData(Object data, String resultType) {
         if (ResultTypeEnum.ONE.getName().equals(resultType) && data instanceof List) {
             List<Object> list = (List<Object>) data;
             return jsonMapper.writeValueAsString(Result.success(list.isEmpty() ? null : list.get(0)));
         }
         return jsonMapper.writeValueAsString(Result.success(data));
-    }
-
-    /**
-     * 校验并处理参数
-     */
-    private boolean validateParams(Map<String, Object> params) {
-        if (params == null || params.isEmpty()) {
-            return true;
-        }
-        
-        String paramType = String.valueOf(params.get("paramType"));
-        Object paramValue = params.get("value");
-
-        if ("Array".equalsIgnoreCase(paramType)) {
-            if (paramValue == null || "".equals(paramValue)) {
-                return false;
-            }
-            String[] values = paramValue.toString().split(",");
-            params.put("value", Arrays.asList(values));
-        }
-        return true;
     }
 }

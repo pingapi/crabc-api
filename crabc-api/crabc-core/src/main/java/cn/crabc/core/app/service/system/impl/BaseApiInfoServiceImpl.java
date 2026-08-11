@@ -395,7 +395,9 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             a.setCreateTime(time);
             list.add(a);
         }
-        return baseAppApiMapper.insert(list);
+        baseAppApiMapper.insert(list);
+        apiInfoCache.invalidateAll();
+        return 1;
     }
 
     @Override
