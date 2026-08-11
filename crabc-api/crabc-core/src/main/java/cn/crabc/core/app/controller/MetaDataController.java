@@ -10,6 +10,7 @@ import cn.crabc.core.spi.MetaDataMapper;
 import cn.crabc.core.spi.bean.Column;
 import cn.crabc.core.spi.bean.Table;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,7 +59,7 @@ public class MetaDataController {
         return Result.success(schemas);
     }
 
-    //@Cacheable(cacheNames = "tableCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema")
+    @Cacheable(cacheNames = "tableCache", cacheManager = "metaDataManager", key = "#datasourceId+'_'+#schema")
     @GetMapping("/tables")
     public Result getTables(@RequestParam("datasourceId") String datasourceId, @RequestParam("schema") String schema,String datasourceType) {
         MetaDataMapper metaData = dataSourceManager.getMetaData(datasourceId);

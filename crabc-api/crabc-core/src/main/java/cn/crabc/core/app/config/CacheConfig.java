@@ -14,13 +14,13 @@ import java.util.concurrent.TimeUnit;
 public class CacheConfig {
 
     /**
-     * 临时缓存对象(5分钟)
+     * 临时缓存对象(15分钟)
      * @return
      */
     @Bean("dataCache")
     public Cache<String, Object> dataCache() {
         return Caffeine.newBuilder()
-                .expireAfterWrite(300, TimeUnit.SECONDS)
+                .expireAfterWrite(15, TimeUnit.MINUTES)
                 .build();
     }
 
@@ -46,7 +46,7 @@ public class CacheConfig {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
         Caffeine<Object, Object> caffeine = Caffeine.newBuilder()
                 // 设置最后一次写入或访问后经过固定时间过期
-                .expireAfterAccess(1800, TimeUnit.SECONDS);
+                .expireAfterAccess(15, TimeUnit.MINUTES);
         cacheManager.setCaffeine(caffeine);
         return cacheManager;
     }
