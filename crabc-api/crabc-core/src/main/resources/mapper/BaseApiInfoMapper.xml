@@ -198,7 +198,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             b.version
         FROM
             base_api_info b
-            left join base_sys_user u on b.create_by = CAST(u.user_id AS VARCHAR)
+            left join base_sys_user u on
+            <!-- 兼容多数据库：MySQL 的 CAST 不支持 VARCHAR，PostgreSQL 的 CAST(AS CHAR) 会截断，故按库区分 -->
+            <choose>
+                <when test="_databaseId == 'mysql'">
+                    b.create_by = CAST(u.user_id AS CHAR)
+                </when>
+                <otherwise>
+                    b.create_by = CAST(u.user_id AS VARCHAR)
+                </otherwise>
+            </choose>
         WHERE
             b.api_id =#{apiId}
     </select>

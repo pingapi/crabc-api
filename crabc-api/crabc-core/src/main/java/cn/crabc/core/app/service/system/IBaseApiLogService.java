@@ -27,6 +27,14 @@ public interface IBaseApiLogService {
     Integer addLog(BaseApiLog log);
 
     /**
+     * 批量添加日志
+     *
+     * @param logs
+     * @return
+     */
+    Integer batchAddLog(List<BaseApiLog> logs);
+
+    /**
      * 日志列表
      *
      * @param param

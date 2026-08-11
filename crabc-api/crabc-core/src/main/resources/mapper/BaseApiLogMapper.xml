@@ -36,8 +36,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and app_name like concat('%',#{appName},'%')
             </if>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-                and request_time &gt;=CAST(#{startTime} AS TIMESTAMP)
-                and request_time &lt;=CAST(#{endTime} AS TIMESTAMP)
+                <!-- 兼容多数据库：MySQL 的 CAST 不支持 TIMESTAMP，PostgreSQL 的 CAST 不支持 DATETIME，故按库区分 -->
+                <choose>
+                    <when test="_databaseId == 'mysql'">
+                        and request_time &gt;=CAST(#{startTime} AS DATETIME)
+                        and request_time &lt;=CAST(#{endTime} AS DATETIME)
+                    </when>
+                    <otherwise>
+                        and request_time &gt;=CAST(#{startTime} AS TIMESTAMP)
+                        and request_time &lt;=CAST(#{endTime} AS TIMESTAMP)
+                    </otherwise>
+                </choose>
             </if>
         </where>
         order by log_id desc
@@ -101,6 +110,47 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         )
     </insert>
 
+    <insert id="batchInsert" parameterType="java.util.List">
+        insert into base_api_log(
+            api_id,
+            api_name,
+            api_path,
+            api_method,
+            app_name,
+            auth_type,
+            request_ip,
+            query_param,
+            request_body,
+            response_body,
+            body_size,
+            request_status,
+            response_code,
+            cost_time,
+            request_time,
+            response_time
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+                #{item.apiId},
+                #{item.apiName},
+                #{item.apiPath},
+                #{item.apiMethod},
+                #{item.appName},
+                #{item.authType},
+                #{item.requestIp},
+                #{item.queryParam},
+                #{item.requestBody},
+                #{item.responseBody},
+                #{item.bodySize},
+                #{item.requestStatus},
+                #{item.responseCode},
+                #{item.costTime},
+                #{item.requestTime},
+                #{item.responseTime}
+            )
+        </foreach>
+    </insert>
+
     <sql id="statisticsWhere">
         <where>
             <if test="keyword !=null and keyword !=''">
@@ -113,8 +163,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 and app_name like concat('%',#{appName},'%')
             </if>
             <if test="startTime !=null and startTime !='' and endTime !=null and endTime !=''">
-                and request_time &gt;=CAST(#{startTime} AS TIMESTAMP)
-                and request_time &lt;=CAST(#{endTime} AS TIMESTAMP)
+                <!-- 兼容多数据库：MySQL 的 CAST 不支持 TIMESTAMP，PostgreSQL 的 CAST 不支持 DATETIME，故按库区分 -->
+                <choose>
+                    <when test="_databaseId == 'mysql'">
+                        and request_time &gt;=CAST(#{startTime} AS DATETIME)
+                        and request_time &lt;=CAST(#{endTime} AS DATETIME)
+                    </when>
+                    <otherwise>
+                        and request_time &gt;=CAST(#{startTime} AS TIMESTAMP)
+                        and request_time &lt;=CAST(#{endTime} AS TIMESTAMP)
+                    </otherwise>
+                </choose>
             </if>
         </where>
     </sql>

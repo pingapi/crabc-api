@@ -28,7 +28,8 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * API开放接口鉴权过滤 拦截器
@@ -42,11 +43,22 @@ public class AuthInterceptor implements HandlerInterceptor {
     // API开放接口前缀
     private static final String API_PRE = "/api/web/";
 
-    // Nonce缓存：防止重放攻击（存储已使用的nonce）
-    private final Cache<String, Long> nonceCache = Caffeine.newBuilder()
-            .expireAfterWrite(15, TimeUnit.MINUTES) // nonce有效期15分钟
-            .maximumSize(10000) // 最多缓存1万个nonce
-            .build();
+    // 日志异步处理配置
+    private static final int BATCH_SIZE = 500; // 每次消费200条
+    private static final long CONSUME_INTERVAL_MS = 500; // 每500ms消费一次
+
+    // 有界日志缓冲队列（超过容量则丢弃）
+    private final BlockingQueue<BaseApiLog> logQueue = new LinkedBlockingQueue<>(2000);
+
+    // 丢弃日志计数器
+    private final AtomicInteger droppedLogCount = new AtomicInteger(0);
+
+    // 定时任务调度器
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread thread = new Thread(r, "api-log-consumer");
+        thread.setDaemon(true); //
+        return thread;
+    });
 
     @Autowired
     private IBaseApiLogService iBaseApiLogService;
@@ -61,6 +73,37 @@ public class AuthInterceptor implements HandlerInterceptor {
     private Cache<String, ApiInfoDTO> apiCache;
     @Autowired
     private ApiRateLimitService apiRateLimitService;
+
+    /**
+     * 构造函数：启动日志批量消费定时任务
+     */
+    public AuthInterceptor() {
+        // 每500ms执行一次批量消费任务
+        scheduler.scheduleAtFixedRate(this::consumeLogBatch, CONSUME_INTERVAL_MS, CONSUME_INTERVAL_MS, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 批量消费日志队列
+     */
+    private void consumeLogBatch() {
+        try {
+            List<BaseApiLog> batch = new ArrayList<>(BATCH_SIZE);
+            logQueue.drainTo(batch, BATCH_SIZE);
+
+            if (!batch.isEmpty()) {
+                iBaseApiLogService.batchAddLog(batch);
+                log.debug("批量插入API日志成功，数量：{}", batch.size());
+            }
+
+            // 定期报告丢弃日志数
+            int dropped = droppedLogCount.getAndSet(0);
+            if (dropped > 0) {
+                log.warn("日志队列已满，丢弃日志数：{}", dropped);
+            }
+        } catch (Exception e) {
+            log.error("批量消费日志失败", e);
+        }
+    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String path = request.getRequestURI();
@@ -119,7 +162,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        addLog(request, response, "");
+        addLogAsync(request, response, "");
         // 清除上下文
         ApiThreadLocal.remove();
     }
@@ -139,16 +182,38 @@ public class AuthInterceptor implements HandlerInterceptor {
         Result result = Result.error(status, message);
         String json = jsonMapper.writeValueAsString(result);
         // 日记记录
-        addLog(request, response, json);
+        addLogAsync(request, response, json);
         response.getWriter().write(json);
     }
+
     /**
-     * 记录访问日志
+     * 异步记录访问日志（将日志加入队列）
      *
      * @param request
      * @param response
      */
-    private void addLog(HttpServletRequest request, HttpServletResponse response, String msg) throws Exception {
+    private void addLogAsync(HttpServletRequest request, HttpServletResponse response, String msg) {
+        try {
+            BaseApiLog apiLog = buildApiLog(request, response, msg);
+            // 尝试将日志加入队列，如果队列已满则丢弃
+            boolean offered = logQueue.offer(apiLog);
+            if (!offered) {
+                droppedLogCount.incrementAndGet();
+            }
+        } catch (Exception e) {
+            log.error("构建API日志失败", e);
+        }
+    }
+
+    /**
+     * 构建API日志对象
+     *
+     * @param request
+     * @param response
+     * @param msg
+     * @return
+     */
+    private BaseApiLog buildApiLog(HttpServletRequest request, HttpServletResponse response, String msg) throws Exception {
         ContentCachingResponseWrapper responseWrapper = null;
         BaseApiLog apiLog = new BaseApiLog();
         long endTime = System.currentTimeMillis();
@@ -188,7 +253,6 @@ public class AuthInterceptor implements HandlerInterceptor {
             if (status == 400) {
                 apiLog.setResponseBody(msg);
             }
-            iBaseApiLogService.addLog(apiLog);
         } catch (Exception e) {
             log.error("响应结果转换异常", e);
         } finally {
@@ -196,6 +260,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 responseWrapper.copyBodyToResponse();
             }
         }
+        return apiLog;
     }
 
     /**
@@ -274,24 +339,8 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 4. Nonce防重放验证（如果提供了nonce）
-        if (nonce != null && !nonce.isEmpty()) {
-            // 生成唯一的nonce key（appKey + nonce组合，防止不同应用nonce冲突）
-            String nonceKey = appKey + ":" + nonce;
 
-            // 检查nonce是否已被使用
-            if (nonceCache.getIfPresent(nonceKey) != null) {
-                log.warn("检测到重放攻击 - AppKey: {}, Nonce: {}, IP: {}",
-                        appKey, nonce, RequestUtils.getIp(request));
-                setErrorResponse(request,response,ErrorStatusEnum.API_AUTH_ERROR.getCode(), "请求已失效");
-                return false;
-            }
-
-            // 记录nonce到缓存，防止重复使用
-            nonceCache.put(nonceKey, authTime);
-        }
-
-        // 5. 获取应用密钥
+        // 4. 获取应用密钥
         String appSecret = appList.stream()
                 .filter(app -> app.getAppKey().equals(appKey))
                 .map(BaseApp::getAppSecret)
@@ -303,7 +352,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        // 6. 构建签名数据并验证
+        // 5. 构建签名数据并验证
         String buildData = this.buildData(request, appKey, timeStamp, nonce);
         boolean verify = SM3Util.verify(buildData, appSecret, sign);
 

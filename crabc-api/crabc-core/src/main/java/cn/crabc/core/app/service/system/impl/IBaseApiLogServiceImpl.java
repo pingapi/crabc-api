@@ -39,6 +39,14 @@ public class IBaseApiLogServiceImpl implements IBaseApiLogService {
     }
 
     @Override
+    public Integer batchAddLog(List<BaseApiLog> logs) {
+        if (logs == null || logs.isEmpty()) {
+            return 0;
+        }
+        return baseApiLogMapper.batchInsert(logs);
+    }
+
+    @Override
     public PageInfo page(ApiLogParam param) {
         PageHelper.startPage(param.getPageNum(), param.getPageSize(), false);
         List<BaseApiLog> list = baseApiLogMapper.selectList(param);
