@@ -1,8 +1,11 @@
 # Server
 server:
   port: ${SERVER_PORT:9377}
-
-# Keep secrets out of git. Override via environment variables when running locally or in containers.
+  tomcat:
+    # 连接建立后，等待客户端发送HTTP请求头超时
+    connection-timeout: 30s
+    # Keep-Alive 长连接空闲超时（请求处理完，等待下一次请求）
+    keep-alive-timeout: 20s
 spring:
   application:
     name: crabc-api
@@ -10,10 +13,10 @@ spring:
     banner-mode: off
   threads:
     virtual:
-      enabled: true  # 全局启用虚拟线程
+      enabled: true
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
-    time-zone: GMT+8
+    time-zone: Asia/Shanghai
     default-property-inclusion: non_null
     core:
       recycler-pool: thread-local  # Jackson3性能恢复
@@ -30,8 +33,10 @@ mybatis:
   mapperLocations: classpath*:mapper/**/*.xml
   config-location: classpath:mybatis-config.xml
 
-#  configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
 pagehelper:
   autoRuntimeDialect: true   # 开启多数据源分页识别
+
+
+crabc:
+  api-log:
+    response-body: false  # 日志是否保存响应结果
