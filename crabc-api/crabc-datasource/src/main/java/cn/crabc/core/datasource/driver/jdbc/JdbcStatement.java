@@ -137,7 +137,7 @@ public class JdbcStatement implements StatementMapper<Map<String, Object>> {
         } catch (Exception e) {
             // 3. 安全的错误处理
             log.error("SQL插入失败 - 数据源: {}, Schema: {}, 错误: {}", dataSourceId, schema, e.getMessage());
-            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), "插入操作失败");
+            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), "插入操作失败：" + e.getMessage());
         } finally {
             JdbcDataSourceRouter.remove();
         }
@@ -171,7 +171,7 @@ public class JdbcStatement implements StatementMapper<Map<String, Object>> {
         } catch (Exception e) {
             // 3. 安全的错误处理
             log.error("SQL更新失败 - 数据源: {}, Schema: {}, 错误: {}", dataSourceId, schema, e.getMessage());
-            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), "更新操作失败");
+            throw new CustomException(ErrorStatusEnum.API_SQL_ERROR.getCode(), "更新操作失败" + e.getMessage());
         } finally {
             JdbcDataSourceRouter.remove();
         }

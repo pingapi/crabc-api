@@ -33,6 +33,6 @@ import org.springframework.context.annotation.ComponentScan;
 public class AdminApplication {
     public static void main(String[] args) {
         SpringApplication.run(AdminApplication.class, args);
-        System.out.println("crabc-admin start success!!!");
+        System.out.println("apigo-admin start success!!!");
     }
 }

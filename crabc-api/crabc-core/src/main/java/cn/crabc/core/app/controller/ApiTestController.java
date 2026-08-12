@@ -7,6 +7,7 @@ import cn.crabc.core.app.service.core.IBaseDataService;
 import cn.crabc.core.app.util.Result;
 import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
+import cn.crabc.core.datasource.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.json.JsonMapper;
@@ -78,6 +79,10 @@ public class ApiTestController {
             return Result.success(formatResultData(data, params.getResultType()));
             
         } catch (Exception e) {
+            if(e instanceof CustomException) {
+                CustomException ex = (CustomException) e;
+                return Result.error("测试异常，请检查参数或者SQL是否正常！" +ex.getMsg());
+            }
             return Result.error("测试异常，请检查参数或者SQL是否正常！");
         }
     }
