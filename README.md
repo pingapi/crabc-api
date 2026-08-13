@@ -34,8 +34,8 @@ cn.crabc
 ~~~
 
 ## 版本说明
-dev分支框架SpringBoot已升级至4.1.0，jdk需21及以上版本 \
-jdk8分支框架SpringBoot是2.x + jdk8
+dev 分支框架SpringBoot是4.1.0，jdk-21及以上版本 \
+jdk-8 分支框架SpringBoot是2.7.x，jdk-8 
 
 ## 社区版压测报告
 
