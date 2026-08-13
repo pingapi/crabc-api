@@ -13,6 +13,8 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -136,8 +138,8 @@ public class IBaseApiLogServiceImpl implements IBaseApiLogService {
      * 统计接口默认只看近七天，避免监控页首次打开时对日志表做全量聚合。
      */
     private void fillDefaultTimeRange(ApiLogParam param) {
-        if (param.getStartTime() != null && !param.getStartTime().isBlank()
-                && param.getEndTime() != null && !param.getEndTime().isBlank()) {
+        if (param.getStartTime() != null && !StringUtils.isBlank(param.getStartTime())
+                && param.getEndTime() != null && !StringUtils.isBlank(param.getEndTime())) {
             return;
         }
         LocalDate today = LocalDate.now();

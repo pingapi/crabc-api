@@ -10,7 +10,7 @@ import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tools.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class ApiTestController {
     @Autowired
     private IBaseDataService baseDataService;
     @Autowired
-    private JsonMapper jsonMapper;
+    private ObjectMapper objectMapper;
 
     /**
      * 运行预览
@@ -101,15 +101,15 @@ public class ApiTestController {
             String bodyStr = (String) bodyData;
             // 兼容双重序列化：bodyData 可能以引号开头（JSON 字符串字面量），先剥掉外层引号还原 JSON 文本
             if (bodyStr.startsWith("\"") && bodyStr.endsWith("\"")) {
-                bodyStr = jsonMapper.readValue(bodyStr, String.class);
+                bodyStr = objectMapper.readValue(bodyStr, String.class);
             }
             if (bodyStr.startsWith("{")) {
-                Map<String, Object> bodyMap = jsonMapper.readValue(bodyStr, HashMap.class);
+                Map<String, Object> bodyMap = objectMapper.readValue(bodyStr, HashMap.class);
                 if (bodyMap != null) {
                     paramsMap.putAll(bodyMap);
                 }
             } else if (bodyStr.startsWith("[")) {
-                List<?> bodyList = jsonMapper.readValue(bodyStr, List.class);
+                List<?> bodyList = objectMapper.readValue(bodyStr, List.class);
                 paramsMap.put("list", bodyList);
             }
         } else if (bodyData instanceof Map) {
@@ -186,10 +186,14 @@ public class ApiTestController {
      * 格式化返回数据
      */
     private String formatResultData(Object data, String resultType) {
-        if (ResultTypeEnum.ONE.getName().equals(resultType) && data instanceof List) {
-            List<Object> list = (List<Object>) data;
-            return jsonMapper.writeValueAsString(Result.success(list.isEmpty() ? null : list.get(0)));
+        try {
+            if (ResultTypeEnum.ONE.getName().equals(resultType) && data instanceof List) {
+                List<Object> list = (List<Object>) data;
+                return objectMapper.writeValueAsString(Result.success(list.isEmpty() ? null : list.get(0)));
+            }
+            return objectMapper.writeValueAsString(Result.success(data));
+        } catch (Exception e) {
+            return "{}";
         }
-        return jsonMapper.writeValueAsString(Result.success(data));
     }
 }

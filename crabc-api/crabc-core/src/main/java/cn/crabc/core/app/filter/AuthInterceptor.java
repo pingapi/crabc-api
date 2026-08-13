@@ -13,8 +13,8 @@ import cn.crabc.core.app.util.SM3Util;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingResponseWrapper;
-import tools.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -67,7 +67,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Value("${crabc.auth.expiresTime:10}")
     private Integer expiresTime;
     @Autowired
-    private JsonMapper jsonMapper;
+    private ObjectMapper objectMapper;
     @Autowired
     @Qualifier("apiCache")
     private Cache<String, ApiInfoDTO> apiCache;
@@ -147,12 +147,16 @@ public class AuthInterceptor implements HandlerInterceptor {
             // 6. 根据认证类型进行鉴权
             List<BaseApp> appList = apiInfo.getAppList();
 
-            return switch (apiInfo.getAuthType().toUpperCase()) {
-                case "APP_CODE" -> checkAppCode(request,response, appList);
-                case "APP_KEY" -> checkAppKey(request,response, appList);
-                case "APP_SECRET" -> checkSM3(request,response, appList);
-                default -> true; // 无认证模式
-            };
+            String authType = apiInfo.getAuthType().toUpperCase();
+            if ("APP_CODE".equals(authType)) {
+                return checkAppCode(request, response, appList);
+            } else if ("APP_KEY".equals(authType)) {
+                return checkAppKey(request, response, appList);
+            } else if ("APP_SECRET".equals(authType)) {
+                return checkSM3(request, response, appList);
+            } else {
+                return true; // 无认证模式
+            }
         }catch (Exception e) {
             log.error("API认证异常: {}", e.getMessage(), e);
             setErrorResponse(request,response,ErrorStatusEnum.API_UN_AUTH.getCode(),ErrorStatusEnum.API_UN_AUTH.getMassage());
@@ -180,7 +184,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setStatus(400);
         response.setContentType("application/json;charset=UTF-8");
         Result result = Result.error(status, message);
-        String json = jsonMapper.writeValueAsString(result);
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(result);
+        } catch (Exception e) {
+            json = "{}";
+        }
         // 日记记录
         addLogAsync(request, response, json);
         response.getWriter().write(json);

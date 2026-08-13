@@ -75,10 +75,10 @@ public class JdbcDataSourceRouter extends AbstractRoutingDataSource {
         // 移除缓存
         DataSourceManager.DATA_SOURCE_POOL_JDBC.remove(dataSourceId);
         // 关闭连接池
-        if (dataSource instanceof DruidDataSource druidDataSource) {
-            druidDataSource.close();
-        } else if (dataSource instanceof HikariDataSource hikariDataSource) {
-            hikariDataSource.close();
+        if (dataSource instanceof DruidDataSource) {
+            ((DruidDataSource) dataSource).close();
+        } else if (dataSource instanceof HikariDataSource) {
+            ((HikariDataSource) dataSource).close();
         }
     }
 

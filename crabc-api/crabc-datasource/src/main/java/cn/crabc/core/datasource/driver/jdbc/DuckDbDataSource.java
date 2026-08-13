@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -121,10 +123,10 @@ public class DuckDbDataSource implements DataSource {
         if (readOnly) {
             properties.setProperty(READ_ONLY_PROPERTY, "true");
         }
-        if (username != null && !username.isBlank()) {
+        if (username != null && !StringUtils.isBlank(username)) {
             properties.setProperty("user", username);
         }
-        if (password != null && !password.isBlank()) {
+        if (password != null && !StringUtils.isBlank(password)) {
             properties.setProperty("password", password);
         }
         return properties;
@@ -134,7 +136,7 @@ public class DuckDbDataSource implements DataSource {
      * extend当前没有强类型结构，先按明确的duckdb.read_only=true语义解析，避免误读其他扩展字段。
      */
     private boolean resolveReadOnly(String extend) {
-        if (extend == null || extend.isBlank()) {
+        if (extend == null || StringUtils.isBlank(extend)) {
             return false;
         }
         String normalized = extend.replace("\"", "")

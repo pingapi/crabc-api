@@ -26,7 +26,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tools.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,7 +56,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Qualifier("apiCache")
     Cache<String, ApiInfoDTO> apiInfoCache;
     @Autowired
-    private JsonMapper jsonMapper;
+    private ObjectMapper objectMapper;
     @Autowired
     private ApiRateLimitService apiRateLimitService;
 
@@ -77,7 +79,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     private void invalidateApiCache(String method, String apiPath) {
-        if (method == null || apiPath == null || apiPath.isBlank()) {
+        if (method == null || apiPath == null || StringUtils.isBlank(apiPath)) {
             return;
         }
         apiInfoCache.invalidate(IBaseApiInfoService.buildCacheKey(method, apiPath));
@@ -450,7 +452,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     }
 
     private boolean hasDraft(BaseApiInfo apiInfo) {
-        return apiInfo.getDraftContent() != null && !apiInfo.getDraftContent().isBlank();
+        return apiInfo.getDraftContent() != null && !StringUtils.isBlank(apiInfo.getDraftContent());
     }
 
     private void saveDraftContent(Long apiId, ApiInfoParam params, BaseApiInfo publishedApi) {
@@ -463,7 +465,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
             params.getSqlInfo().setApiId(apiId);
         }
         try {
-            apiInfoMapper.updateDraftContent(apiId, jsonMapper.writeValueAsString(params), UserThreadLocal.getUserId());
+            apiInfoMapper.updateDraftContent(apiId, objectMapper.writeValueAsString(params), UserThreadLocal.getUserId());
         } catch (Exception e) {
             throw new CustomException(ErrorStatusEnum.SYSTEM_ERROR.getCode(), "暂存接口信息失败");
         }
@@ -471,7 +473,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
 
     private ApiInfoParam readDraftContent(String draftContent) {
         try {
-            return jsonMapper.readValue(draftContent, ApiInfoParam.class);
+            return objectMapper.readValue(draftContent, ApiInfoParam.class);
         } catch (Exception e) {
             throw new CustomException(ErrorStatusEnum.SYSTEM_ERROR.getCode(), "读取暂存接口信息失败");
         }
@@ -506,7 +508,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
      */
     private boolean isClearRateLimit(ApiRateLimitParam param) {
         return param.getWindowValue() == null
-                && (param.getWindowUnit() == null || param.getWindowUnit().isBlank())
+                && (param.getWindowUnit() == null || StringUtils.isBlank(param.getWindowUnit()))
                 && param.getLimitCount() == null;
     }
 
@@ -515,16 +517,20 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
      */
     private Integer parseWindowSeconds(ApiRateLimitParam param) {
         if (param.getWindowValue() == null || param.getWindowValue() <= 0
-                || param.getWindowUnit() == null || param.getWindowUnit().isBlank()) {
+                || param.getWindowUnit() == null || StringUtils.isBlank(param.getWindowUnit())) {
             throw new CustomException(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), "限流时间窗口不能为空");
         }
         String unit = param.getWindowUnit().toUpperCase();
-        return switch (unit) {
-            case "SECOND" -> param.getWindowValue();
-            case "MINUTE" -> param.getWindowValue() * 60;
-            case "HOUR" -> param.getWindowValue() * 3600;
-            default -> throw new CustomException(ErrorStatusEnum.FORBID_OPERATE.getCode(), "限流时间单位无效");
-        };
+        switch (unit) {
+            case "SECOND":
+                return param.getWindowValue();
+            case "MINUTE":
+                return param.getWindowValue() * 60;
+            case "HOUR":
+                return param.getWindowValue() * 3600;
+            default:
+                throw new CustomException(ErrorStatusEnum.FORBID_OPERATE.getCode(), "限流时间单位无效");
+        }
     }
 
     /**

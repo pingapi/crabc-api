@@ -101,10 +101,10 @@ public class DataSourceManager {
         DataSource dataSource = DATA_SOURCE_POOL_JDBC.get(datasourceId);
         // 移除缓存
         DATA_SOURCE_POOL_JDBC.remove(datasourceId);
-        if (dataSource instanceof DruidDataSource druidDataSource) {
-            druidDataSource.close();
-        } else if (dataSource instanceof HikariDataSource hikariDataSource) {
-            hikariDataSource.close();
+        if (dataSource instanceof DruidDataSource) {
+            ((DruidDataSource) dataSource).close();
+        } else if (dataSource instanceof HikariDataSource) {
+            ((HikariDataSource) dataSource).close();
         }
     }
 }

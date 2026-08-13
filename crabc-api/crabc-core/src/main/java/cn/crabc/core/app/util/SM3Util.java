@@ -5,7 +5,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.Security;
-import java.util.HexFormat;
+import org.apache.commons.codec.binary.Hex;
 import java.util.Locale;
 
 /**
@@ -53,7 +53,7 @@ public class SM3Util {
         digest.update(bytes, 0, bytes.length);
         byte[] result = new byte[digest.getDigestSize()];
         digest.doFinal(result, 0);
-        return HexFormat.of().formatHex(result);
+        return Hex.encodeHexString(result);
     }
 
     /**

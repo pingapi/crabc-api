@@ -212,10 +212,10 @@ public abstract class DefaultDataSourceDriver implements DataSourceDriver {
      * 只关闭真正持有连接池资源的数据源，DuckDB直连数据源无常驻连接可关闭。
      */
     private void closeDataSource(DataSource dataSource) {
-        if (dataSource instanceof DruidDataSource druidDataSource) {
-            druidDataSource.close();
-        } else if (dataSource instanceof HikariDataSource hikariDataSource) {
-            hikariDataSource.close();
+        if (dataSource instanceof DruidDataSource) {
+            ((DruidDataSource) dataSource).close();
+        } else if (dataSource instanceof HikariDataSource) {
+            ((HikariDataSource) dataSource).close();
         }
     }
 }

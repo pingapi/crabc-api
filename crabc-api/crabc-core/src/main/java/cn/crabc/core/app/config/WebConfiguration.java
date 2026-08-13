@@ -1,7 +1,7 @@
 
 package cn.crabc.core.app.config;
 
-import org.springframework.boot.web.error.ErrorPage;
+import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;

@@ -15,7 +15,7 @@ import com.alibaba.druid.sql.ast.statement.SQLSelect;
 import com.alibaba.druid.sql.ast.statement.SQLSelectItem;
 import com.alibaba.druid.sql.ast.statement.SQLSelectQueryBlock;
 import com.alibaba.druid.sql.ast.statement.SQLSelectStatement;
-import com.alibaba.druid.sql.dialect.clickhouse.visitor.CKStatVisitor;
+
 import com.alibaba.druid.sql.dialect.db2.visitor.DB2SchemaStatVisitor;
 import com.alibaba.druid.sql.dialect.hive.visitor.HiveSchemaStatVisitor;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlSchemaStatVisitor;
@@ -26,6 +26,7 @@ import com.alibaba.druid.sql.visitor.SchemaStatVisitor;
 import com.alibaba.druid.stat.TableStat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.URI;
 import java.util.*;
@@ -208,7 +209,7 @@ public class SQLUtil {
                     visitor = new DB2SchemaStatVisitor();
                     break;
                 case "clickhouse":
-                    visitor = new CKStatVisitor();
+                    visitor = new MySqlSchemaStatVisitor();
                     break;
                 case "hive":
                     visitor = new HiveSchemaStatVisitor();
@@ -262,7 +263,7 @@ public class SQLUtil {
      */
     public static List<String> splitSqlStatements(String sql) {
         List<String> statements = new ArrayList<>();
-        if (sql == null || sql.isBlank()) {
+        if (sql == null || StringUtils.isBlank(sql)) {
             return statements;
         }
 

@@ -12,7 +12,7 @@ import cn.crabc.core.datasource.driver.jdbc.DuckDbDataSource;
 import cn.crabc.core.spi.bean.BaseDataSource;
 import com.github.pagehelper.PageHelper;
 import com.zaxxer.hikari.HikariDataSource;
-import jakarta.annotation.PostConstruct;
+import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -183,10 +183,12 @@ public class BaseDataSourceServiceImpl implements IBaseDataSourceService {
         if (dataSource == null) {
             return DataSourceIdentity.empty();
         }
-        if (dataSource instanceof HikariDataSource hikari) {
+        if (dataSource instanceof HikariDataSource) {
+            HikariDataSource hikari = (HikariDataSource) dataSource;
             return new DataSourceIdentity(hikari.getJdbcUrl(), hikari.getUsername(), hikari.getPassword());
         }
-        if (dataSource instanceof DuckDbDataSource duckDb) {
+        if (dataSource instanceof DuckDbDataSource) {
+            DuckDbDataSource duckDb = (DuckDbDataSource) dataSource;
             return new DataSourceIdentity(duckDb.getJdbcUrl(), duckDb.getUsername(), duckDb.getPassword());
         }
         return DataSourceIdentity.empty();

@@ -11,6 +11,8 @@ import cn.crabc.core.app.entity.vo.ApiRateLimitVO;
 import cn.crabc.core.app.entity.vo.BaseApiInfoVO;
 import cn.crabc.core.datasource.util.PageInfo;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -22,7 +24,7 @@ import java.util.Locale;
 public interface IBaseApiInfoService {
 
     static String normalizeApiPath(String apiPath) {
-        if (apiPath == null || apiPath.isBlank()) {
+        if (apiPath == null || StringUtils.isBlank(apiPath)) {
             return "";
         }
         return apiPath.startsWith("/") ? apiPath.substring(1) : apiPath;

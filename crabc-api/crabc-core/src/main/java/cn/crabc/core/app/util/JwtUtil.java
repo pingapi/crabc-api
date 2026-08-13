@@ -2,8 +2,8 @@ package cn.crabc.core.app.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
+import io.jsonwebtoken.SignatureAlgorithm;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -41,14 +41,12 @@ public class JwtUtil {
         Date expiration = new Date(now.getTime() + expirationTime);
         try {
             return Jwts.builder()
-                    .header()
-                    .add("typ", "JWT")
-                    .add("alg", "HS256")
-                    .and()
-                    .claims(claims)
-                    .expiration(expiration)
-                    .id(uuid)
-                    .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                    .setClaims(claims)
+                    .setHeaderParam("typ", "JWT")
+                    .setHeaderParam("alg", "HS256")
+                    .setExpiration(expiration)
+                    .setId(uuid)
+                    .signWith(SignatureAlgorithm.HS256, secret.getBytes())
                     .compact();
         }catch (Exception e) {
             e.printStackTrace();
@@ -65,9 +63,9 @@ public class JwtUtil {
     public static Claims parseToken(String token) {
         try {
             return Jwts.parser()
-                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                    .build()
-                    .parseSignedClaims(token).getPayload();
+                    .setSigningKey(secret.getBytes())
+                    .parseClaimsJws(token)
+                    .getBody();
         } catch (Exception e) {
             e.printStackTrace();
         }
