@@ -8,14 +8,17 @@ import cn.crabc.core.app.util.Result;
 import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
+import cn.crabc.core.plugin.DataPluginExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * API运行和测试
@@ -30,6 +33,8 @@ public class ApiTestController {
     private IBaseDataService baseDataService;
     @Autowired
     private JsonMapper jsonMapper;
+    @Autowired
+    private DataPluginExecutor dataPluginExecutor;
 
     /**
      * 运行预览
@@ -43,7 +48,34 @@ public class ApiTestController {
             return Result.error(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), ErrorStatusEnum.PARAM_NOT_FOUNT.getMassage());
         }
         PreviewVO previewVO = baseDataService.sqlPreview(api.getDatasourceId(),api.getDatasourceType(), api.getSchemaName(), api.getSqlScript());
+        // 应用数据插件链：开发页运行预览同样走插件，字段变化时重建 metadata
+        applyPluginToPreview(previewVO, api.getPluginConfig());
         return Result.success(previewVO);
+    }
+
+    /**
+     * 对运行预览结果应用数据插件，并依据处理后的行重建 metadata 列名
+     */
+    private void applyPluginToPreview(PreviewVO previewVO, String pluginConfig) {
+        if (previewVO == null || previewVO.getData() == null) {
+            return;
+        }
+        Object processed = dataPluginExecutor.execute(pluginConfig, previewVO.getData(), new HashMap<>());
+        if (processed instanceof List<?> list) {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> rows = (List<Map<String, Object>>) processed;
+            previewVO.setData(rows);
+            // 依据处理后的行重建列名（保持首行字段顺序）
+            Set<String> metadata = new LinkedHashSet<>();
+            for (Map<String, Object> row : rows) {
+                metadata.addAll(row.keySet());
+            }
+            previewVO.setMetadata(metadata);
+        } else if (processed == null) {
+            // 单对象插件匹配失败等场景：清空结果
+            previewVO.setData(List.of());
+            previewVO.setMetadata(Set.of());
+        }
     }
 
     /**
@@ -69,11 +101,14 @@ public class ApiTestController {
             // 执行SQL
             Object data = baseDataService.execute(
                 params.getDatasourceId(),
-                params.getDatasourceType(), 
+                params.getDatasourceType(),
                 params.getSchemaName(),
-                params.getSqlScript(), 
+                params.getSqlScript(),
                 paramsMap
             );
+
+            // 应用数据插件链
+            data = dataPluginExecutor.execute(params.getPluginConfig(), data, paramsMap);
 
             // 处理返回结果
             return Result.success(formatResultData(data, params.getResultType()));

@@ -60,6 +60,12 @@
             <artifactId>crabc-datasource</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 数据插件引擎 -->
+        <dependency>
+            <groupId>cn.crabc</groupId>
+            <artifactId>crabc-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

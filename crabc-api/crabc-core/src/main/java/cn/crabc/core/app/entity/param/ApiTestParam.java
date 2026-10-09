@@ -39,4 +39,9 @@ public class ApiTestParam {
     private Object bodyData;
 
     private Map<String,Object> queryParam;
+
+    /**
+     * 数据插件配置JSON（开发页 baseInfo.pluginConfig），测试/运行预览时应用插件链
+     */
+    private String pluginConfig;
 }

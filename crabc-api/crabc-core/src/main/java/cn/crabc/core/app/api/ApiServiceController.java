@@ -8,6 +8,7 @@ import cn.crabc.core.app.util.ApiThreadLocal;
 import cn.crabc.core.app.util.Result;
 import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
+import cn.crabc.core.plugin.DataPluginExecutor;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,9 @@ public class ApiServiceController {
 
     @Autowired
     private IBaseDataService baseDataService;
+
+    @Autowired
+    private DataPluginExecutor dataPluginExecutor;
 
     // 参数安全配置
     private static final int MAX_PARAM_VALUE_LENGTH = 10000; // 单个参数值最大长度
@@ -232,6 +236,9 @@ public class ApiServiceController {
         // 执行数据查询
         Object data = baseDataService.execute(api.getDatasourceId().toString(), api.getDatasourceType(),
                                             api.getSchemaName(), api.getSqlScript(), params);
+
+        // 应用数据插件链（对 SQL 执行结果进行过滤、重命名、结构转换等后处理）
+        data = dataPluginExecutor.execute(api.getPluginConfig(), data, params);
 
         // 根据返回类型处理结果
         if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {

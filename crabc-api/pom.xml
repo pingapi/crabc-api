@@ -17,6 +17,7 @@
         <module>crabc-spi</module>
         <module>crabc-datasource</module>
         <module>crabc-admin</module>
+        <module>crabc-plugin</module>
     </modules>
 
 </project>

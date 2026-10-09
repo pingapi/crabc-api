@@ -26,6 +26,7 @@ CREATE TABLE base_api_info (
     table_name VARCHAR(256) DEFAULT NULL,
     release_time TIMESTAMP DEFAULT NULL,
     draft_content TEXT,
+    plugin_config TEXT,
     remarks VARCHAR(1000) DEFAULT NULL,
     version VARCHAR(100) DEFAULT NULL,
     create_by VARCHAR(128) DEFAULT NULL,
@@ -58,6 +59,7 @@ COMMENT ON COLUMN base_api_info.datasource_type IS '数据源类型';
 COMMENT ON COLUMN base_api_info.table_name IS '表名';
 COMMENT ON COLUMN base_api_info.release_time IS '发布时间';
 COMMENT ON COLUMN base_api_info.draft_content IS '已发布接口暂存内容';
+COMMENT ON COLUMN base_api_info.plugin_config IS '数据插件配置JSON';
 COMMENT ON COLUMN base_api_info.remarks IS '描述';
 COMMENT ON COLUMN base_api_info.version IS '版本';
 

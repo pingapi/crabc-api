@@ -29,6 +29,7 @@ CREATE TABLE `base_api_info` (
                                  `table_name` varchar(256)  DEFAULT NULL COMMENT '表名',
                                  `release_time` datetime DEFAULT NULL COMMENT '发布时间',
                                  `draft_content` longtext COMMENT '已发布接口暂存内容',
+                                 `plugin_config` text COMMENT '数据插件配置JSON',
                                  `remarks` varchar(1000) DEFAULT NULL COMMENT '描述',
                                  `version` varchar(100)  DEFAULT NULL COMMENT '版本',
                                  `create_by` varchar(128) DEFAULT NULL,

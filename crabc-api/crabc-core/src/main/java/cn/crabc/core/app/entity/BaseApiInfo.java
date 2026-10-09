@@ -140,4 +140,9 @@ public class BaseApiInfo extends BaseEntity {
      */
     private String draftContent;
 
+    /**
+     * 数据插件配置JSON
+     */
+    private String pluginConfig;
+
 }
