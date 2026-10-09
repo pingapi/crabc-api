@@ -35,7 +35,7 @@ cn.crabc
 ~~~
 
 ## 版本说明
-dev 分支框架SpringBoot是4.1.0，jdk-21及以上版本 \
+dev 分支框架SpringBoot是4.1.1，jdk-21及以上版本 \
 jdk-8 分支框架SpringBoot是2.7.x，jdk-8 
 
 ## 社区版压测报告
@@ -64,7 +64,7 @@ jdk-8 分支框架SpringBoot是2.7.x，jdk-8
 
 
 ## 企业版
-https://apigo.cn
+https://www.apigo.cn
 
 ## 企业版架构图
 
@@ -77,7 +77,7 @@ https://apigo.cn
 账号密码：admin/admin123
 
 ## 官网
-官网：https://apigo.cn 
+官网：https://www.apigo.cn 
 
 使用指南：http://docs.apigo.cn  
 
@@ -97,7 +97,7 @@ gitee: https://gitee.com/pingapi/crabc-api
 <dependency>
     <groupId>cn.crabc</groupId>
     <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>6.0.0</version>
+    <version>6.1.0</version>
 </dependency>
 ```
 在程序启动类中添加下面注解
