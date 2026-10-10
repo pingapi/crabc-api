@@ -7,6 +7,9 @@ ALTER TABLE base_api_info ADD rate_limit_count int DEFAULT NULL COMMENT '限流�
 
 -- v6.0.0
 ALTER TABLE base_api_info ADD plugin_config text COMMENT '数据插件配置JSON';
+-- PostgreSQL 方言（PostgreSQL 库请执行以下语句，MySQL 请忽略）
+-- ALTER TABLE base_api_info ADD COLUMN plugin_config TEXT;
+-- COMMENT ON COLUMN base_api_info.plugin_config IS '数据插件配置JSON';
 
 -- 索引优化 2026-08-11
 -- base_api_info 表新增索引

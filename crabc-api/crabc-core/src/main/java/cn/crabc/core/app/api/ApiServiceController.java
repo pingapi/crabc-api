@@ -8,8 +8,11 @@ import cn.crabc.core.app.util.ApiThreadLocal;
 import cn.crabc.core.app.util.Result;
 import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
+import cn.crabc.core.plugin.DataPluginException;
 import cn.crabc.core.plugin.DataPluginExecutor;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,8 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/api/web")
 public class ApiServiceController {
+
+    private static final Logger log = LoggerFactory.getLogger(ApiServiceController.class);
 
     @Autowired
     private IBaseDataService baseDataService;
@@ -167,10 +172,12 @@ public class ApiServiceController {
             return true;
         }
 
-        paramMap.put(BaseConstant.PAGE_SETUP, api.getPageSetup() == null ? 0 : api.getPageSetup());
+        // page_setup 可能为空（老数据或非页面创建的接口），统一按不分页处理，避免拆箱 NPE
+        int pageSetup = api.getPageSetup() == null ? 0 : api.getPageSetup();
+        paramMap.put(BaseConstant.PAGE_SETUP, pageSetup);
 
         return checkParams(api.getRequestParams(), paramMap) &&
-               !(api.getPageSetup() == 1 && !paramMap.containsKey(BaseConstant.PAGE_NUM));
+               !(pageSetup == 1 && !paramMap.containsKey(BaseConstant.PAGE_NUM));
     }
 
     /**
@@ -238,7 +245,13 @@ public class ApiServiceController {
                                             api.getSchemaName(), api.getSqlScript(), params);
 
         // 应用数据插件链（对 SQL 执行结果进行过滤、重命名、结构转换等后处理）
-        data = dataPluginExecutor.execute(api.getPluginConfig(), data, params);
+        try {
+            data = dataPluginExecutor.execute(api.getPluginConfig(), data, params);
+        } catch (DataPluginException e) {
+            // 插件失败需携带接口上下文留痕，便于线上定位；对外响应由全局异常处理器泛化
+            log.error("接口[{}]数据插件执行失败，插件：{}", api.getApiId(), e.getPluginKey(), e);
+            throw e;
+        }
 
         // 根据返回类型处理结果
         if (ResultTypeEnum.ONE.getName().equals(api.getResultType()) && data instanceof List) {

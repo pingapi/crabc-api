@@ -41,7 +41,7 @@ public class ApiTestParam {
     private Map<String,Object> queryParam;
 
     /**
-     * 数据插件配置JSON（开发页 baseInfo.pluginConfig），测试/运行预览时应用插件链
+     * 数据插件配置（开发页 baseInfo.pluginConfig）：兼容 JSON 字符串与已反序列化对象，由控制层统一归一化
      */
-    private String pluginConfig;
+    private Object pluginConfig;
 }

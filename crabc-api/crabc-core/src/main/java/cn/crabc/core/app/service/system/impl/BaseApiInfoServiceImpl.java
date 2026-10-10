@@ -18,6 +18,7 @@ import cn.crabc.core.datasource.util.PageInfo;
 import cn.crabc.core.app.util.UserThreadLocal;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
+import cn.crabc.core.plugin.DataPluginConfigValidator;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
@@ -57,6 +58,8 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     private JsonMapper jsonMapper;
     @Autowired
     private ApiRateLimitService apiRateLimitService;
+    @Autowired
+    private DataPluginConfigValidator dataPluginConfigValidator;
 
 
     @Override
@@ -229,6 +232,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long addApiInfo(ApiInfoParam params) {
+        validatePluginConfig(params.getBaseInfo());
         Date date = new Date();
         BaseApiInfo api = params.getBaseInfo();
         BaseApiSql sql = params.getSqlInfo();
@@ -256,6 +260,7 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long updateApiInfo(ApiInfoParam params) {
+        validatePluginConfig(params.getBaseInfo());
         Long apiId = params.getBaseInfo().getApiId();
         Integer count = apiInfoMapper.countApi(apiId);
         if (count == 0) {
@@ -498,6 +503,22 @@ public class BaseApiInfoServiceImpl implements IBaseApiInfoService {
     private void fillTransactionDefault(BaseApiInfo apiInfo) {
         if (apiInfo != null && apiInfo.getTransactionEnabled() == null) {
             apiInfo.setTransactionEnabled(0);
+        }
+    }
+
+    /**
+     * 数据插件配置校验：拦截非法配置，避免"保存成功但运行时静默失效"
+     *
+     * @param api 接口基本信息
+     */
+    private void validatePluginConfig(BaseApiInfo api) {
+        if (api == null) {
+            return;
+        }
+        try {
+            dataPluginConfigValidator.validate(api.getPluginConfig());
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), e.getMessage());
         }
     }
 

@@ -3,6 +3,8 @@ package cn.crabc.core.plugin.impl;
 import cn.crabc.core.plugin.DataPlugin;
 import cn.crabc.core.plugin.PluginKeys;
 import cn.crabc.core.plugin.util.PluginUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import java.util.Map;
 @Component
 public class TreeTransformPlugin implements DataPlugin {
 
+    private static final Logger log = LoggerFactory.getLogger(TreeTransformPlugin.class);
+
     private static final String DEFAULT_CHILDREN_FIELD = "children";
 
     @Override
@@ -38,12 +42,19 @@ public class TreeTransformPlugin implements DataPlugin {
         }
         String idField = PluginUtils.str(config.get("idField"));
         String parentIdField = PluginUtils.str(config.get("parentIdField"));
-        if (idField == null || parentIdField == null) {
+        if (PluginUtils.isBlank(idField) || PluginUtils.isBlank(parentIdField)) {
             throw new IllegalArgumentException("层级转树插件必须配置 ID 字段和父 ID 字段");
         }
         String childrenField = PluginUtils.isBlank(config.get("childrenField"))
                 ? DEFAULT_CHILDREN_FIELD : PluginUtils.str(config.get("childrenField"));
         String rootId = PluginUtils.isBlank(config.get("rootId")) ? null : PluginUtils.str(config.get("rootId"));
+        // 配置字段不存在时所有行都会被视为根节点，显式告警避免"配置无效却无感知"
+        if (!PluginUtils.containsField(rows, idField)) {
+            log.warn("数据插件[{}]ID字段[{}]不存在于结果集中", getName(), idField);
+        }
+        if (!PluginUtils.containsField(rows, parentIdField)) {
+            log.warn("数据插件[{}]父ID字段[{}]不存在于结果集中", getName(), parentIdField);
+        }
 
         // id -> 节点索引，保持原始顺序
         Map<String, Map<String, Object>> nodeMap = new LinkedHashMap<>();

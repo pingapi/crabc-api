@@ -8,6 +8,7 @@ import cn.crabc.core.app.util.Result;
 import cn.crabc.core.datasource.constant.BaseConstant;
 import cn.crabc.core.datasource.enums.ErrorStatusEnum;
 import cn.crabc.core.datasource.exception.CustomException;
+import cn.crabc.core.plugin.DataPluginException;
 import cn.crabc.core.plugin.DataPluginExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -56,26 +57,33 @@ public class ApiTestController {
     /**
      * 对运行预览结果应用数据插件，并依据处理后的行重建 metadata 列名
      */
-    private void applyPluginToPreview(PreviewVO previewVO, String pluginConfig) {
+    @SuppressWarnings("unchecked")
+    private void applyPluginToPreview(PreviewVO previewVO, Object pluginConfig) {
         if (previewVO == null || previewVO.getData() == null) {
             return;
         }
-        Object processed = dataPluginExecutor.execute(pluginConfig, previewVO.getData(), new HashMap<>());
+        Object processed = dataPluginExecutor.execute(
+                normalizePluginConfig(pluginConfig), previewVO.getData(), new HashMap<>());
+        List<Map<String, Object>> rows;
         if (processed instanceof List<?> list) {
-            @SuppressWarnings("unchecked")
-            List<Map<String, Object>> rows = (List<Map<String, Object>>) processed;
-            previewVO.setData(rows);
-            // 依据处理后的行重建列名（保持首行字段顺序）
-            Set<String> metadata = new LinkedHashSet<>();
-            for (Map<String, Object> row : rows) {
-                metadata.addAll(row.keySet());
-            }
-            previewVO.setMetadata(metadata);
+            rows = (List<Map<String, Object>>) list;
+        } else if (processed instanceof Map<?, ?> map) {
+            // 单对象插件命中：包装为单行结果，避免预览仍展示插件前的原始数据
+            rows = List.of((Map<String, Object>) map);
         } else if (processed == null) {
-            // 单对象插件匹配失败等场景：清空结果
-            previewVO.setData(List.of());
-            previewVO.setMetadata(Set.of());
+            // 单对象插件未命中（返回 null）：结果为空
+            rows = List.of();
+        } else {
+            // 非行集合结果（如 DML 影响行数、已启用的结构转换异常分支）保持原样
+            return;
         }
+        previewVO.setData(rows);
+        // 依据处理后的行重建列名（保持首行字段顺序）
+        Set<String> metadata = new LinkedHashSet<>();
+        for (Map<String, Object> row : rows) {
+            metadata.addAll(row.keySet());
+        }
+        previewVO.setMetadata(metadata);
     }
 
     /**
@@ -108,11 +116,14 @@ public class ApiTestController {
             );
 
             // 应用数据插件链
-            data = dataPluginExecutor.execute(params.getPluginConfig(), data, paramsMap);
+            data = dataPluginExecutor.execute(normalizePluginConfig(params.getPluginConfig()), data, paramsMap);
 
             // 处理返回结果
             return Result.success(formatResultData(data, params.getResultType()));
             
+        } catch (DataPluginException e) {
+            // 插件失败场景：返回具体插件标识便于开发定位，文案不含任何行数据值
+            return Result.error(50020, e.getMessage());
         } catch (Exception e) {
             if(e instanceof CustomException) {
                 CustomException ex = (CustomException) e;
@@ -215,6 +226,26 @@ public class ApiTestController {
      */
     private Integer normalizeTransactionEnabled(Integer transactionEnabled) {
         return transactionEnabled == null ? 0 : transactionEnabled;
+    }
+
+    /**
+     * 归一化数据插件配置：兼容 JSON 字符串（开发页原样透传）与已反序列化对象（直接传对象）
+     *
+     * @param pluginConfig 插件配置，可能为 String / Map / List / null
+     * @return 配置 JSON 字符串；为空返回 null
+     */
+    private String normalizePluginConfig(Object pluginConfig) {
+        if (pluginConfig == null) {
+            return null;
+        }
+        if (pluginConfig instanceof String str) {
+            return str.isBlank() ? null : str;
+        }
+        try {
+            return jsonMapper.writeValueAsString(pluginConfig);
+        } catch (Exception e) {
+            throw new CustomException(ErrorStatusEnum.PARAM_NOT_FOUNT.getCode(), "数据插件配置格式不正确");
+        }
     }
 
     /**

@@ -12,6 +12,11 @@ import java.util.regex.Pattern;
  */
 public final class PluginUtils {
 
+    /**
+     * 正则表达式最大长度，防止超长/恶意模式带来的编译与匹配开销
+     */
+    public static final int MAX_REGEX_LENGTH = 200;
+
     private PluginUtils() {
     }
 
@@ -52,7 +57,6 @@ public final class PluginUtils {
     /**
      * 数值感知比较：双方均为数字时按数值比较，否则按字符串比较
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static int compare(Object a, Object b) {
         BigDecimal na = toNumber(a);
         BigDecimal nb = toNumber(b);
@@ -82,12 +86,43 @@ public final class PluginUtils {
             case "notContains" -> blank || !str(actual).contains(str(expected));
             case "startsWith" -> !blank && str(actual).startsWith(str(expected));
             case "endsWith" -> !blank && str(actual).endsWith(str(expected));
-            case "regex" -> !blank && Pattern.compile(str(expected)).matcher(str(actual)).find();
+            case "regex" -> matchesRegex(actual, compileRegex(expected));
             case "in" -> !blank && inList(actual, expected);
             case "isNull" -> blank;
             case "isNotNull" -> !blank;
             default -> false;
         };
+    }
+
+    /**
+     * 是否为正则操作符（供调用方在循环外预编译）
+     */
+    public static boolean isRegexOperator(String operator) {
+        return "regex".equals(operator);
+    }
+
+    /**
+     * 预编译正则表达式（长度超限直接失败，避免超长模式开销）
+     *
+     * @param expected 正则表达式文本
+     * @return 编译后的 Pattern
+     */
+    public static Pattern compileRegex(Object expected) {
+        String pattern = str(expected);
+        if (pattern == null || pattern.isBlank()) {
+            throw new IllegalArgumentException("正则表达式不能为空");
+        }
+        if (pattern.length() > MAX_REGEX_LENGTH) {
+            throw new IllegalArgumentException("正则表达式长度不能超过 " + MAX_REGEX_LENGTH + " 个字符");
+        }
+        return Pattern.compile(pattern);
+    }
+
+    /**
+     * 使用预编译 Pattern 匹配
+     */
+    public static boolean matchesRegex(Object actual, Pattern pattern) {
+        return !isBlank(actual) && pattern.matcher(str(actual)).find();
     }
 
     /**
@@ -119,28 +154,38 @@ public final class PluginUtils {
     }
 
     /**
-     * 按类型脱敏
+     * 按类型脱敏（非字符串值会先转字符串，数值型敏感字段建议由 SQL 侧保证为字符串）
      *
      * @param value 原始值
      * @param type  脱敏类型：general、phone、idCard、email、bankCard、name、address
      */
     public static String mask(String value, String type) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.isEmpty()) {
             return value;
         }
         int len = value.length();
         return switch (type == null ? "general" : type) {
-            case "phone" -> len <= 7 ? value : value.substring(0, 3) + "****" + value.substring(len - 4);
-            case "idCard" -> len <= 10 ? value : value.substring(0, 6) + "********" + value.substring(len - 4);
+            // 手机号：不足 7 位整串脱敏，否则保留前 3 后 4
+            case "phone" -> len <= 7 ? "*".repeat(len) : value.substring(0, 3) + "****" + value.substring(len - 4);
+            // 身份证：不足 10 位整串脱敏，否则保留前 6 后 4
+            case "idCard" -> len <= 10 ? "*".repeat(len) : value.substring(0, 6) + "********" + value.substring(len - 4);
             case "email" -> {
                 int at = value.indexOf('@');
-                yield at <= 1 ? value : value.charAt(0) + "****" + value.substring(at);
+                if (at > 1) {
+                    yield value.charAt(0) + "****" + value.substring(at);
+                }
+                yield len == 1 ? value : value.charAt(0) + "*".repeat(len - 1);
             }
-            case "bankCard" -> len <= 4 ? value : "************" + value.substring(len - 4);
-            case "name" -> len <= 1 ? value : value.charAt(0) + "*".repeat(len - 1);
+            // 银行卡：仅保留末 4 位
+            case "bankCard" -> len <= 4 ? "*".repeat(len) : "************" + value.substring(len - 4);
+            case "name" -> len == 1 ? value : value.charAt(0) + "*".repeat(len - 1);
             case "address" -> len <= 3 ? value : value.substring(0, 3) + "****";
             // 通用脱敏：保留首尾字符
-            default -> len <= 2 ? value.charAt(0) + "*" : value.charAt(0) + "*".repeat(len - 2) + value.charAt(len - 1);
+            default -> switch (len) {
+                case 1 -> value;
+                case 2 -> value.charAt(0) + "*";
+                default -> value.charAt(0) + "*".repeat(len - 2) + value.charAt(len - 1);
+            };
         };
     }
 
@@ -156,5 +201,18 @@ public final class PluginUtils {
             return null;
         }
         return (List<Map<String, Object>>) list;
+    }
+
+    /**
+     * 判断结果集是否包含指定字段（以首行字段为准），用于对"配置了不存在的字段"给出告警
+     *
+     * @param rows  结果行
+     * @param field 字段名
+     */
+    public static boolean containsField(List<Map<String, Object>> rows, String field) {
+        if (rows == null || rows.isEmpty() || field == null || field.isBlank()) {
+            return false;
+        }
+        return rows.getFirst().containsKey(field);
     }
 }
