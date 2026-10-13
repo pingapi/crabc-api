@@ -1,7 +1,18 @@
 
+<div align="center">
+  <h3>✨ ApiGo ✨</h3>
 
-# 介绍
-**ApiGo** 是接口开发平台，企业项目脚手架，sql2Api，数据预览等。深度整合SpringBoot和Mybatis实现动态数据源和动态SQL、函数和存储过程。
+  <p><i>Java 多数据库插件化数据源框架，SQL to API</i></p>
+  <p>
+    <a href="README_EN.md">English</a> | <b>简体中文</b>
+  </p>
+
+  <p><sub>✦ ✦ ✦</sub></p>
+
+</div>
+
+## 介绍
+**ApiGo** 是多数据库插件化数据源框架，企业项目脚手架，sql2Api等。深度整合SpringBoot和Mybatis实现动态数据源和动态SQL、函数和存储过程。
 支持 WorkBuddy、千问办公、豆包等 AI 办公平台 MCP 接入，
 支持接入（mysql、oracle、postgresql、sqlserver、达梦、TiDB、es和hive）等SQL或/NoSQL数据源，
 在线可视化编写SQL后即可快速生成接口对外提供服务，接口一键上下线。减少通用接口的SQL编写，让开发人员专注更复杂的业务逻辑实现。
