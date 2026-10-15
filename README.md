@@ -34,13 +34,13 @@
 ## 模块
 ~~~
 cn.crabc    
-├── crabc-boot               // 业务模块
-│     └── crabc-admin        // 启动模块
-│     └── crabc-core        // 基础模块
+├── apigo-api               // 业务模块
+│     └── apigo-admin        // 启动模块
+│     └── apigo-core        // 基础模块
 │           └── static       // 前端静态页面 [9377]
-│     └── crabc-datasource   // 数据源加载模块
-│     └── crabc-spi          // 插件定义模块
-├── crabc-spring-boot-starter // 第三方项目maven集成依赖包
+│     └── apigo-datasource   // 数据源加载模块
+│     └── apigo-spi          // 插件定义模块
+├── apigo-spring-boot-starter // 第三方项目maven集成依赖包
 ├── db                       // SQL脚本
 ├──pom.xml                   // 依赖
 ~~~
@@ -92,7 +92,6 @@ https://www.apigo.cn
 
 使用指南：http://docs.apigo.cn  
 
-github：https://github.com/pingapi/apigo
 
 ## 商用授权
 已申请软件著作，开源版仅供个人学习使用 \
@@ -100,7 +99,7 @@ github：https://github.com/pingapi/apigo
 
 ## 源码地址
 github: https://github.com/pingapi/apigo \
-gitee: https://gitee.com/pingapi/crabc-api 
+gitee: https://gitee.com/pingapi/apigo
 
 ## Maven集成apigo
 

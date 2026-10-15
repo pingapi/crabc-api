@@ -33,12 +33,12 @@ helps enterprises upgrade the value of their data assets and becomes an importan
 ## Modules
 ~~~
 cn.crabc    
-├── crabc-boot               // Business modules
-│     └── crabc-admin        // Startup module
-│     └── crabc-core        // Core module
+├── apigo-api               // Business modules
+│     └── apigo-admin        // Startup module
+│     └── apigo-core        // Core module
 │           └── static       // Frontend static pages [9377]
-│     └── crabc-datasource   // Data source loading module
-│     └── crabc-spi          // Plugin definition module
+│     └── apigo-datasource   // Data source loading module
+│     └── apigo-spi          // Plugin definition module
 ├── crabc-spring-boot-starter // Maven dependency for third-party project integration
 ├── db                       // SQL scripts
 ├──pom.xml                   // Dependencies
