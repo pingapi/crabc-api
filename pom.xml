@@ -12,7 +12,7 @@
     <description>接口开发平台</description>
     <modules>
         <module>apigo-api</module>
-<!--        <module>crabc-spring-boot-starter</module>-->
+<!--        <module>apigo-spring-boot-starter</module>-->
     </modules>
 
     <properties>
