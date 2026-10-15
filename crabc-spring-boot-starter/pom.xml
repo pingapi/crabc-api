@@ -15,7 +15,7 @@
     <version>6.1.0</version>
     <packaging>jar</packaging>
     <description>Low code tools</description>
-    <url>https://github.com/pingapi/crabc-api</url>
+    <url>https://github.com/pingapi/apigo</url>
 
     <licenses>
         <license>
@@ -41,7 +41,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.crabc</groupId>
-            <artifactId>crabc-core</artifactId>
+            <artifactId>apigo-core</artifactId>
             <version>6.1.0</version>
         </dependency>
         <dependency>

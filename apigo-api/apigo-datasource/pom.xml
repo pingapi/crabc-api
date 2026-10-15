@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.crabc</groupId>
-        <artifactId>crabc-api</artifactId>
+        <artifactId>apigo-api</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>crabc-datasource</artifactId>
+    <artifactId>apigo-datasource</artifactId>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -38,7 +38,7 @@
         </dependency>
         <dependency>
             <groupId>cn.crabc</groupId>
-            <artifactId>crabc-spi</artifactId>
+            <artifactId>apigo-spi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- 数据源驱动包 -->

@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>crabc-api</artifactId>
+        <artifactId>apigo-api</artifactId>
         <groupId>cn.crabc</groupId>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>crabc-core</artifactId>
+    <artifactId>apigo-core</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -57,13 +57,13 @@
         </dependency>
         <dependency>
             <groupId>cn.crabc</groupId>
-            <artifactId>crabc-datasource</artifactId>
+            <artifactId>apigo-datasource</artifactId>
             <version>${project.version}</version>
         </dependency>
         <!-- 数据插件引擎 -->
         <dependency>
             <groupId>cn.crabc</groupId>
-            <artifactId>crabc-plugin</artifactId>
+            <artifactId>apigo-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

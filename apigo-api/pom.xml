@@ -9,15 +9,15 @@
         <version>${revision}</version>
     </parent>
     <packaging>pom</packaging>
-    <artifactId>crabc-api</artifactId>
+    <artifactId>apigo-api</artifactId>
     <version>${revision}</version>
 
     <modules>
-        <module>crabc-core</module>
-        <module>crabc-spi</module>
-        <module>crabc-datasource</module>
-        <module>crabc-admin</module>
-        <module>crabc-plugin</module>
+        <module>apigo-core</module>
+        <module>apigo-spi</module>
+        <module>apigo-datasource</module>
+        <module>apigo-admin</module>
+        <module>apigo-plugin</module>
     </modules>
 
 </project>

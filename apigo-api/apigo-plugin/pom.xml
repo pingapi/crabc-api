@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>crabc-api</artifactId>
+        <artifactId>apigo-api</artifactId>
         <groupId>cn.crabc</groupId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>crabc-plugin</artifactId>
+    <artifactId>apigo-plugin</artifactId>
     <description>数据插件引擎：对 SQL 执行结果进行可配置的后处理</description>
 
     <properties>

@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.crabc</groupId>
-        <artifactId>crabc-api</artifactId>
+        <artifactId>apigo-api</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>crabc-admin</artifactId>
+    <artifactId>apigo-admin</artifactId>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -18,7 +18,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.crabc</groupId>
-            <artifactId>crabc-core</artifactId>
+            <artifactId>apigo-core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <description>接口开发平台</description>
     <modules>
-        <module>crabc-api</module>
+        <module>apigo-api</module>
 <!--        <module>crabc-spring-boot-starter</module>-->
     </modules>
 
