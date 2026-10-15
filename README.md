@@ -117,16 +117,29 @@ gitee: https://gitee.com/pingapi/crabc-api
 ```
 集成Demo参考: <a href="https://gitee.com/linebyte/crabc-spring-boot-starter-demo" style="text-decoration: none;" target="_blank">crabc-spring-boot-starter-demo</a>
 
+## 安全配置（启动必填）
+
+JWT 签名密钥不再内置在代码中，必须由部署环境注入：
+
+```bash
+# 首次生成后请妥善保存；更换密钥前不要变更
+export JWT_SECRET=$(openssl rand -base64 32)
+```
+
+- 未配置、强度不足（Base64 解码后少于 32 字节）或仍是历史泄露密钥时，应用**直接启动失败**，不会回退到任何默认值。
+- 签发与校验只使用 `JWT_SECRET` 这一个密钥：更换密钥后，此前签发的令牌全部失效，需要重新登录。
+- 本地开发可把测试密钥写入 `crabc-api/crabc-admin/src/main/resources/application-local.yml`（已被 .gitignore 忽略），无需设置环境变量。
+
 ## Docker启动
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 
 X86/AMD架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:latest
+docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:latest
 ```
 ARM架构
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:latest
+docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:latest
 ```
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
@@ -134,7 +147,7 @@ docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=r
 ## Windows桌面运行
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
-java -jar crabc-api.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root 
+java -jar crabc-api.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root --crabc.jwt.secret=<Base64密钥>
 ```
 
 ## AI 办公工具接入（MCP）

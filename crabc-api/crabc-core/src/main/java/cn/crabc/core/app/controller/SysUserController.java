@@ -26,6 +26,8 @@ public class SysUserController {
     @Autowired
     private IBaseUserService iBaseUserService;
     @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
     @Qualifier("dataCache")
     Cache<String, Object> caffeineCache;
     @Autowired
@@ -47,11 +49,11 @@ public class SysUserController {
             return Result.error("账号或密码错误!");
         }
         Map<String, Object> user = new HashMap<>();
-        String token = JwtUtil.createToken(userInfo.getUserId(), userInfo.getUsername());
+        String token = jwtUtil.createToken(userInfo.getUserId(), userInfo.getUsername());
         if (token == null) {
             return Result.error("登录失败");
         }
-        user.put("expires", 3600);
+        user.put("expires", jwtUtil.getExpireSeconds());
         user.put("access_token", token);
         user.put("refresh_token", UUID.randomUUID().toString().replace("-", ""));
         return Result.success(user);
@@ -59,6 +61,9 @@ public class SysUserController {
 
     /**
      * 注销
+     * <p>
+     * 仅清理本次请求的线程上下文。令牌为无状态凭证，服务端未做吊销，
+     * 注销后旧令牌在有效期内仍可继续使用（如需立即失效需引入服务端会话/黑名单）。
      *
      * @return
      */

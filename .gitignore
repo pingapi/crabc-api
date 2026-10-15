@@ -56,6 +56,8 @@ crabc-web/
 
 ####################### idea ##############################
 .idea
+# 本地开发密钥/配置，禁止提交
+application-local.yml
 *.iws
 *.iml
 *.ipr

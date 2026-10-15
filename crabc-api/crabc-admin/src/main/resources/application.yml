@@ -7,8 +7,12 @@ server:
     # Keep-Alive 长连接空闲超时（请求处理完，等待下一次请求）
     keep-alive-timeout: 20s
 spring:
+  # 本地开发密钥可选导入：application-local.yml 已由 .gitignore 忽略，本机存在时加载，不存在时跳过。
+  # 因此正式环境依旧必须通过环境变量 JWT_SECRET 注入，不会回退到任何内置密钥。
+  config:
+    import: optional:classpath:application-local.yml
   application:
-    name: crabc-api
+    name: apigo-api
   main:
     banner-mode: off
   threads:
@@ -69,7 +73,7 @@ pagehelper:
 
 crabc:
   api-log:
-    response-body: false  # 日志是否保存响应结果
+    response-body: true  # 日志是否保存响应结果
   mcp:
     enabled: true
     token: ${MCP_TOKEN:sk-*****}
@@ -80,3 +84,12 @@ crabc:
     allowed-jdbc-schemes: mysql,mariadb,tdsql,tidb,doris,starrocks,postgresql,opengauss,oracle,sqlserver,dm,clickhouse,dolphindb,duckdb,sybase,hive,db2,oceanbase
     # true 时拒绝连接回环/内网地址
     block-internal-host: false
+  # JWT 签名密钥：必须由部署环境注入（环境变量 JWT_SECRET），生成方式 openssl rand -base64 32。
+  # 未配置、强度不足（解码后少于 32 字节）或仍为历史泄露密钥时，应用启动直接失败，不做默认回退。
+  jwt:
+    secret: ${JWT_SECRET:}
+    key-id: ${JWT_KEY_ID:k1}
+    expire-minutes: ${JWT_EXPIRE_MINUTES:480}
+    issuer: apigo
+    audience: apigo-admin
+    clock-skew-seconds: ${JWT_CLOCK_SKEW_SECONDS:60}
