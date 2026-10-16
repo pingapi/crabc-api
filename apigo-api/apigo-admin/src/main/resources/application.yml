@@ -56,9 +56,9 @@ spring:
           enabled: true             # 自动扫描 @McpTool
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://127.0.0.1:3306/apigo?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password:
+    url: ${DB_URL:jdbc:mysql://127.0.0.1:3306/apigo?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USER:root}
+    password: ${DB_PWD:}
 # mybatis配置
 mybatis:
   # 搜索指定包别名
