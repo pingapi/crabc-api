@@ -1,6 +1,6 @@
 
 <div align="center">
-  <h3>✨ ApiGo ✨</h3>
+  <h3>✨ ApiGo-Api ✨</h3>
 
   <p><i>Java 多数据库插件化数据源框架，SQL to API</i></p>
   <p>
