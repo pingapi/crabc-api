@@ -134,11 +134,11 @@ export JWT_SECRET=$(openssl rand -base64 32)
 
 X86/AMD架构
 ```
-docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:latest
+docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL="jdbc:mysql://localhost:3306/apigo" -e DB_USER="root" -e DB_PWD="root" -d --name apigo crabc/apigo:latest
 ```
 ARM架构
 ```
-docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:latest
+docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL="jdbc:mysql://localhost:3306/apigo" -e DB_USER="root" -e DB_PWD="root" -d --name apigo crabc/crabc-admin:latest
 ```
 访问地址：http://127.0.0.1:9377
 账号密码：admin/admin123
@@ -146,7 +146,7 @@ docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL=jdbc:mysql://local
 ## Windows桌面运行
 先执行db/dml.sql脚本，创建库表和初始化数据，建议mysql 8.0+版本
 ```
-java -jar crabc-api.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root --crabc.jwt.secret=<Base64密钥>
+java -jar crabc-api.jar JWT_SECRET="$JWT_SECRET" --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root --crabc.jwt.secret=<Base64密钥>
 ```
 
 ## AI 办公工具接入（MCP）

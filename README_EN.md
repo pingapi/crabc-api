@@ -117,11 +117,11 @@ First run the db/dml.sql script to create the tables and initialize data. MySQL 
 
 X86/AMD architecture
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/apigo:latest
+docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL="jdbc:mysql://localhost:3306/apigo" -e DB_USER="root" -e DB_PWD="root" -d --name apigo crabc/apigo:latest
 ```
 ARM architecture
 ```
-docker run -p 9377:9377 -e DB_URL=jdbc:mysql://localhost:3306/apigo -e DB_USER=root -e DB_PWD=root -d --name apigo crabc/crabc-admin:latest
+docker run -p 9377:9377 -e JWT_SECRET="$JWT_SECRET" -e DB_URL="jdbc:mysql://localhost:3306/apigo" -e DB_USER="root" -e DB_PWD="root" -d --name apigo crabc/crabc-admin:latest
 ```
 Access URL: http://127.0.0.1:9377
 Username / Password: admin/admin123
@@ -129,7 +129,7 @@ Username / Password: admin/admin123
 ## Run on Windows Desktop
 First run the db/dml.sql script to create the tables and initialize data. MySQL 8.0+ is recommended.
 ```
-java -jar crabc-api.jar --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root 
+java -jar crabc-api.jar JWT_SECRET="$JWT_SECRET" --spring.datasource.url=jdbc:mysql://127.0.0.1:3306/crabc --spring.datasource.username=root --spring.datasource.password=root 
 ```
 
 ## AI Office Tool Integration (MCP)
