@@ -164,7 +164,7 @@ ApiGo ships with a built-in MCP Server (Streamable HTTP). AI office tools/Agents
 
 ## Screenshots
 ### API Development
-![img.png](doc/dev.png)
+![img.png](doc/dev_en.png)
 #### API Properties
 ![img.png](doc/detail.png)
 #### Response Parameters
@@ -172,7 +172,7 @@ ApiGo ships with a built-in MCP Server (Streamable HTTP). AI office tools/Agents
 #### Online Preview
 ![img_2.png](doc/img_test.png)
 #### API List
-![img.png](doc/apis.png)
+![img.png](doc/apis_en.png)
 #### API Rate Limiting
 ![img.png](doc/limit.png)
 #### Metrics

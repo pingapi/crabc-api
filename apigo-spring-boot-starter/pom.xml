@@ -126,5 +126,14 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
     </distributionManagement>
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <properties>
+                <gpg.executable>gpg</gpg.executable>
+                <gpg.passphrase>Crabc123</gpg.passphrase>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
