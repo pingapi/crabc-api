@@ -190,4 +190,4 @@ ApiGo ships with a built-in MCP Server (Streamable HTTP). AI office tools/Agents
 **Please click [Star] before joining, thank you.**
 
 ## E-mail
-yuqf@apigo.cn
+iamyuqf@outlook.com
