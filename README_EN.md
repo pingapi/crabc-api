@@ -102,8 +102,8 @@ The enterprise edition is more powerful — for commercial use please join the g
 ```
 <dependency>
     <groupId>cn.crabc</groupId>
-    <artifactId>crabc-spring-boot-starter</artifactId>
-    <version>6.1.0</version>
+    <artifactId>apigo-spring-boot-starter</artifactId>
+    <version>6.3.0</version>
 </dependency>
 ```
 Add the following annotation to your application startup class:
