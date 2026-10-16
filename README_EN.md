@@ -189,28 +189,5 @@ ApiGo ships with a built-in MCP Server (Streamable HTTP). AI office tools/Agents
 ## Community Group
 **Please click [Star] before joining, thank you.**
 
-
-For commercial inquiries, add WeChat (please note "apigo")
-
-![img.png](doc/img.png)
-
-## Product Registration
-Below are some of the users who have adopted apigo. <a href="https://gitee.com/linebyte/crabc/issues/IA98CA" target="_blank">Click to register</a>
-
-| Company |
-|:-------|
-| Zhenqing Bus   |
-| Sunshine Zhiwei   |
-| Yibu Data   |
-| Pixel Yuntu   |
-| Qianjing Technology   |
-| Fangcuntu Information  |
-| Luxi Technology   |
-| Xunmai Medical   |
-| Cloud Guizhou   |
-| Landian Technology   |
-| A Municipal Power Bureau  |
-| Qirui Pharmaceuticals   |
-| Jinri Capital   |
-| Zhihui Dacheng   |
-| Zhongke Shitong   |
+## E-mail
+yuqf@apigo.cn

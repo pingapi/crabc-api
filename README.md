@@ -212,6 +212,8 @@ QQ群(请先Star)：748993036
 
 ![img.png](doc/img.png)
 
+邮箱：iamyuqf@163.com
+
 ## 产品使用登记
 以下为部分接入apigo的用户 ，<a href="https://gitee.com/linebyte/crabc/issues/IA98CA" target="_blank"> 点击进行登记</a>
 
