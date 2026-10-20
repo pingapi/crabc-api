@@ -18,7 +18,7 @@ After writing SQL online with visual tooling, you can instantly generate an API 
 It supports MyBatis tag syntax (e.g. `if`), data masking, data transformation, national cryptographic encryption, collaborative development, API orchestration and more. It can be integrated with microservice gateways to support third-party APIs, authentication, rate limiting, caching, alerting/monitoring and unified logging — a one-stop API data service that
 helps enterprises upgrade the value of their data assets and becomes an important driver of digital transformation.
 
-![img.png](doc/home.png)
+![img.png](doc/home2.png)
 ## Community Edition Features
 - **Workbench**: Visually write SQL and publish it as an API endpoint. Supports executing multiple SQL statements at once and MyBatis tag syntax for dynamic SQL and dynamic tags.
 - **Data Source**: Data source list and data query, supporting a wide range of SQL/NoSQL databases.
